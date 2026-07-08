@@ -17,6 +17,9 @@ dist/
 android/.gradle/
 android/app/build/
 android/local.properties
+android/keystore.properties
+android/*.keystore
+android/*.jks
 android/capacitor-cordova-android-plugins/
 ios/App/Pods/
 ios/App/App/public/

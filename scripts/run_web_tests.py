@@ -352,6 +352,25 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertTrue((root / "scripts" / "generate_native_icons.py").is_file())
         self.assertTrue((root / "scripts" / "cq_brand_icon.py").is_file())
 
+    def test_android_release_signing_scaffold(self) -> None:
+        root = ROOT
+        example = root / "android" / "keystore.properties.example"
+        self.assertTrue(example.is_file())
+        text = example.read_text(encoding="utf-8")
+        for key in ("storeFile", "storePassword", "keyPassword", "keyAlias"):
+            self.assertIn(f"{key}=", text, f"missing {key} in keystore.properties.example")
+        self.assertIn("countquest", text)
+        gradle = (root / "android" / "app" / "build.gradle").read_text(encoding="utf-8")
+        self.assertIn("keystore.properties", gradle)
+        self.assertIn("signingConfigs", gradle)
+        self.assertIn("signingConfig signingConfigs.release", gradle)
+        self.assertTrue((root / "scripts" / "android_release_build.py").is_file())
+        pkg = (root / "package.json").read_text(encoding="utf-8")
+        self.assertIn("build:android:release", pkg)
+        gitignore = (root / ".gitignore").read_text(encoding="utf-8")
+        self.assertIn("keystore.properties", gitignore)
+        self.assertIn("*.keystore", gitignore)
+
     def test_capacitor_scaffold(self) -> None:
         root = ROOT
         shell = load_index_html()

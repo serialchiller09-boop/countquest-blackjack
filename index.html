@@ -242,9 +242,22 @@
       height: 100dvh;
       max-height: 100dvh;
     }
+    body.casino-play-active #screen-casino-play,
+    body.casino-play-active #screen-casino-play *,
+    body.casino-play-active #screen-handend,
+    body.casino-play-active #screen-handend *,
+    body.casino-play-active #action-bar,
+    body.casino-play-active #app-header {
+      scrollbar-width: none;
+    }
+    body.casino-play-active #screen-casino-play::-webkit-scrollbar,
+    body.casino-play-active #screen-handend::-webkit-scrollbar,
+    body.casino-play-active #action-bar::-webkit-scrollbar {
+      display: none;
+    }
 
     body.casino-play-active main {
-      overflow: hidden;
+      overflow: hidden !important;
       padding-top: 0;
       padding-bottom: 0;
       min-height: 0;
@@ -613,7 +626,8 @@
       grid-area: cards;
       position: relative;
       left: 50%;
-      transform: translateX(-50%);
+      transform: translateX(-50%) scale(var(--cq-hand-scale, 1));
+      transform-origin: center top;
       width: min(140%, 26rem);
       min-height: 2.5rem;
       max-height: none;
@@ -690,6 +704,13 @@
       width: 1.9rem !important;
       height: 2.6rem !important;
     }
+    .casino-hand-cards-cards-10 .playing-card {
+      width: 1.65rem !important;
+      height: 2.3rem !important;
+    }
+    .casino-hand-cards-cards-10 .playing-card + .playing-card {
+      margin-left: -0.95rem;
+    }
     .casino-seat-human .casino-seat-cards-wrap.casino-seat-cards-wide {
       width: min(200%, 32rem);
     }
@@ -757,60 +778,122 @@
       max-height: none;
       overflow: hidden;
     }
-    /* Hand-end dock — stays on the live table instead of swapping screens */
+    /* Hand-end dock — compact, no scroll, stays on live table */
     #screen-handend.casino-handend-overlay {
       position: fixed;
       left: 0;
       right: 0;
-      bottom: max(0.35rem, env(safe-area-inset-bottom));
+      bottom: max(0.25rem, env(safe-area-inset-bottom));
       z-index: 28;
-      padding: 0 0.45rem;
-      max-width: 40rem;
+      padding: 0 0.4rem;
+      max-width: 42rem;
       margin: 0 auto;
       width: 100%;
       pointer-events: auto;
+      overflow: hidden;
     }
-    #screen-handend.casino-handend-overlay > .felt {
-      padding: 0.55rem 0.75rem;
-      border-radius: 1rem;
+    #screen-handend.casino-handend-overlay .handend-panel {
+      padding: 0.4rem 0.55rem;
+      border-radius: 0.85rem;
       box-shadow: 0 -6px 28px rgba(0,0,0,.5), 0 0 24px rgba(245,158,11,.12);
       border: 1px solid rgba(245,158,11,.25);
       overflow: hidden;
     }
-    #screen-handend.casino-handend-overlay h3 {
-      font-size: 0.95rem;
-      margin-bottom: 0.15rem;
+    #screen-handend.casino-handend-overlay .handend-compact-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.28rem;
+      overflow: hidden;
     }
     #screen-handend.casino-handend-overlay #handend-summary {
-      font-size: 0.95rem;
-      line-height: 1.35;
-    }
-    #screen-handend.casino-handend-overlay #handend-feedback {
-      padding: 0.45rem 0.55rem;
-      font-size: 0.72rem;
-      line-height: 1.35;
+      font-size: 0.82rem;
+      line-height: 1.25;
+      font-weight: 600;
       overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    #screen-handend.casino-handend-overlay #handend-count {
+      display: flex;
+      flex-wrap: nowrap;
+      justify-content: center;
+      align-items: center;
+      gap: 0.35rem 0.55rem;
+      font-size: 0.62rem;
+      line-height: 1.2;
+      overflow: hidden;
+      padding: 0.2rem 0.35rem;
+      border-radius: 0.45rem;
+      background: rgba(0,0,0,.22);
+      border: 1px solid rgba(6,182,212,.2);
+    }
+    #screen-handend.casino-handend-overlay .handend-stat {
+      white-space: nowrap;
+      color: rgba(167,243,208,.75);
+    }
+    #screen-handend.casino-handend-overlay .handend-stat b {
+      color: #a5f3fc;
+      font-weight: 700;
+    }
+    #screen-handend.casino-handend-overlay #handend-review,
+    #screen-handend.casino-handend-overlay #handend-feedback {
+      font-size: 0.62rem;
+      line-height: 1.25;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      padding: 0.15rem 0.3rem;
+      border-radius: 0.35rem;
+      background: rgba(0,0,0,.18);
+    }
+    #screen-handend.casino-handend-overlay .handend-actions {
+      display: flex;
+      flex-wrap: nowrap;
+      justify-content: center;
+      align-items: center;
+      gap: 0.35rem;
+      padding-top: 0.1rem;
+      overflow: hidden;
+    }
+    #screen-handend.casino-handend-overlay .handend-actions button {
+      padding: 0.4rem 0.75rem;
+      font-size: 0.72rem;
+      white-space: nowrap;
+      flex-shrink: 1;
+      min-width: 0;
+    }
+    #screen-handend.casino-handend-overlay #btn-next-hand {
+      flex: 1.2 1 auto;
+      max-width: 9rem;
+    }
+    body.casino-play-active #bet-advice {
+      overflow: hidden;
+      text-overflow: ellipsis;
       display: -webkit-box;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 2;
+      max-height: 2.4rem;
     }
-    #screen-handend.casino-handend-overlay #handend-review {
-      font-size: 0.68rem;
-      padding: 0.4rem 0.5rem;
+    body.casino-play-active .casino-felt-bet-panel {
+      overflow: hidden;
+      flex-wrap: wrap;
+      max-height: 3.25rem;
+    }
+    body.casino-play-active .casino-felt-bet-panel .felt-bet-chip-row {
+      flex-wrap: nowrap;
+      overflow: hidden;
+      max-width: 100%;
+    }
+    dialog.casino-count-quiz-dialog,
+    dialog#modal-count-confirm {
+      overflow: hidden;
+      max-height: min(70vh, 18rem);
+    }
+    dialog.casino-count-quiz-dialog #count-quiz-explanation {
       overflow: hidden;
       display: -webkit-box;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 3;
-      white-space: pre-wrap;
-    }
-    #screen-handend.casino-handend-overlay .handend-actions {
-      padding-top: 0.35rem;
-      gap: 0.45rem;
-    }
-    #screen-handend.casino-handend-overlay .handend-actions button {
-      padding-top: 0.55rem;
-      padding-bottom: 0.55rem;
-      font-size: 0.82rem;
     }
     body.casino-handend-active .casino-table-surface::after {
       content: '';
@@ -1086,15 +1169,23 @@
       .casino-seat-human .casino-seat-cards-wrap:has(.casino-player-hand:nth-child(2)) {
         width: min(240%, 28rem);
       }
-      #screen-handend.casino-handend-overlay > .felt {
-        padding: 0.4rem 0.55rem;
+      #screen-handend.casino-handend-overlay .handend-panel {
+        padding: 0.32rem 0.42rem;
       }
-      #screen-handend.casino-handend-overlay #handend-feedback {
-        font-size: 0.65rem;
-        -webkit-line-clamp: 2;
+      #screen-handend.casino-handend-overlay #handend-summary {
+        font-size: 0.72rem;
       }
+      #screen-handend.casino-handend-overlay #handend-count {
+        font-size: 0.56rem;
+        gap: 0.25rem 0.4rem;
+      }
+      #screen-handend.casino-handend-overlay #handend-feedback,
       #screen-handend.casino-handend-overlay #handend-review {
-        -webkit-line-clamp: 2;
+        font-size: 0.58rem;
+      }
+      #screen-handend.casino-handend-overlay .handend-actions button {
+        padding: 0.32rem 0.55rem;
+        font-size: 0.66rem;
       }
       dialog.casino-count-quiz-dialog {
         margin-bottom: 5.5rem;
@@ -2804,18 +2895,19 @@
     </div>
   </section>
 
-  <!-- HAND END -->
-  <section id="screen-handend" class="hidden game-screen space-y-4 py-4 max-w-4xl mx-auto w-full">
-    <div class="felt rounded-2xl p-6 sm:p-8 text-center space-y-4 shadow-inner">
-      <h3 class="text-gold font-bold text-lg">Hand Complete</h3>
-      <div id="handend-summary" class="text-xl space-y-1"></div>
-      <div id="handend-feedback" class="text-sm text-emerald-200/80 bg-black/20 rounded-xl p-4"></div>
-      <div id="handend-count" class="font-mono text-sm text-cyan-300"></div>
-      <div id="handend-review" class="hidden text-left bg-black/25 rounded-xl p-4 text-sm text-emerald-100/90 whitespace-pre-wrap"></div>
-      <div class="handend-actions flex justify-center gap-3 flex-wrap pt-2">
-        <button id="btn-next-hand" class="px-8 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 text-stone-900 font-bold shadow-lg">Next Hand</button>
-        <button id="btn-end-session" class="px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/10">End Session</button>
-        <button id="btn-handend-count-quiz" type="button" class="hidden px-5 py-3 rounded-xl bg-cyan-900/50 border border-cyan-600/40 text-cyan-100 text-sm font-medium">Count Check</button>
+  <!-- HAND END (compact dock overlay during play — no scroll) -->
+  <section id="screen-handend" class="hidden game-screen max-w-4xl mx-auto w-full">
+    <div class="felt handend-panel text-center shadow-inner">
+      <div class="handend-compact-grid">
+        <div id="handend-summary" class="text-gold"></div>
+        <div id="handend-count" class="hidden font-mono text-cyan-300"></div>
+        <div id="handend-review" class="hidden text-emerald-100/90"></div>
+        <div id="handend-feedback" class="text-emerald-200/80"></div>
+        <div class="handend-actions">
+          <button id="btn-next-hand" class="rounded-lg bg-gradient-to-r from-amber-500 to-amber-400 text-stone-900 font-bold shadow-lg">Next Hand</button>
+          <button id="btn-handend-count-quiz" type="button" class="hidden rounded-lg bg-cyan-900/50 border border-cyan-600/40 text-cyan-100 font-medium">Count Check</button>
+          <button id="btn-end-session" class="rounded-lg bg-white/10 hover:bg-white/20 border border-white/10">End</button>
+        </div>
       </div>
     </div>
   </section>
@@ -4711,6 +4803,35 @@ function formatHandRunningCountReview(start, end) {
   const changeText = change >= 0 ? `+${change}` : `${change}`;
   const fmt = (n) => (n >= 0 ? `+${n}` : `${n}`);
   return `Running count: ${fmt(start)} → ${fmt(end)} (change ${changeText} this hand)`;
+}
+
+function formatHandRunningCountReviewCompact(start, end) {
+  const fmt = (n) => (n >= 0 ? `+${n}` : `${n}`);
+  const delta = end - start;
+  const d = delta >= 0 ? `+${delta}` : `${delta}`;
+  return `RC ${fmt(start)}→${fmt(end)} (${d})`;
+}
+
+function formatHandEndReviewCompact(roundReview, counter, lastHand) {
+  const parts = [];
+  if (lastHand) {
+    const fmt = (n) => (n >= 0 ? `+${n}` : `${n}`);
+    parts.push(lastHand.countOk
+      ? `Count ✓ (${fmt(lastHand.guess)} vs ${fmt(lastHand.actual)})`
+      : `Count ✗ (off ${Math.abs(lastHand.guess - lastHand.actual)})`);
+  }
+  const decisions = roundReview?.decisions || [];
+  if (decisions.length) {
+    const ok = decisions.filter(d => !d.mistake).length;
+    parts.push(`Strategy ${ok}/${decisions.length}`);
+  }
+  if (roundReview?.bet != null) {
+    parts.push(`Bet $${roundReview.bet}${roundReview.suggested != null ? ` (rec $${roundReview.suggested})` : ''}`);
+  }
+  if (roundReview && counter) {
+    parts.push(formatHandRunningCountReviewCompact(roundReview.runningCountAtHandStart, counter.runningCount));
+  }
+  return parts.join(' · ');
 }
 
 function infoTipButton(tipText, label = 'Explain this') {
@@ -15871,18 +15992,53 @@ class CountQuestApp {
       this.phase === 'handEnd'
       && handend
       && !handend.classList.contains('hidden')
-    ) ? handend.offsetHeight + 10 : 0;
-    const contentH = viewport.scrollHeight;
-    const contentW = viewport.scrollWidth;
+    ) ? handend.offsetHeight + 8 : 0;
+    const grid = document.getElementById('casino-seat-grid');
+    const contentH = Math.max(viewport.scrollHeight, viewport.offsetHeight);
+    const contentW = Math.max(
+      viewport.scrollWidth,
+      viewport.offsetWidth,
+      grid?.scrollWidth || 0,
+    );
     const maxH = Math.max(1, shellH - handendReserve);
     const scaleY = contentH > maxH ? maxH / contentH : 1;
     const scaleX = contentW > shellW ? shellW / contentW : 1;
     const scale = Math.min(1, scaleX, scaleY);
-    const applied = Math.max(0.68, scale);
+    const applied = Math.max(0.62, scale);
     if (applied < 0.995) {
       viewport.style.transform = `scale(${applied})`;
       viewport.style.marginBottom = `-${contentH * (1 - applied)}px`;
     }
+  }
+
+  applyPlayerHandsFitScale(ph, maxCards, splitN) {
+    if (!ph) return;
+    let scale = 1;
+    if (splitN >= 4) scale = Math.min(scale, 0.78);
+    else if (splitN >= 3) scale = Math.min(scale, 0.86);
+    else if (splitN >= 2) scale = Math.min(scale, 0.92);
+    if (maxCards >= 11) scale = Math.min(scale, 0.62);
+    else if (maxCards >= 10) scale = Math.min(scale, 0.68);
+    else if (maxCards >= 9) scale = Math.min(scale, 0.74);
+    else if (maxCards >= 7) scale = Math.min(scale, 0.82);
+    else if (maxCards >= 5) scale = Math.min(scale, 0.9);
+    ph.style.setProperty('--cq-hand-scale', String(scale));
+  }
+
+  renderHandEndCountStrip(shoe) {
+    if (!this.wantsCountDisplay() || !shoe) {
+      return '<span class="handend-stat">🔒 Count hidden</span>';
+    }
+    const i = this.counter.getCountSnapshot(shoe);
+    const sys = COUNTING_SYSTEMS[i.systemId] || COUNTING_SYSTEMS['hi-lo'];
+    const rs = i.runningCount >= 0 ? `+${i.runningCount}` : `${i.runningCount}`;
+    const stat = (label, val) => `<span class="handend-stat">${label} <b>${val}</b></span>`;
+    if (sys.balanced) {
+      const ts = i.trueCount >= 0 ? `+${i.trueCount.toFixed(1)}` : i.trueCount.toFixed(1);
+      return stat('RC', rs) + stat('TC', ts) + stat('Decks', i.decksRemaining.toFixed(1)) + stat('Seen', i.cardsCounted);
+    }
+    const vs = i.abovePivot >= 0 ? `+${i.abovePivot}` : `${i.abovePivot}`;
+    return stat('RC', rs) + stat('Key', `+${i.pivot}`) + stat('Above', vs) + stat('Seen', i.cardsCounted);
   }
 
   renderBet() {
@@ -15902,7 +16058,7 @@ class CountQuestApp {
       const recLine = this.help.showExactBet()
         ? `<div class="flex flex-wrap items-center justify-center gap-1"><strong>Recommended: $${rec}</strong>${infoTipButton(why, 'Why this bet amount?')}</div>`
         : `<span>${this.help.formatBetRange(this.betSuggestion, this.bankroll, this.minBet)}</span>`;
-      adv.innerHTML = `<div class="space-y-1 max-w-xl mx-auto"><div>${recLine}</div><p class="text-xs text-emerald-400/70">${why}</p></div>`;
+      adv.innerHTML = `<div class="max-w-xl mx-auto"><div>${recLine}</div><p class="text-xs text-emerald-400/70 truncate">${why}</p></div>`;
     } else { adv.classList.add('hidden'); }
     const dealBtn = document.getElementById('btn-deal');
     if (dealBtn) dealBtn.textContent = isBetDrill ? 'Submit Bet' : 'Deal Cards';
@@ -15990,10 +16146,12 @@ class CountQuestApp {
     ph.classList.toggle('casino-seat-cards-split-3', splitN >= 3);
     ph.classList.toggle('casino-seat-cards-split-4', splitN >= 4);
     ph.classList.toggle('casino-seat-cards-wide', maxCards >= 5);
+    this.applyPlayerHandsFitScale(ph, maxCards, splitN);
     ph.innerHTML = this.playerHands.map((h, i) => {
       const active = i === this.activeIdx && !h.finished;
       const cardN = h.hand.cards.length;
-      const cardsCls = cardN >= 9 ? 'casino-hand-cards-cards-9'
+      const cardsCls = cardN >= 10 ? 'casino-hand-cards-cards-9 casino-hand-cards-cards-10'
+        : cardN >= 9 ? 'casino-hand-cards-cards-9'
         : cardN >= 8 ? 'casino-hand-cards-cards-8'
         : cardN >= 7 ? 'casino-hand-cards-cards-7'
         : cardN >= 6 ? 'casino-hand-cards-cards-6'
@@ -16025,73 +16183,73 @@ class CountQuestApp {
   }
 
   renderHandEnd() {
-    const lines = (this.results || []).map(r => {
-      const col = r.r === 'win' || r.r === 'blackjack' ? 'text-green-400' : r.r === 'push' ? 'text-yellow-400' : 'text-red-400';
-      const icon = r.r === 'blackjack' ? '★ ' : r.r === 'win' ? '✓ ' : r.r === 'push' ? '═ ' : '✗ ';
-      return `<div class="${col} font-semibold">${icon}${r.label}: ${r.r.toUpperCase()} <span class="font-mono">(${r.net >= 0 ? '+' : ''}$${r.net})</span></div>`;
-    }).join('');
-    document.getElementById('handend-summary').innerHTML = lines || 'Hand complete';
+    const summaryEl = document.getElementById('handend-summary');
+    const parts = (this.results || []).map(r => {
+      const icon = r.r === 'blackjack' ? '★' : r.r === 'win' ? '✓' : r.r === 'push' ? '═' : '✗';
+      return `${icon} ${r.label} ${r.r.toUpperCase()} (${r.net >= 0 ? '+' : ''}$${r.net})`;
+    });
+    summaryEl.textContent = parts.length ? parts.join(' · ') : 'Hand complete';
 
     const fb = document.getElementById('handend-feedback');
     const lvl = this.help.level;
     const mp = this.help.modeProfile;
     let msg = '';
     if (this.stats.helpLevelups > 0 && this.stats.lastLevelUpHand === this.stats.handsPlayed) {
-      msg = `★ You just advanced to Help Level ${lvl} (${HELP_LABELS[lvl]})! `;
+      msg = `★ Level ${lvl} (${HELP_LABELS[lvl]})! `;
     }
-    msg += this.help.modeHint() || '';
-    if (!this.help.modeHint()) {
-      if (lvl === 0) msg += 'Novice: review count change and bet choice below.';
-      else if (lvl === 1) msg += 'Guided: did your bet match the count-based range?';
-      else if (lvl === 2 || lvl === 3) msg += 'Count quiz coming — track that running count.';
-      else msg += 'Expert: minimal coaching. Session analytics at end.';
-    }
-    if (mp === 'drill-combined') {
-      msg = `Combined Practice — count in your head, play basic strategy. ${this.combinedSessionSummaryText()}`;
-    }
-    if (mp === 'campaign') msg = `Campaign chapter — ${THEMES[this.settings.theme]?.name || 'Classic'}. ` + msg;
-    if (mp === 'daily' && this.dailyChallenge) msg = `Daily: ${this.dailyChallenge.title}. ` + msg;
-    if (mp === 'tutorial' && !msg.trim()) msg = 'Tutorial session: every hint is on. Try the count quiz after each hand.';
+    const hint = this.help.modeHint();
+    if (hint) msg += hint;
+    else if (lvl === 0) msg += 'Review count & bet below.';
+    else if (lvl === 1) msg += 'Did your bet match the count range?';
+    else if (lvl <= 3) msg += 'Track the running count.';
+    if (mp === 'drill-combined') msg = this.combinedSessionSummaryText();
+    if (mp === 'campaign') msg = `${THEMES[this.settings.theme]?.name || 'Campaign'} · ${msg}`.trim();
+    if (mp === 'daily' && this.dailyChallenge) msg = `${this.dailyChallenge.title} · ${msg}`.trim();
     if (this.sessionMode === 'tournament' && this.save.tournament?.match) {
       const m = this.save.tournament.match;
-      msg = `🏆 Tournament duel vs ${m.opponentName} — Hand ${m.handsPlayed}/${TOURNAMENT_HANDS_PER_MATCH}. `;
-      msg += `Your net P/L: ${this.session.netPL >= 0 ? '+' : ''}$${this.session.netPL} · Target to beat: ${m.opponentTarget}`;
+      msg = `🏆 vs ${m.opponentName} H${m.handsPlayed}/${TOURNAMENT_HANDS_PER_MATCH} · P/L ${this.session.netPL >= 0 ? '+' : ''}$${this.session.netPL}`;
       const nextBtn = document.getElementById('btn-next-hand');
-      if (nextBtn) {
-        nextBtn.textContent = m.handsPlayed >= TOURNAMENT_HANDS_PER_MATCH ? 'Resolve Match' : 'Next Hand';
-      }
+      if (nextBtn) nextBtn.textContent = m.handsPlayed >= TOURNAMENT_HANDS_PER_MATCH ? 'Resolve' : 'Next';
     } else if (this.session && mp !== 'drill-combined') {
-      msg += ` Session P/L: ${this.session.netPL >= 0 ? '+' : ''}$${this.session.netPL}`;
+      msg = `${msg ? msg + ' · ' : ''}Session ${this.session.netPL >= 0 ? '+' : ''}$${this.session.netPL}`.trim();
       const nextBtn = document.getElementById('btn-next-hand');
       if (nextBtn) nextBtn.textContent = 'Next Hand';
     }
-    fb.textContent = msg;
+    fb.textContent = msg.replace(/\s+/g, ' ').trim();
 
     const showC = this.help.showEndOfHandCount();
     const countEl = document.getElementById('handend-count');
     countEl.classList.toggle('hidden', !showC);
-    if (showC && this.shoe) countEl.innerHTML = this.renderCountBoxes(true, this.shoe);
+    if (showC && this.shoe) countEl.innerHTML = this.renderHandEndCountStrip(this.shoe);
 
     const rev = document.getElementById('handend-review');
-    if (this.help.postHandReview() && this.roundReview) {
+    const showReview = this.help.postHandReview() && this.roundReview;
+    if (showReview) {
       rev.classList.remove('hidden');
       if (mp === 'drill-combined') {
         const handNum = this.session?.hands;
         const lastHand = (this.combinedPracticeVisit || []).find(h => h.handNum === handNum);
-        rev.textContent = formatCombinedHandReview(this.roundReview, this.counter, lastHand);
+        rev.textContent = formatHandEndReviewCompact(this.roundReview, this.counter, lastHand);
       } else {
         const mistakes = (this.roundReview.decisions || []).filter(d => d.mistake);
-        rev.textContent = `${formatHandRunningCountReview(this.roundReview.runningCountAtHandStart, this.counter.runningCount)}\n`
-          + `Bet $${this.roundReview.bet} (suggested $${this.roundReview.suggested})\n`
-          + (mistakes.length ? `Strategy: ${mistakes.length} suboptimal play(s) this hand.` : 'Strategy: all decisions matched basic strategy.');
+        const rc = formatHandRunningCountReviewCompact(
+          this.roundReview.runningCountAtHandStart,
+          this.counter.runningCount,
+        );
+        const strat = mistakes.length
+          ? `Strategy: ${mistakes.length} suboptimal`
+          : 'Strategy: all correct';
+        rev.textContent = `${rc} · Bet $${this.roundReview.bet} (rec $${this.roundReview.suggested}) · ${strat}`;
       }
     } else rev.classList.add('hidden');
+
     const quizBtn = document.getElementById('btn-handend-count-quiz');
     if (quizBtn) {
       const showOpt = !!this._handendQuizOptional && !this.help.postHandQuiz();
       quizBtn.classList.toggle('hidden', !showOpt);
     }
     document.getElementById('result-toast').classList.add('hidden');
+    requestAnimationFrame(() => this.fitCasinoPlayViewport());
   }
 }
 
@@ -16284,6 +16442,8 @@ function runTests() {
   check(formatCountChangeLabel(1) === 'Count Change: +1', 'count change label +1');
   check(formatCountChangeLabel(-1) === 'Count Change: -1', 'count change label -1');
   check(formatHandRunningCountReview(2, 5).includes('change +3'), 'hand count review plain English');
+  check(formatHandRunningCountReviewCompact(2, 5).includes('RC +2→+5'), 'compact hand count review');
+  check(typeof formatHandEndReviewCompact === 'function', 'compact handend review formatter');
   const hardHand = new Hand([createPlayingCard('10','S'), createPlayingCard('6','H')]);
   check(hardHand.beginnerDisplaySummary().startsWith('Hard 16'), 'beginner hard hand label');
   const softHand = new Hand([createPlayingCard('A','S'), createPlayingCard('6','H')]);

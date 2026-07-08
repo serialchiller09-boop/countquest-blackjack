@@ -254,11 +254,10 @@
     body.casino-bet-active #count-hud,
     body.casino-bet-active #strategy-hint,
     body.casino-bet-active #shoe-status { display: none !important; }
-    body.casino-play-active #count-hud-bet {
+    body.casino-play-active #count-hud-bet,
+    body.casino-play-active #count-hud {
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 0.2rem;
-      max-height: 3.25rem;
-      overflow: hidden;
     }
     body.casino-play-active:not(.casino-action-bar-visible) { --cq-action-bar-h: 0.5rem; }
     body.casino-play-active.casino-action-bar-visible #action-bar {
@@ -472,6 +471,7 @@
       height: auto;
       max-height: none;
       min-height: var(--cq-seat-col-h);
+      overflow: visible;
       border: 2px solid rgba(245, 158, 11, 0.55);
       box-shadow: 0 0 20px var(--cq-gold-glow), inset 0 0 24px rgba(245,158,11,.08), inset 0 1px 0 rgba(253,230,138,.12);
       background: linear-gradient(180deg, rgba(245,158,11,.08) 0%, rgba(0,0,0,.36) 100%);
@@ -484,6 +484,8 @@
       max-height: none;
       padding: 0.15rem 0.2rem 0.1rem;
       gap: 0.15rem;
+      overflow-x: auto;
+      overflow-y: visible;
     }
     .casino-seat-human .casino-seat-cards-wrap .playing-card {
       width: 2.65rem;
@@ -494,19 +496,23 @@
       flex-direction: row;
       flex-wrap: nowrap;
       justify-content: flex-start;
-      gap: 0.25rem;
+      gap: 0.28rem;
       overflow-x: auto;
-      overflow-y: hidden;
+      overflow-y: visible;
       scrollbar-width: thin;
       -webkit-overflow-scrolling: touch;
-      padding-left: 0.12rem;
-      padding-right: 0.12rem;
+      width: 100%;
+      max-width: 100%;
+      margin-left: 0;
+      margin-right: 0;
+      padding-left: 0.15rem;
+      padding-right: 0.15rem;
     }
     .casino-seat-human .casino-seat-cards-wrap.casino-seat-cards-split .casino-player-hand,
     .casino-seat-human .casino-seat-cards-wrap:has(.casino-player-hand:nth-child(2)) .casino-player-hand {
       flex: 0 0 auto;
-      min-width: 0;
-      max-width: 46%;
+      min-width: 4.25rem;
+      max-width: none;
     }
     .casino-seat-human .casino-seat-cards-wrap.casino-seat-cards-split-3 .casino-player-hand,
     .casino-seat-human .casino-seat-cards-wrap:has(.casino-player-hand:nth-child(3)) .casino-player-hand {
@@ -582,6 +588,11 @@
       justify-content: center;
       align-content: center;
       gap: 0.1rem;
+    }
+    #player-hands.casino-seat-cards-wrap {
+      max-height: none;
+      overflow-x: auto;
+      overflow-y: visible;
     }
     .casino-seat-cards-wrap .playing-card { width: 2.1rem; height: 2.9rem; }
     .casino-seat-cards-wrap .playing-card .center-suit { font-size: 0.95rem; }
@@ -681,42 +692,142 @@
       .casino-dealer-zone .playing-card { width: 3rem; height: 4.15rem; }
       .casino-seat-human .casino-seat-cards-wrap .playing-card { width: 2.85rem; height: 4rem; }
     }
+    @media (max-height: 799px) {
+      :root {
+        --cq-seat-spot-size: 3.65rem;
+        --cq-seat-col-h: 4.75rem;
+      }
+      .casino-dealer-zone { padding: 0.02rem 0 0.06rem; margin-bottom: 0.06rem; }
+      .casino-dealer-zone .playing-card { width: 2rem; height: 2.75rem; }
+      .casino-dealer-zone p { margin-bottom: 0.05rem; }
+      #casino-seat-grid { min-height: 0; }
+      .casino-seat-human {
+        grid-template-rows: var(--cq-seat-spot-size) auto minmax(0, 0.7rem);
+        min-height: 0;
+      }
+      .casino-seat-human .casino-seat-cards-wrap {
+        min-height: 2.85rem;
+        max-height: none;
+        overflow-x: auto;
+        overflow-y: visible;
+      }
+      .casino-seat-human .casino-seat-cards-wrap .playing-card {
+        width: 2rem;
+        height: 2.75rem;
+      }
+      .casino-player-hand { padding: 0.08rem 0.12rem 0.05rem; margin-bottom: 0.05rem; }
+      .casino-seat-human .casino-player-hand > p:last-child {
+        font-size: 0.45rem !important;
+        line-height: 1.05;
+        margin-top: 0.05rem;
+      }
+      .casino-seat-human .casino-seat-cards-wrap:has(.casino-player-hand:nth-child(2)) .casino-hand-cards .playing-card {
+        width: 1.85rem;
+        height: 2.55rem;
+      }
+      .casino-seat-human .casino-seat-cards-wrap:has(.casino-player-hand:nth-child(3)) .casino-hand-cards .playing-card {
+        width: 1.65rem;
+        height: 2.3rem;
+      }
+      .casino-seat-human .casino-seat-cards-wrap:has(.casino-player-hand:nth-child(4)) .casino-hand-cards .playing-card {
+        width: 1.5rem;
+        height: 2.1rem;
+      }
+      .casino-seat-human .casino-seat-cards-wrap:has(.casino-player-hand:nth-child(2)) .casino-player-hand {
+        min-width: 3.5rem;
+        padding: 0.06rem 0.08rem 0.04rem;
+      }
+      .casino-seat-human .casino-seat-cards-wrap:has(.casino-player-hand:nth-child(3)) .casino-player-hand,
+      .casino-seat-human .casino-seat-cards-wrap:has(.casino-player-hand:nth-child(4)) .casino-player-hand {
+        min-width: 2.75rem;
+        max-width: 28%;
+      }
+      body.casino-play-active #app-header { padding-top: 0.25rem; padding-bottom: 0.25rem; }
+      body.casino-play-active #app-header .app-main > div:first-child { gap: 0.25rem; }
+      body.casino-play-active #app-header .app-main { row-gap: 0.15rem; }
+      body.casino-play-active .app-title { font-size: 1rem; line-height: 1.1; }
+      body.casino-play-active .app-title-sub,
+      body.casino-play-active #header-mode { display: none; }
+      body.casino-play-active #logo { width: 1.75rem; height: 1.75rem; }
+      body.casino-play-active #header-currency .currency-chip,
+      body.casino-play-active #header-currency .currency-gem {
+        padding: 0.15rem 0.4rem;
+        font-size: 0.68rem;
+      }
+      body.casino-play-active #btn-help-settings,
+      body.casino-play-active #btn-sound,
+      body.casino-play-active #btn-toggle-stats,
+      body.casino-play-active #btn-chart,
+      body.casino-play-active #btn-quit {
+        padding-top: 0.25rem;
+        padding-bottom: 0.25rem;
+        font-size: 0.65rem;
+      }
+    }
     @media (min-width: 1280px) and (max-height: 799px) {
       :root {
         --cq-header-h: 4rem;
-        --cq-action-bar-h: 4rem;
-        --cq-seat-spot-size: 4.5rem;
-        --cq-seat-col-h: 5.25rem;
-        --cq-topbar-max: 3rem;
+        --cq-action-bar-h: 3.75rem;
+        --cq-seat-spot-size: 3.55rem;
+        --cq-seat-col-h: 4.5rem;
+        --cq-topbar-max: 3.75rem;
       }
-      .casino-play-shell { padding: 0.1rem 0.3rem 0; }
-      .casino-table-surface { padding: 0.2rem 0.3rem 0.25rem; }
+      .casino-play-shell { padding: 0.08rem 0.3rem 0; }
+      .casino-table-surface { padding: 0.18rem 0.3rem 0.22rem; }
       .casino-table-topbar {
-        max-height: var(--cq-topbar-max);
-        overflow: hidden;
-        gap: 0.06rem;
+        display: grid;
+        grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+        grid-template-rows: auto auto;
+        gap: 0.06rem 0.35rem;
+        max-height: none;
+        flex-shrink: 0;
+        align-items: center;
+      }
+      .casino-table-topbar #how-to-count-bet,
+      .casino-table-topbar #count-hud-bet,
+      .casino-table-topbar #bet-advice,
+      .casino-table-topbar #count-hud {
+        grid-column: 1 / -1;
+      }
+      .casino-table-topbar #strategy-hint {
+        grid-column: 1;
+        margin: 0;
+      }
+      .casino-table-topbar #shoe-status {
+        grid-column: 2;
+        margin: 0;
+        text-align: right;
       }
       body.casino-play-active #count-hud,
       body.casino-play-active #count-hud-bet {
-        max-height: 2.5rem;
-        overflow: hidden;
+        gap: 0.15rem;
       }
+      body.casino-play-active .count-box > div { padding-top: 0.15rem !important; padding-bottom: 0.15rem !important; }
+      body.casino-play-active .count-box .text-lg { font-size: 0.88rem !important; }
+      body.casino-play-active .count-box .text-\[10px\] { font-size: 0.5rem !important; line-height: 1.1; }
       body.casino-play-active #bet-advice {
-        max-height: 1.1rem;
-        overflow: hidden;
-        line-height: 1.05;
+        line-height: 1.15;
+        font-size: 0.62rem;
       }
       body.casino-play-active #shoe-status {
-        max-height: 0.75rem;
-        overflow: hidden;
-        line-height: 1.05;
+        line-height: 1.1;
         white-space: nowrap;
         text-overflow: ellipsis;
+        overflow: hidden;
+        font-size: 0.55rem;
       }
-      .casino-dealer-zone { padding: 0.03rem 0 0.08rem; margin-bottom: 0.08rem; min-height: 0; }
-      .casino-dealer-zone .playing-card { width: 2.25rem; height: 3.1rem; }
+      body.casino-play-active #strategy-hint {
+        font-size: 0.6rem;
+        padding: 0.15rem 0.4rem;
+        max-height: 1.15rem;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+      body.casino-play-active .action-btn { min-height: 2.5rem; min-width: 4rem; font-size: 0.85rem; }
+      .casino-dealer-zone .playing-card { width: 2rem; height: 2.75rem; }
       #casino-seat-grid {
-        min-height: 4.75rem;
+        min-height: 0;
         gap: 0.2rem;
         padding: 0.2rem 0.3rem 0.28rem;
       }
@@ -725,23 +836,9 @@
       .casino-seat-label { max-height: 0.62rem; }
       .casino-seat-available-icon { width: 1.1rem; height: 1.1rem; }
       .casino-seat-available-text { font-size: 0.32rem; }
-      .casino-seat-human {
-        grid-template-rows: var(--cq-seat-spot-size) minmax(2rem, 3.1rem) minmax(0, 0.62rem);
-        min-height: 5.25rem;
-      }
-      .casino-seat-human .casino-seat-cards-wrap {
-        min-height: 2rem;
-        max-height: 3.1rem;
-        padding: 0.08rem 0.12rem;
-        gap: 0.1rem;
-      }
-      .casino-seat-human .casino-seat-cards-wrap .playing-card {
-        width: 2.2rem;
-        height: 3.05rem;
-      }
       .casino-seat-human .casino-seat-cards-wrap:has(.casino-player-hand:nth-child(2)) .casino-hand-cards .playing-card {
-        width: 2rem;
-        height: 2.8rem;
+        width: 1.85rem;
+        height: 2.55rem;
       }
       .casino-felt-bet-rail { padding: 0.15rem 0.35rem; margin: 0.04rem 0.15rem 0.1rem; }
       .casino-felt-bet-panel .bet-chip { min-height: 1.75rem; min-width: 1.75rem; font-size: 0.58rem; }
@@ -755,15 +852,17 @@
     }
     @media (max-width: 900px) {
       :root {
-        --cq-seat-spot-size: 3.35rem;
-        --cq-seat-col-h: 4rem;
+        --cq-seat-spot-size: 3.15rem;
+        --cq-seat-col-h: 3.85rem;
       }
       #casino-seat-grid {
         grid-template-columns: repeat(7, minmax(0, 1fr));
         grid-template-rows: auto;
-        gap: 0.15rem;
-        padding: 0.2rem 0.15rem 0.3rem;
+        gap: 0.12rem;
+        padding: 0.18rem 0.1rem 0.28rem;
+        overflow: visible;
       }
+      .casino-seat { min-width: 0; }
       #casino-seat-grid::before { bottom: 1.35rem; opacity: 0.15; }
       .casino-seat {
         padding: 0.1rem 0.04rem 0.1rem;
@@ -782,6 +881,14 @@
       .casino-seat-human .casino-seat-cards-wrap {
         min-height: 1.85rem;
         padding: 0.08rem 0.1rem;
+      }
+      .casino-seat-human .casino-seat-cards-wrap.casino-seat-cards-split,
+      .casino-seat-human .casino-seat-cards-wrap:has(.casino-player-hand:nth-child(2)) {
+        width: 100%;
+        max-width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+        gap: 0.22rem;
       }
       .casino-seat-human .casino-seat-cards-wrap .playing-card {
         width: 2.15rem;
@@ -845,6 +952,17 @@
       .casino-seat-human .casino-seat-cards-wrap.casino-seat-cards-split .casino-hand-cards .playing-card {
         width: 1.55rem;
         height: 2.15rem;
+      }
+      .casino-seat-human .casino-seat-cards-wrap.casino-seat-cards-split,
+      .casino-seat-human .casino-seat-cards-wrap:has(.casino-player-hand:nth-child(2)) {
+        width: 100%;
+        max-width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+      }
+      .casino-seat-human .casino-seat-cards-wrap.casino-seat-cards-split .casino-player-hand,
+      .casino-seat-human .casino-seat-cards-wrap:has(.casino-player-hand:nth-child(2)) .casino-player-hand {
+        min-width: 3.5rem;
       }
       .casino-seat-bet-chip { min-width: 1.85rem; min-height: 1.85rem; font-size: 0.55rem; }
     }
@@ -1573,7 +1691,7 @@
         </div>
         <div class="lobby-profile-meta">
           <div id="lobby-profile-name" class="lobby-profile-name">Player</div>
-          <div id="lobby-profile-rank" class="lobby-profile-rank">Novice · Help L0</div>
+          <div id="lobby-profile-rank" class="lobby-profile-rank">Novice · Help Level 0</div>
           <div class="lobby-xp-row">
             <div id="lobby-xp-bar" class="lobby-xp-bar" title="XP to next level"><div id="lobby-xp-fill" class="lobby-xp-fill" style="width:0%"></div></div>
             <span id="lobby-profile-level" class="lobby-level-badge">1</span>
@@ -2144,7 +2262,7 @@
         <span class="text-emerald-300/80">Practice mode</span>
         <select id="index-drill-mode" class="mt-1 w-full rounded-lg bg-black/30 border border-white/10 px-3 py-2 text-white">
           <option value="random" selected>Random Mix — all index plays</option>
-          <option value="insurance">Insurance Only — TC +3 index</option>
+          <option value="insurance">Insurance Only — true count +3 index</option>
           <option value="stand">Stand Deviations — stiff hands vs 10</option>
           <option value="double">Double Deviations — aggressive doubles</option>
         </select>
@@ -2219,9 +2337,9 @@
         <span class="text-emerald-300/80">Scenario focus</span>
         <select id="bet-spread-scenario" class="mt-1 w-full rounded-lg bg-black/30 border border-white/10 px-3 py-2 text-white">
           <option value="mixed" selected>Mixed — low, neutral &amp; high counts</option>
-          <option value="low">Low count — TC −4 to −1</option>
-          <option value="neutral">Neutral — TC −1 to +1</option>
-          <option value="high">High count — TC +3 to +8</option>
+          <option value="low">Low count — true count −4 to −1</option>
+          <option value="neutral">Neutral — true count −1 to +1</option>
+          <option value="high">High count — true count +3 to +8</option>
         </select>
       </label>
       <label class="block text-sm">
@@ -2252,7 +2370,7 @@
       </div>
       <details class="text-xs text-emerald-300/70 rounded-lg bg-black/20 p-3 border border-white/5">
         <summary class="cursor-pointer font-semibold text-emerald-200/90">How the spread works</summary>
-        <p class="mt-2 leading-relaxed">TC ≤ 0 → bet <strong>1 unit</strong> (minimum). Each full +1 true count adds <strong>1 unit</strong> until you hit the spread cap. Keep any single bet under <strong>2% of bankroll</strong> to limit risk of ruin. Smooth ramps avoid pit heat.</p>
+        <p class="mt-2 leading-relaxed">True count ≤ 0 → bet <strong>1 unit</strong> (minimum). Each full +1 true count adds <strong>1 unit</strong> until you hit the spread cap. Keep any single bet under <strong>2% of bankroll</strong> to limit risk of ruin. Smooth ramps avoid pit heat.</p>
       </details>
       <button id="btn-bet-spread-start" type="button" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 text-stone-900 font-bold">Start Session</button>
     </div>
@@ -2430,7 +2548,8 @@
   <h4 class="text-sm font-semibold text-amber-300/90 mb-2">Counting System</h4>
   <p class="text-xs text-emerald-400/60 mb-2">Switch between shoes — changing mid-shoe reshuffles the deck.</p>
   <div id="counting-system-cards" class="space-y-2 mb-4"></div>
-  <h4 class="text-sm font-semibold text-amber-300/90 mb-2">Help Level</h4>
+  <h4 class="text-sm font-semibold text-amber-300/90 mb-1">Help Level</h4>
+  <p class="text-xs text-emerald-400/65 mb-2">All five levels are available from the start — pick Novice through Expert anytime.</p>
   <div id="help-level-cards" class="space-y-2 max-h-[28vh] overflow-y-auto"></div>
   <h4 class="text-sm font-semibold text-amber-300/90 mt-4 mb-2">Table Rules</h4>
   <div id="rules-toggles" class="space-y-2 text-sm"></div>
@@ -2537,9 +2656,9 @@
 <dialog id="modal-help-levelup" class="rounded-2xl bg-[#0f1f18] text-white p-6 max-w-md w-[92vw] border text-center relative">
   <div class="level-up-content space-y-4">
     <div class="flex items-center justify-center gap-4 py-2">
-      <div class="level-badge old"><span class="text-[10px] opacity-70">Was</span><span id="levelup-from-label">Novice</span><span class="text-[9px] font-mono opacity-60" id="levelup-from-num">L0</span></div>
+      <div class="level-badge old"><span class="text-[10px] opacity-70">Was</span><span id="levelup-from-label">Novice</span><span class="text-[9px] font-mono opacity-60" id="levelup-from-num">Level 0</span></div>
       <span class="level-up-arrow" aria-hidden="true">→</span>
-      <div class="level-badge new"><span class="text-[10px] opacity-80">Now</span><span id="levelup-to-label">Guided</span><span class="text-[9px] font-mono opacity-70" id="levelup-to-num">L1</span></div>
+      <div class="level-badge new"><span class="text-[10px] opacity-80">Now</span><span id="levelup-to-label">Guided</span><span class="text-[9px] font-mono opacity-70" id="levelup-to-num">Level 1</span></div>
     </div>
     <div>
       <p class="text-xs uppercase tracking-widest text-amber-400/90 mb-1">★ Help Level Up ★</p>
@@ -2618,7 +2737,7 @@ const LOBBY_PLAY_MODES = [
   { id: '1v1', title: '1v1 Tables', sub: 'Quick match — pay entry, beat the dealer', icon: '🎴', cls: 'lobby-play-1v1', action: 'tables' },
   { id: 'tournament', title: 'Tournaments', sub: 'High stakes brackets — Pro tier tables', icon: '🏆', cls: 'lobby-play-tournament', action: 'tournament' },
   { id: 'event', title: 'Special Event', sub: 'Daily challenge + rotating event tables', icon: '✨', cls: 'lobby-play-event', action: 'special-event' },
-  { id: 'training', title: 'Training Drills', sub: 'Running count, TC, deviations, bet spread', icon: '🏋️', cls: 'lobby-play-training', action: 'training' },
+  { id: 'training', title: 'Training Drills', sub: 'Running count, true count, deviations, bet spread', icon: '🏋️', cls: 'lobby-play-training', action: 'training' },
   { id: 'dealer', title: 'Dealer Shift', sub: 'Run the table — payouts & count under pressure', icon: '🎰', cls: 'lobby-play-dealer', action: 'dealer-mode' },
   { id: 'friends', title: 'With Friends', sub: 'Counting Crews — invite code & crew chat', icon: '🤝', cls: 'lobby-play-friends', action: 'clubs' },
 ];
@@ -4346,11 +4465,11 @@ const TUTORIAL_STEPS = [
   {
     title: 'How to Count',
     countExplanation: true,
-    demo: '5♠ → +1  |  10♥ → −1  |  8♦ → 0  |  RC +6 ÷ 3 decks = TC +2.0',
+    demo: '5♠ → +1  |  10♥ → −1  |  8♦ → 0  |  running count +6 ÷ 3 decks = true count +2.0',
   },
-  { title: 'Bet Sizing', systemBetSizing: true, demo: 'TC +3 → ~4 units ($40 at $10/unit)' },
+  { title: 'Bet Sizing', systemBetSizing: true, demo: 'True count +3 → ~4 units ($40 at $10/unit)' },
   { title: 'Basic Strategy', body: 'Counting tells you when to bet big; basic strategy tells you how to play each hand. Use the strategy chart (header button) until plays feel automatic.', demo: '16 vs 6 → Stand (dealer likely busts)' },
-  { title: 'Ready to Play', body: 'Start in Practice Range drills to isolate skills, or jump into Full Campaign. Help Level 0 shows everything; advance as you improve.', demo: null, final: true },
+  { title: 'Ready to Play', body: 'Start in Practice Range drills to isolate skills, or jump into Full Campaign. Pick any help level (Novice through Expert) in Settings whenever you want.', demo: null, final: true },
 ];
 
 /**
@@ -4888,71 +5007,71 @@ const INDEX_PLAY_CATALOG = [
     id: 'ins-tc3', category: 'insurance', name: 'Insurance vs Ace',
     playerRanks: ['10', '8'], dealerUp: 'A', index: 3,
     basicAction: 'no-insurance', indexAction: 'insurance',
-    explainBasic: 'Below TC +3, skip insurance. The deck is not rich enough in tens to make the side bet profitable.',
-    explainIndex: 'At TC +3 or higher, take insurance. Extra tens increase dealer blackjack frequency enough to make insurance +EV.',
+    explainBasic: 'Below true count +3, skip insurance. The deck is not rich enough in tens to make the side bet profitable.',
+    explainIndex: 'At true count +3 or higher, take insurance. Extra tens increase dealer blackjack frequency enough to make insurance +EV.',
   },
   {
     id: '16v10-0', category: 'stand', name: '16 vs 10',
     playerRanks: ['10', '6'], dealerUp: '10', index: 0,
     basicAction: 'hit', indexAction: 'stand',
     explainBasic: 'Below index 0, hit 16 vs 10 — basic strategy (fewer tens remaining).',
-    explainIndex: 'At TC 0+, stand on 16 vs 10. Extra tens mean the dealer is more likely to have 17–21, and you bust more often if you hit.',
+    explainIndex: 'At true count 0+, stand on 16 vs 10. Extra tens mean the dealer is more likely to have 17–21, and you bust more often if you hit.',
   },
   {
     id: '15v10-4', category: 'stand', name: '15 vs 10',
     playerRanks: ['10', '5'], dealerUp: '10', index: 4,
     basicAction: 'hit', indexAction: 'stand',
-    explainBasic: 'Below TC +4, hit 15 vs 10 per basic strategy.',
-    explainIndex: 'At TC +4+, stand on 15 vs 10. A ten-rich deck makes both busting and dealer strong hands more likely — standing loses less.',
+    explainBasic: 'Below true count +4, hit 15 vs 10 per basic strategy.',
+    explainIndex: 'At true count +4+, stand on 15 vs 10. A ten-rich deck makes both busting and dealer strong hands more likely — standing loses less.',
   },
   {
     id: '12v2-3', category: 'stand', name: '12 vs 2',
     playerRanks: ['10', '2'], dealerUp: '2', index: 3,
     basicAction: 'hit', indexAction: 'stand',
-    explainBasic: 'Below TC +3, hit 12 vs 2 — dealer weak card but not enough tens to stand.',
-    explainIndex: 'At TC +3+, stand on 12 vs 2. With many tens left, hitting risks busting; dealer is still likely to make a hand.',
+    explainBasic: 'Below true count +3, hit 12 vs 2 — dealer weak card but not enough tens to stand.',
+    explainIndex: 'At true count +3+, stand on 12 vs 2. With many tens left, hitting risks busting; dealer is still likely to make a hand.',
   },
   {
     id: '12v3-2', category: 'stand', name: '12 vs 3',
     playerRanks: ['10', '2'], dealerUp: '3', index: 2,
     basicAction: 'hit', indexAction: 'stand',
-    explainBasic: 'Below TC +2, hit 12 vs 3 per basic strategy.',
-    explainIndex: 'At TC +2+, stand on 12 vs 3. Ten-rich shoes make busting more costly than standing on your stiff 12.',
+    explainBasic: 'Below true count +2, hit 12 vs 3 per basic strategy.',
+    explainIndex: 'At true count +2+, stand on 12 vs 3. Ten-rich shoes make busting more costly than standing on your stiff 12.',
   },
   {
     id: '12v4-0', category: 'stand', name: '12 vs 4',
     playerRanks: ['8', '4'], dealerUp: '4', index: 0,
     basicAction: 'hit', indexAction: 'stand',
-    explainBasic: 'Below TC 0, hit 12 vs 4 — standard basic strategy.',
-    explainIndex: 'At TC 0+, stand on 12 vs 4. When the count is neutral or positive, tens make hitting 12 too dangerous.',
+    explainBasic: 'Below true count 0, hit 12 vs 4 — standard basic strategy.',
+    explainIndex: 'At true count 0+, stand on 12 vs 4. When the count is neutral or positive, tens make hitting 12 too dangerous.',
   },
   {
     id: '13v2--1', category: 'stand', name: '13 vs 2',
     playerRanks: ['10', '3'], dealerUp: '2', index: -1,
     basicAction: 'hit', indexAction: 'stand',
-    explainBasic: 'Below TC −1, hit 13 vs 2 per basic strategy.',
-    explainIndex: 'At TC −1+, stand on 13 vs 2. Even a slightly positive count means enough tens that standing beats hitting.',
+    explainBasic: 'Below true count −1, hit 13 vs 2 per basic strategy.',
+    explainIndex: 'At true count −1+, stand on 13 vs 2. Even a slightly positive count means enough tens that standing beats hitting.',
   },
   {
     id: '10v10-4', category: 'double', name: '10 vs 10',
     playerRanks: ['6', '4'], dealerUp: '10', index: 4,
     basicAction: 'hit', indexAction: 'double', canDouble: true,
-    explainBasic: 'Below TC +4, hit 10 vs 10 — you are likely behind a strong dealer hand.',
-    explainIndex: 'At TC +4+, double 10 vs 10. Many tens mean you are more likely to draw a 10 for 20 and win double your bet.',
+    explainBasic: 'Below true count +4, hit 10 vs 10 — you are likely behind a strong dealer hand.',
+    explainIndex: 'At true count +4+, double 10 vs 10. Many tens mean you are more likely to draw a 10 for 20 and win double your bet.',
   },
   {
     id: '11vA-1', category: 'double', name: '11 vs Ace',
     playerRanks: ['6', '5'], dealerUp: 'A', index: 1,
     basicAction: 'hit', indexAction: 'double', canDouble: true,
-    explainBasic: 'Below TC +1, hit 11 vs Ace — dealer may have blackjack or a strong hand.',
-    explainIndex: 'At TC +1+, double 11 vs Ace. Extra tens help you make 21 while the dealer is still vulnerable.',
+    explainBasic: 'Below true count +1, hit 11 vs Ace — dealer may have blackjack or a strong hand.',
+    explainIndex: 'At true count +1+, double 11 vs Ace. Extra tens help you make 21 while the dealer is still vulnerable.',
   },
   {
     id: '9v2-1', category: 'double', name: '9 vs 2',
     playerRanks: ['5', '4'], dealerUp: '2', index: 1,
     basicAction: 'hit', indexAction: 'double', canDouble: true,
-    explainBasic: 'Below TC +1, hit 9 vs 2 per basic strategy.',
-    explainIndex: 'At TC +1+, double 9 vs 2. A positive count means more tens to improve your 9 into a strong total.',
+    explainBasic: 'Below true count +1, hit 9 vs 2 per basic strategy.',
+    explainIndex: 'At true count +1+, double 9 vs 2. A positive count means more tens to improve your 9 into a strong total.',
   },
 ];
 
@@ -5046,9 +5165,9 @@ const BET_SPREAD_PRESETS = {
 
 const BET_SPREAD_SCENARIOS = {
   mixed: { label: 'Mixed', desc: 'Low, neutral & high counts' },
-  low: { label: 'Low count', desc: 'TC −4 to −1 — stay at minimum' },
-  neutral: { label: 'Neutral', desc: 'TC −1 to +1 — mostly 1 unit' },
-  high: { label: 'High count', desc: 'TC +3 to +8 — ramp up' },
+  low: { label: 'Low count', desc: 'True count −4 to −1 — stay at minimum' },
+  neutral: { label: 'Neutral', desc: 'True count −1 to +1 — mostly 1 unit' },
+  high: { label: 'High count', desc: 'True count +3 to +8 — ramp up' },
 };
 
 const BET_SPREAD_ROUND_OPTIONS = [8, 10, 12];
@@ -5204,16 +5323,16 @@ function explainBetSpreadAnswer(problem, chosenUnits, optimalUnits, extras = {})
   const parts = [];
   if (chosenUnits === optimalUnits) {
     if (problem.trueCount <= 0) {
-      parts.push(`TC ${tc} has no player edge — bet 1 unit (${amt(1)}). Counting advantage comes from betting small when the deck is poor and larger when tens are rich.`);
+      parts.push(`True count ${tc} has no player edge — bet 1 unit (${amt(1)}). Counting advantage comes from betting small when the deck is poor and larger when tens are rich.`);
     } else {
-      parts.push(`TC ${tc} → ${optimalUnits} units (${amt(optimalUnits)}). Each +1 TC adds one unit because more high cards remain — your edge grows, so the optimal wager ramps up.`);
+      parts.push(`True count ${tc} → ${optimalUnits} units (${amt(optimalUnits)}). Each +1 true count adds one unit because more high cards remain — your edge grows, so the optimal wager ramps up.`);
     }
   } else if (isBetSpreadChoiceAppropriate(chosenUnits, optimalUnits)) {
-    parts.push(`Close! TC ${tc} calls for ${optimalUnits} units (${amt(optimalUnits)}). You chose ${chosenUnits} — within 1 unit is acceptable in live play, but aim for the exact ramp.`);
+    parts.push(`Close! True count ${tc} calls for ${optimalUnits} units (${amt(optimalUnits)}). You chose ${chosenUnits} — within 1 unit is acceptable in live play, but aim for the exact ramp.`);
   } else if (chosenUnits < optimalUnits) {
-    parts.push(`Too small. TC ${tc} warrants ${optimalUnits} units (${amt(optimalUnits)}) — you're leaving edge on the table.`);
+    parts.push(`Too small. True count ${tc} warrants ${optimalUnits} units (${amt(optimalUnits)}) — you're leaving edge on the table.`);
   } else {
-    parts.push(`Too large. TC ${tc} calls for ${optimalUnits} units (${amt(optimalUnits)}), not ${chosenUnits}. Over-betting raises risk of ruin.`);
+    parts.push(`Too large. True count ${tc} calls for ${optimalUnits} units (${amt(optimalUnits)}), not ${chosenUnits}. Over-betting raises risk of ruin.`);
   }
   if (extras.heat?.heated) {
     parts.push(`Heat warning: ${extras.heat.jump}-unit jump from last bet — smooth spreads avoid pit attention.`);
@@ -6410,7 +6529,7 @@ const COUNTING_SYSTEMS = {
     lowRanks: HI_LO_LOW_RANKS,
     neutralRanks: HI_LO_NEUTRAL_RANKS,
     unlockHint: 'Default system — always available.',
-    betHint: 'Bet from true count (RC ÷ decks remaining).',
+    betHint: 'Bet from true count (running count ÷ decks remaining).',
   },
   ko: {
     id: 'ko',
@@ -6512,10 +6631,10 @@ class CardCounter {
     const rcText = snap.runningCount >= 0 ? `+${snap.runningCount}` : `${snap.runningCount}`;
     if (COUNTING_SYSTEMS[snap.systemId]?.balanced) {
       const tcText = snap.trueCount >= 0 ? `+${snap.trueCount.toFixed(1)}` : snap.trueCount.toFixed(1);
-      return `${snap.systemName} RC ${rcText} | TC ${tcText} | Decks ${snap.decksRemaining.toFixed(2)}`;
+      return `${snap.systemName} Running count ${rcText} | True count ${tcText} | Decks ${snap.decksRemaining.toFixed(2)}`;
     }
     const keyText = snap.abovePivot >= 0 ? `+${snap.abovePivot}` : `${snap.abovePivot}`;
-    return `${snap.systemName} RC ${rcText} | vs Key +${snap.pivot} (${keyText}) | Decks ${snap.decksRemaining.toFixed(2)}`;
+    return `${snap.systemName} Running count ${rcText} | vs Key +${snap.pivot} (${keyText}) | Decks ${snap.decksRemaining.toFixed(2)}`;
   }
 }
 
@@ -6885,7 +7004,7 @@ function buildCountGraphAscii(runningCountSamples, width = 40) {
     lines.push(line);
   }
   lines.push('─'.repeat(pts.length));
-  lines.push(`RC ${min} → ${max} (${runningCountSamples.length} samples)`);
+  lines.push(`Running count ${min} → ${max} (${runningCountSamples.length} samples)`);
   return lines.join('\n');
 }
 
@@ -6917,7 +7036,7 @@ function drawCountCanvas(canvas, runningCountSamples) {
   ctx.fillStyle = '#6ee7b7';
   ctx.font = '11px monospace';
   const lastRc = runningCountSamples[runningCountSamples.length - 1];
-  ctx.fillText(`RC ${lastRc >= 0 ? '+' : ''}${lastRc}`, pad, 14);
+  ctx.fillText(`Running count ${lastRc >= 0 ? '+' : ''}${lastRc}`, pad, 14);
 }
 
 function canSplit(h) { return h.size === 2 && h.cards[0].rank === h.cards[1].rank; }
@@ -6969,7 +7088,58 @@ function hardStrat(total, dealer) {
   return makeStrategyAdvice('hit', `Hit ${total} vs ${d}`);
 }
 
-function advise(hand, dealerUpcardRank, canDouble, canSplit) {
+/** Normalize rank for index-play hand matching (tens → '10'). */
+function rankForIndexPlayMatch(rank) {
+  return isTenValueRank(rank) ? '10' : rank;
+}
+
+function handRanksMatchIndexPlay(hand, play) {
+  if (!hand || hand.size !== play.playerRanks.length) return false;
+  const actual = hand.cards.map(c => rankForIndexPlayMatch(c.rank)).sort();
+  const expected = [...play.playerRanks].sort();
+  return actual.every((r, i) => r === expected[i]);
+}
+
+function findMatchingIndexPlay(hand, dealerUpcardRank) {
+  const up = rankForIndexPlayMatch(dealerUpcardRank);
+  return INDEX_PLAY_CATALOG.find(p => p.category !== 'insurance' && p.dealerUp === up && handRanksMatchIndexPlay(hand, p)) || null;
+}
+
+function applyIndexPlayDeviation(hand, dealerUpcardRank, canDouble, canSplit, trueCount, countingSystemId = 'hi-lo') {
+  if (countingSystemId !== 'hi-lo' || trueCount == null || Number.isNaN(trueCount)) return null;
+  const play = findMatchingIndexPlay(hand, dealerUpcardRank);
+  if (!play) return null;
+  const idx = getIndexPlayCorrectAction(play, trueCount);
+  if (idx.action === 'insurance' || idx.action === 'no-insurance') return null;
+  let action = idx.action;
+  if (action === 'double' && !canDouble) action = 'hit';
+  if (action === 'split' && !canSplit) action = 'hit';
+  const indexFmt = play.index >= 0 ? `+${play.index}` : `${play.index}`;
+  const rationale = idx.useIndex
+    ? `Index ${indexFmt} — ${idx.explanation}`
+    : `${idx.explanation}`;
+  return makeStrategyAdvice(action, rationale);
+}
+
+/** Insurance deviation vs dealer Ace (Hi-Lo true count +3 index). */
+function adviseInsurance(trueCount, countingSystemId = 'hi-lo') {
+  const play = INDEX_PLAY_CATALOG.find(p => p.id === 'ins-tc3');
+  if (!play || countingSystemId !== 'hi-lo' || trueCount == null || Number.isNaN(trueCount)) {
+    return { action: 'no-insurance', rationale: 'Skip insurance — basic strategy (count not used).' };
+  }
+  const idx = getIndexPlayCorrectAction(play, trueCount);
+  return {
+    action: idx.action,
+    rationale: idx.explanation,
+    useIndex: idx.useIndex,
+    summary: idx.summary,
+  };
+}
+
+function advise(hand, dealerUpcardRank, canDouble, canSplit, opts = {}) {
+  const { trueCount = null, countingSystemId = 'hi-lo' } = opts;
+  const indexAdvice = applyIndexPlayDeviation(hand, dealerUpcardRank, canDouble, canSplit, trueCount, countingSystemId);
+  if (indexAdvice) return indexAdvice;
   const dealerUpcardValue = parseDealerUpcardAsNumber(dealerUpcardRank);
   if (canSplit && hand.size === 2 && hand.cards[0].rank === hand.cards[1].rank) {
     const p = pairStrat(hand.cards[0].rank, dealerUpcardValue);
@@ -7016,8 +7186,8 @@ function buildStrategyChartContent(rules = DEFAULT_RULES, systemId = 'hi-lo') {
     lines.push(`ℹ Counting: ${sys.name} — basic strategy plays are the same as Hi-Lo.`);
     lines.push(`Bet sizing uses running count vs key (pivot ≈ +${pivot} on 6 decks), not true count.`);
   } else {
-    lines.push('ℹ Counting: Hi-Lo — use true count (RC ÷ decks remaining) for bet sizing.');
-    lines.push('Basic strategy plays do not change with the count.');
+    lines.push('ℹ Counting: Hi-Lo — use true count (running count ÷ decks remaining) for bet sizing.');
+    lines.push('Index deviations (e.g. stand 16 vs 10 at TC 0+) apply in live play when Help Level shows strategy hints.');
   }
   lines.push('');
   lines.push(`BASIC STRATEGY (${describeRulesForChart(rules)})`);
@@ -7074,7 +7244,7 @@ class HelpSystem {
       tutorial: 'Tutorial — full coaching on every step.',
       'drill-count': 'Count drill — focus on tracking; count shown while dealing.',
       'drill-speed': 'Speed drill — Hi-Lo running count at deal speed.',
-      'drill-true-count': 'True count drill — RC ÷ decks remaining.',
+      'drill-true-count': 'True count drill — running count ÷ decks remaining.',
       'drill-decisions': 'Decision drill — count hidden; strategy coaching on mistakes.',
       'drill-combined': 'Combined practice — real hands; count hidden; strategy + count feedback each hand.',
       'drill-index': 'Index play drill — Hi-Lo strategy deviations at each true count.',
@@ -7177,10 +7347,10 @@ class HelpSystem {
     const high = Math.max(low, Math.min(highU * sug.unitSize, cap, bankroll));
     if (sug.betMetricLabel === 'key') {
       const rs = sug.runningCount >= 0 ? `+${sug.runningCount}` : `${sug.runningCount}`;
-      return `RC ${rs} (key +${sug.pivot}) → bet $${low}–$${high}`;
+      return `Running count ${rs} (key +${sug.pivot}) → bet $${low}–$${high}`;
     }
     const ts = sug.trueCount >= 0 ? `+${sug.trueCount.toFixed(1)}` : sug.trueCount.toFixed(1);
-    return `TC ${ts} → bet $${low}–$${high}`;
+    return `True count ${ts} → bet $${low}–$${high}`;
   }
   levelBanner() {
     const mh = this.modeHint();
@@ -7226,7 +7396,7 @@ class HelpSystem {
     if (betTotal) text += `\nBet spread: ${betMatch}/${betTotal} matched suggestion`;
     if (sys.balanced) {
       text += `\nAvg true count: ${metricSign}${avgMetric.toFixed(2)}`;
-      text += `\nEst. player edge (from avg TC): ${ev >= 0 ? '+' : ''}${ev.toFixed(2)}% (simplified)`;
+      text += `\nEst. player edge (from avg true count): ${ev >= 0 ? '+' : ''}${ev.toFixed(2)}% (simplified)`;
     } else {
       text += `\nAvg vs key (+${pivot}): ${metricSign}${avgMetric.toFixed(2)}`;
       text += `\nEst. player edge (from avg vs key): ${ev >= 0 ? '+' : ''}${ev.toFixed(2)}% (simplified)`;
@@ -7277,10 +7447,8 @@ function updateRank(s) {
 }
 
 function tryAutoLevelUp(s) {
-  if (s.handsPlayed < 50 || s.handsPlayed - s.lastLevelUpHand < 25 || s.helpLevel >= 4) return null;
-  if (s.recentCount.length < 15 || calculateRecentCountAccuracyPercent(s) < 85 || calculateStrategyAccuracyPercent(s) < 80) return null;
-  s.helpLevel++; s.helpLevelups++; s.lastLevelUpHand = s.handsPlayed;
-  return s.helpLevel;
+  /* Help levels are player-selected in Settings — no automatic promotion. */
+  return null;
 }
 
 function recordHandEnd(s, bankroll, netPL) {
@@ -7785,8 +7953,8 @@ class CountQuestApp {
     const demo = document.getElementById('tutorial-demo');
     if (demo && !demo.classList.contains('hidden')) {
       demo.textContent = system === 'ko'
-        ? `7♠ → +1  |  10♥ → −1  |  8♦ → 0  |  RC +5 vs key +${pivot} → bet ramp`
-        : '5♠ → +1  |  10♥ → −1  |  8♦ → 0  |  RC +6 ÷ 3 decks = TC +2.0';
+        ? `7♠ → +1  |  10♥ → −1  |  8♦ → 0  |  running count +5 vs key +${pivot} → bet ramp`
+        : '5♠ → +1  |  10♥ → −1  |  8♦ → 0  |  running count +6 ÷ 3 decks = true count +2.0';
     }
   }
 
@@ -7949,9 +8117,9 @@ class CountQuestApp {
     const fromLabel = HELP_LABELS[previousLevel] || `Level ${previousLevel}`;
     const toLabel = HELP_LABELS[newLevel] || `Level ${newLevel}`;
     document.getElementById('levelup-from-label').textContent = fromLabel;
-    document.getElementById('levelup-from-num').textContent = `L${previousLevel}`;
+    document.getElementById('levelup-from-num').textContent = `Level ${previousLevel}`;
     document.getElementById('levelup-to-label').textContent = toLabel;
-    document.getElementById('levelup-to-num').textContent = `L${newLevel}`;
+    document.getElementById('levelup-to-num').textContent = `Level ${newLevel}`;
     document.getElementById('levelup-title').textContent = `${toLabel} Mode Unlocked`;
     document.getElementById('levelup-subtitle').textContent =
       `Your accuracy earned a tougher training tier. ${HELP_DESC[newLevel]}`;
@@ -9093,7 +9261,7 @@ class CountQuestApp {
         correct: fmtSignedCount(actual),
         detail: parsed.ok ? `Off by ${Math.abs(parsed.value - actual)}` : 'Invalid or timed out',
       });
-      this.toast(`RC was ${actual >= 0 ? '+' : ''}${actual}`, 'info', 3000);
+      this.toast(`Running count was ${actual >= 0 ? '+' : ''}${actual}`, 'info', 3000);
     }
     this.finishDealerRound();
   }
@@ -9499,7 +9667,7 @@ class CountQuestApp {
     if (hint) {
       hint.innerHTML = `Balance: <strong class="text-emerald-300">🪙 ${w.chips.toLocaleString()}</strong> chips · `
         + `<strong class="text-violet-200">💎 ${w.gems}</strong> gems · `
-        + `Rank <strong class="text-gold">${RANK_NAMES[st.rank]}</strong> · Help L${st.helpLevel}`;
+        + `Rank <strong class="text-gold">${RANK_NAMES[st.rank]}</strong> · Help Level ${st.helpLevel}`;
     }
     const list = document.getElementById('table-tier-list');
     if (!list) return;
@@ -9510,7 +9678,7 @@ class CountQuestApp {
         `${tier.entryFeeChips.toLocaleString()} chips entry`,
         tier.entryFeeGems ? `${tier.entryFeeGems} 💎` : null,
         `Min ${tier.minChips.toLocaleString()} chips`,
-        tier.minHelpLevel ? `Help L${tier.minHelpLevel}+` : null,
+        tier.minHelpLevel ? `Help Level ${tier.minHelpLevel}+` : null,
         tier.minRank ? `${RANK_NAMES[tier.minRank]}+` : null,
       ].filter(Boolean).join(' · ');
       const pot = tier.entryFeeChips * 2;
@@ -9859,7 +10027,7 @@ class CountQuestApp {
           </div>` : '';
       const statsLine = showWeekly
         ? `${w.points} pts · ${w.hands} hands · count ${w.countCorrect}/${w.countTotal || 0}`
-        : `${rankName} · Help L${m.helpLevel}`;
+        : `${rankName} · Help Level ${m.helpLevel}`;
       return `<div class="flex items-center justify-between gap-2 p-3 rounded-lg bg-black/25 border border-white/5">
         <div class="min-w-0 flex-1">
           <div class="font-medium text-emerald-100 truncate">${m.displayName}${isYou ? ' <span class="text-cyan-300/80">(you)</span>' : ''}</div>
@@ -11273,7 +11441,7 @@ class CountQuestApp {
               <div class="font-bold text-lg text-cyan-200">${visit.avgUnitError}u</div>
             </div>
           </div>
-          ${visit.rampScore != null ? `<p class="text-[10px] text-emerald-500/60 text-center mt-2">Ramp: avg ${visit.avgChosenLow}u low TC → ${visit.avgChosenHigh}u high TC</p>` : ''}
+          ${visit.rampScore != null ? `<p class="text-[10px] text-emerald-500/60 text-center mt-2">Ramp: avg ${visit.avgChosenLow}u low true count → ${visit.avgChosenHigh}u high true count</p>` : ''}
           ${visit.heatFlags ? `<p class="text-[10px] text-orange-400/70 text-center">Heat flags: ${visit.heatFlags}</p>` : ''}
         </div>`
       : '';
@@ -11393,7 +11561,7 @@ class CountQuestApp {
     if (sub === 'summary') {
       const sum = summarizeBetSpreadRounds(ds.roundResults || []);
       const rampLine = sum.rampScore != null
-        ? `<p class="text-xs text-emerald-300/80">Spread ramp: <strong>${sum.avgChosenLow}u</strong> low TC → <strong>${sum.avgChosenHigh}u</strong> high TC ${sum.rampScore >= 100 ? '✓' : '— ramp up with count!'}</p>`
+        ? `<p class="text-xs text-emerald-300/80">Spread ramp: <strong>${sum.avgChosenLow}u</strong> low true count → <strong>${sum.avgChosenHigh}u</strong> high true count ${sum.rampScore >= 100 ? '✓' : '— ramp up with count!'}</p>`
         : '';
       const extras = [
         sum.heatFlags ? `${sum.heatFlags} heat flag${sum.heatFlags === 1 ? '' : 's'}` : '',
@@ -11505,7 +11673,7 @@ class CountQuestApp {
       recordMistakeReviewEntry(this.save, {
         drillId: 'index-plays',
         category: 'deviation',
-        context: `${prob.play.name} at TC ${formatTrueCountAnswer(prob.trueCount, 'decimal')}`,
+        context: `${prob.play.name} at true count ${formatTrueCountAnswer(prob.trueCount, 'decimal')}`,
         wrong: formatIndexPlayAction(action),
         correct: formatIndexPlayAction(correct.action),
         detail: correct.explanation,
@@ -11655,7 +11823,7 @@ class CountQuestApp {
       const sum = summarizeIndexPlayRounds(ds.roundResults || []);
       const mistakes = (ds.roundResults || []).filter(r => !r.correct);
       const mistakeLines = mistakes.slice(0, 3).map(r =>
-        `<li class="text-left text-xs text-red-200/90">• ${r.playName} at TC ${formatTrueCountAnswer(r.trueCount, 'decimal')}: chose ${formatIndexPlayAction(r.chosen)}, needed ${formatIndexPlayAction(r.optimal)}</li>`
+        `<li class="text-left text-xs text-red-200/90">• ${r.playName} at true count ${formatTrueCountAnswer(r.trueCount, 'decimal')}: chose ${formatIndexPlayAction(r.chosen)}, needed ${formatIndexPlayAction(r.optimal)}</li>`
       ).join('');
       document.getElementById('index-drill-summary').innerHTML = `
         <h3 class="font-bold text-gold text-lg">Round complete</h3>
@@ -12094,7 +12262,7 @@ class CountQuestApp {
       recordMistakeReviewEntry(this.save, {
         drillId: 'true-count',
         category: 'count',
-        context: `RC ${fmtSignedCount(prob.runningCount)} ÷ ${prob.decksRemaining} deck${prob.decksRemaining === 1 ? '' : 's'}`,
+        context: `Running count ${fmtSignedCount(prob.runningCount)} ÷ ${prob.decksRemaining} deck${prob.decksRemaining === 1 ? '' : 's'}`,
         wrong: formatTrueCountAnswer(guess, ds.difficulty),
         correct: formatTrueCountAnswer(actual, ds.difficulty),
         detail: `Off by ${error}`,
@@ -12219,7 +12387,7 @@ class CountQuestApp {
       document.getElementById('tc-drill-summary').innerHTML = `
         <h3 class="font-bold text-gold text-lg">Round complete</h3>
         <p class="text-emerald-200/90">${sum.accuracy}% correct · avg error ${sum.avgError} · ${diffLabel}</p>
-        <p class="text-xs text-emerald-400/60">${sum.total} problems · true count = RC ÷ decks remaining</p>
+        <p class="text-xs text-emerald-400/60">${sum.total} problems · true count = running count ÷ decks remaining</p>
         <div class="flex gap-2 justify-center pt-2">
           <button type="button" id="btn-tc-drill-again" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 text-stone-900 font-bold">Another Round</button>
           <button type="button" id="btn-tc-drill-settings" class="px-6 py-2.5 rounded-xl bg-white/10 hover:bg-white/15">Change Settings</button>
@@ -12425,7 +12593,7 @@ class CountQuestApp {
       recordMistakeReviewEntry(this.save, {
         drillId: 'betting',
         category: 'bet',
-        context: `Round ${this.drillState.round}/8 · TC ${tcFmt}`,
+        context: `Round ${this.drillState.round}/8 · true count ${tcFmt}`,
         wrong: `$${amount}`,
         correct: `$${this.drillState.expected}`,
         detail: this.betSuggestion?.why || recommendedBetWhyText(this.betSuggestion),
@@ -12548,7 +12716,7 @@ class CountQuestApp {
         const pivot = getKoPivot(this.settings.numDecks || 6);
         bodyEl.textContent = sys === 'ko'
           ? `Use a 1–6 unit spread: minimum bet at/below the key (+${pivot}), then add one unit per +1 running count above it. Never wager more than 10% of bankroll.`
-          : 'Use a 1–6 unit spread: minimum bet at TC ≤ 0, then add one unit per true-count point. Never wager more than 10% of bankroll in a single hand.';
+          : 'Use a 1–6 unit spread: minimum bet at true count ≤ 0, then add one unit per true-count point. Never wager more than 10% of bankroll in a single hand.';
       } else if (step.bodyHtml) bodyEl.innerHTML = step.bodyHtml;
       else bodyEl.textContent = step.body || '';
     }
@@ -12558,8 +12726,8 @@ class CountQuestApp {
         const sys = this.activeCountingSystem();
         const pivot = getKoPivot(this.settings.numDecks || 6);
         demo.textContent = sys === 'ko'
-          ? `RC +${pivot + 3} vs key +${pivot} → ~4 units ($40 at $10/unit)`
-          : 'TC +3 → ~4 units ($40 at $10/unit)';
+          ? `Running count +${pivot + 3} vs key +${pivot} → ~4 units ($40 at $10/unit)`
+          : 'True count +3 → ~4 units ($40 at $10/unit)';
       } else if (!step.countExplanation) demo.textContent = step.demo;
       demo.classList.remove('hidden');
     } else demo.classList.add('hidden');
@@ -12948,8 +13116,8 @@ class CountQuestApp {
     const ok = Math.abs(playerGuess - actualRunningCount) <= 1;
     this.showFieldError('count-confirm-result', ok ? '' : `Off by ${Math.abs(playerGuess - actualRunningCount)}`);
     document.getElementById('count-confirm-result').textContent = ok
-      ? `✓ Correct! RC is ${actualRunningCount >= 0 ? '+' : ''}${actualRunningCount}`
-      : `✗ Actual RC is ${actualRunningCount >= 0 ? '+' : ''}${actualRunningCount}`;
+      ? `✓ Correct! Running count is ${actualRunningCount >= 0 ? '+' : ''}${actualRunningCount}`
+      : `✗ Actual running count is ${actualRunningCount >= 0 ? '+' : ''}${actualRunningCount}`;
     this.toast(ok ? 'Count confirmed!' : 'Count off — keep practicing', ok ? 'success' : 'info');
     if (ok) Sounds.play('count');
     setTimeout(() => {
@@ -13084,10 +13252,11 @@ class CountQuestApp {
     if (!up) throw new Error('Dealer upcard missing');
     if (up === 'A') {
       this.dealing = false;
-      document.getElementById('modal-insurance').showModal();
+      this.showInsuranceModal();
       this.render();
       return;
     }
+    this.dealing = false;
     this.afterInsurance();
     } catch (err) {
       console.error('CountQuest: dealInitial failed —', err);
@@ -13101,7 +13270,6 @@ class CountQuestApp {
       this.render();
       return;
     }
-    this.dealing = false;
   }
 
   animateChipFly(amount) {
@@ -13159,8 +13327,37 @@ class CountQuestApp {
     setTimeout(() => { this.revealHoleAnim = false; }, 600);
   }
 
+  showInsuranceModal() {
+    const dlg = document.getElementById('modal-insurance');
+    const snap = this.shoe ? this.counter.getCountSnapshot(this.shoe) : null;
+    const insAdvice = adviseInsurance(snap?.trueCount ?? null, this.activeCountingSystem());
+    const hint = this.help.showStrategyAlways() || this.help.showStrategyOnMistake()
+      ? `<p class="text-xs text-cyan-200/90 mb-3 bg-black/25 rounded-lg px-3 py-2">Strategy → ${formatIndexPlayAction(insAdvice.action)}: ${insAdvice.rationale}</p>`
+      : '';
+    dlg.innerHTML = `<h3 class="font-bold text-lg mb-2">Insurance</h3>
+      <p class="text-sm text-emerald-200/80 mb-2">Dealer shows Ace. Max half your bet.</p>${hint}
+      <div class="flex gap-2">
+        <button id="btn-ins-no" type="button" class="flex-1 py-2 rounded-lg bg-white/10">No</button>
+        <button id="btn-ins-yes" type="button" class="flex-1 py-2 rounded-lg bg-amber-500 text-stone-900 font-bold">Yes (max)</button>
+      </div>`;
+    this.bindClick('btn-ins-no', () => this.resolveInsurance(false));
+    this.bindClick('btn-ins-yes', () => this.resolveInsurance(true));
+    dlg.showModal();
+  }
+
   resolveInsurance(take) {
     document.getElementById('modal-insurance').close();
+    const snap = this.shoe ? this.counter.getCountSnapshot(this.shoe) : null;
+    const insAdvice = adviseInsurance(snap?.trueCount ?? null, this.activeCountingSystem());
+    const optimal = insAdvice.action === 'insurance';
+    if (this.roundReview) {
+      this.roundReview.decisions.push({ action: take ? 'insurance' : 'no-insurance', advice: insAdvice.action, mistake: (take !== optimal) });
+      this.stats.decisionsTotal++;
+      if (take !== optimal) {
+        this.stats.strategyMistakes++; this.help.shoeMistakes++;
+        this.help.recordDecisionMistake({ action: take ? 'insurance' : 'no-insurance', optimal: insAdvice.action });
+      }
+    }
     const main = this.playerHands[0].bet;
     const max = maxInsurance(main);
     this.insuranceBet = take ? Math.min(max, this.bankroll) : 0;
@@ -13244,7 +13441,9 @@ class CountQuestApp {
       return;
     }
     const up = this.dealer.cards[0].rank;
-    const advice = advise(st.hand, up, this.canDouble(st), this.canSplit(st));
+    const snap = this.shoe ? this.counter.getCountSnapshot(this.shoe) : null;
+    const stratOpts = { trueCount: snap?.trueCount ?? null, countingSystemId: this.activeCountingSystem() };
+    const advice = advise(st.hand, up, this.canDouble(st), this.canSplit(st), stratOpts);
     const total = st.hand.value();
 
     if (this.roundReview) {
@@ -13503,13 +13702,12 @@ class CountQuestApp {
   setHelpLevel(lvl) {
     const level = Math.max(0, Math.min(4, Math.floor(Number(lvl) || 0)));
     const previous = this.help.level;
+    if (level === previous) return;
     this.help.level = level;
     this.stats.helpLevel = level;
     this.persist();
     this.render();
-    if (level > previous) {
-      this.toast(`Switched to ${HELP_LABELS[level]} (Level ${level})`, 'level', 2500);
-    }
+    this.toast(`Help Level ${level} — ${HELP_LABELS[level]}`, 'level', 2500);
   }
 
   showStrategy(advice) {
@@ -13930,16 +14128,16 @@ class CountQuestApp {
 
   renderCard(c, hidden = false, animIndex = null) {
     const animStyle = animIndex != null ? ` style="--deal-i:${animIndex}"` : '';
-    const animCls = animIndex != null ? ' deal-anim' : '';
+    const animCls = animIndex != null ? ' deal-anim dealt' : '';
     if (hidden) {
       const flip = this.revealHoleAnim ? ' flip-reveal' : '';
-      return `<div class="playing-card back hole-hidden dealt${animCls}${flip}"${animStyle}><div class="card-inner"></div></div>`;
+      return `<div class="playing-card back hole-hidden${animCls}${flip}"${animStyle}><div class="card-inner"></div></div>`;
     }
     const red = c.suit === 'H' || c.suit === 'D';
     const sym = SUIT_SYM[c.suit];
     const cls = red ? 'red' : '';
     const rankCls = c.rank === '10' ? ' rank-10' : '';
-    return `<div class="playing-card ${cls}${rankCls} dealt${animCls}"${animStyle}>
+    return `<div class="playing-card ${cls}${rankCls}${animCls}"${animStyle}>
       <div class="corner corner-tl"><span>${c.rank}</span><span>${sym}</span></div>
       <div class="center-suit">${sym}</div>
       <div class="corner corner-br"><span>${c.rank}</span><span>${sym}</span></div>
@@ -14295,7 +14493,7 @@ class CountQuestApp {
     const pname = document.getElementById('lobby-profile-name');
     if (pname) pname.textContent = name;
     const prank = document.getElementById('lobby-profile-rank');
-    if (prank) prank.textContent = `${rankName} · Help L${st.helpLevel}`;
+    if (prank) prank.textContent = `${rankName} · Help Level ${st.helpLevel}`;
 
     const clubsBtn = document.getElementById('lobby-clubs-btn');
     const clubsSub = document.getElementById('lobby-clubs-sub');
@@ -15160,18 +15358,21 @@ class CountQuestApp {
     } else if (shoeEl) shoeEl.textContent = '';
 
     const animBase = Math.max(0, this.dealAnimIndex - 1);
+    const showDealAnim = this.dealing;
     document.getElementById('dealer-cards').innerHTML = this.dealer.cards.map((c, i) => {
-      const isLast = this.dealing || (i === this.dealer.cards.length - 1 && this.dealAnimIndex > 0);
-      const anim = isLast && i === this.dealer.cards.length - 1 ? animBase : null;
+      const isLast = showDealAnim && i === this.dealer.cards.length - 1;
+      const anim = isLast ? animBase : null;
       return this.renderCard(c, this.hideHole && i === 1, anim);
     }).join('');
     document.getElementById('dealer-total').innerHTML = this.handTotalHtml(this.dealer, this.hideHole);
 
     const st = this.playerHands.length ? this.activeState() : null;
     const up = this.dealer.cards[0]?.rank;
+    const snap = this.shoe ? this.counter.getCountSnapshot(this.shoe) : null;
+    const stratOpts = { trueCount: snap?.trueCount ?? null, countingSystemId: this.activeCountingSystem() };
     let hint = document.getElementById('strategy-hint');
-    if (st && up && this.help.shouldShowHint(advise(st.hand, up, this.canDouble(st), this.canSplit(st)), st.hand.value())) {
-      const a = advise(st.hand, up, this.canDouble(st), this.canSplit(st));
+    if (st && up && this.help.shouldShowHint(advise(st.hand, up, this.canDouble(st), this.canSplit(st), stratOpts), st.hand.value())) {
+      const a = advise(st.hand, up, this.canDouble(st), this.canSplit(st), stratOpts);
       hint.textContent = `Strategy → ${a.action.toUpperCase()}: ${a.rationale}`;
       hint.classList.remove('hidden');
     } else if (!this.help.showStrategyOnMistake()) hint.classList.add('hidden');
@@ -15186,7 +15387,7 @@ class CountQuestApp {
       return `<div class="casino-player-hand ${active ? 'ring-1 ring-amber-400/60 rounded-lg p-1' : ''}">
         ${this.playerHands.length > 1 ? `<p class="text-[9px] uppercase tracking-wider text-emerald-300/60 mb-0.5 text-center">Hand ${i + 1}${active ? ' ◀' : ''}</p>` : ''}
         <div class="casino-hand-cards">${h.hand.cards.map((c, ci) => {
-          const isLast = ci === h.hand.cards.length - 1 && this.dealAnimIndex > 0;
+          const isLast = showDealAnim && ci === h.hand.cards.length - 1;
           return this.renderCard(c, false, isLast ? animBase : null);
         }).join('')}</div>
         <p class="text-center text-[10px] text-emerald-200/80 mt-0.5 font-mono">${this.handTotalHtml(h.hand)} · $${h.bet}</p>
@@ -15421,7 +15622,7 @@ function runTests() {
   updatePersonalBests(testSave, { type: 'handEnd', handNetPL: 10, sessionNetPL: 10 });
   eq(testSave.stats.winStreak, 1, 'win streak');
   check(dailyChallengeForDate(new Date('2026-07-07')).date === '2026-07-07', 'daily date');
-  check(buildCountGraphAscii([0, 1, 2, 3]).includes('RC'), 'ascii graph');
+  check(buildCountGraphAscii([0, 1, 2, 3]).includes('Running count'), 'ascii graph');
 
   check(!validateBetAmount('abc', 1000, 10).ok, 'reject non-numeric bet');
   check(!validateBetAmount(5, 1000, 10).ok, 'reject below min bet');
@@ -15571,7 +15772,7 @@ function runTests() {
     wrong: '+2', correct: '+5', detail: 'Off by 3',
   });
   recordMistakeReviewEntry(mrSave, {
-    drillId: 'true-count', category: 'count', context: 'RC +6 ÷ 2 decks',
+    drillId: 'true-count', category: 'count', context: 'Running count +6 ÷ 2 decks',
     wrong: '+2', correct: '+3', detail: 'Off by 1',
   });
   check(mrSave.mistakeReviewLog.entries.length === 2, 'mistake review entries stored');
@@ -15622,6 +15823,14 @@ function runTests() {
   eq(getIndexPlayCorrectAction(idx16, 0).action, 'stand', '16v10 stand at tc0');
   eq(getIndexPlayCorrectAction(idx16, -1).action, 'hit', '16v10 hit below index');
   eq(getIndexPlayCorrectAction(INDEX_PLAY_CATALOG.find(p => p.id === 'ins-tc3'), 3).action, 'insurance', 'insurance at tc3');
+  const hand16v10 = new Hand([createPlayingCard('K', 'S'), createPlayingCard('6', 'H')]);
+  eq(advise(hand16v10, '10', false, false, { trueCount: 0, countingSystemId: 'hi-lo' }).action, 'stand', 'live index 16v10 stand tc0');
+  eq(advise(hand16v10, '10', false, false, { trueCount: -1, countingSystemId: 'hi-lo' }).action, 'hit', 'live index 16v10 hit below');
+  eq(advise(hand16v10, '10', false, false, { trueCount: 0, countingSystemId: 'ko' }).action, 'hit', 'ko skips index deviations');
+  const hand10v10 = new Hand([createPlayingCard('6', 'S'), createPlayingCard('4', 'H')]);
+  eq(advise(hand10v10, '10', true, false, { trueCount: 4, countingSystemId: 'hi-lo' }).action, 'double', 'live index 10v10 double tc4');
+  eq(adviseInsurance(3, 'hi-lo').action, 'insurance', 'live insurance index tc3');
+  eq(adviseInsurance(2.5, 'hi-lo').action, 'no-insurance', 'live insurance below index');
   check(document.getElementById('screen-drill-index'), 'index play drill screen');
   check(TRAINING_DRILLS.find(d => d.id === 'index-plays')?.status === 'live', 'index play drill live');
   check(typeof navApp.openIndexPlayDrill === 'function', 'openIndexPlayDrill handler');

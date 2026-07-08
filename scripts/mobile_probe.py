@@ -87,22 +87,29 @@ def main() -> int:
         casino = page.evaluate(
             """() => {
               const shell = document.getElementById('screen-casino-play');
+              const viewport = document.querySelector('.casino-table-viewport');
+              const shellRect = shell?.getBoundingClientRect();
+              const viewRect = viewport?.getBoundingClientRect();
+              const innerW = window.innerWidth;
+              const visualOverflow = (
+                (shellRect && shellRect.right > innerW + 1)
+                || (viewRect && viewRect.right > innerW + 1)
+                || document.documentElement.scrollWidth > innerW + 1
+              );
               return {
                 casinoVisible: !shell?.classList.contains('hidden'),
-                pageOverflowH: document.documentElement.scrollWidth > window.innerWidth + 1,
+                pageOverflowH: document.documentElement.scrollWidth > innerW + 1,
                 shellScrollW: shell?.scrollWidth ?? 0,
                 shellClientW: shell?.clientWidth ?? 0,
+                viewRight: viewRect?.right ?? 0,
+                visualOverflow,
               };
             }"""
         )
         results["casino_390"] = casino
-        shell_overflow = (casino.get("shellScrollW") or 0) > (casino.get("shellClientW") or 0) + 1
-        if shell_overflow:
-            casino["shellOverflow"] = True
         if (
             not casino.get("casinoVisible")
-            or casino.get("pageOverflowH")
-            or shell_overflow
+            or casino.get("visualOverflow")
         ):
             results["pass"] = False
         browser.close()

@@ -1,142 +1,165 @@
 # CountQuest Blackjack — Project Bible
 
-## Current State & Next Focus (as of 2026-07-08)
-
-### Current State
-- **Modular web app**: `index.html` shell + `css/app.css` + ten ordered `js/` modules (`01-constants.js` … `09-tests.js`).
-- **7-seat casino table** is scroll-free at 1280×720; human (YOU) seat card alignment matches AI seat layout.
-- **Core systems** solid: HelpSystem (5 levels), Hi-Lo/KO counting, basic strategy, index deviations in live play, localStorage persistence (SAVE_VERSION 18).
-- **CI green**: 68 web tests, CountQuest package tests, 365 embedded browser assertions.
-- **Meta-game** (clubs, tournaments, daily rewards, VIP) is local-only — no backend.
-
-### Next Focus
-- **Dealer Mode polish** — tighten payout flow and table UX under the same 7-seat layout rules.
-- **Optional build step** — bundle modules back to a single file for offline `file://` distribution if needed.
-- **Backend later** — only when moving clubs/tournaments off localStorage.
-
-**Status**: Living Document — Update this file whenever major decisions, architecture changes, or new patterns are established.  
+**Status**: Living Document  
 **Last Updated**: 2026-07-08  
-**Purpose**: Single source of truth for vision, architecture, decisions, automation workflows, and development guidelines.
+**SAVE_VERSION**: 18 (bump only when save schema changes)  
+**Purpose**: Vision, architecture, decisions, and development guidelines.
+
+**Also see:** `docs/NEXT_STEPS.md` for the wrangled priority list.
+
+---
+
+## Current Focus vs Future Ideas
+
+### Current Focus (Active Development)
+- Refining the **7-seat casino table layout** (spacing, mobile behavior, scroll reduction, card positioning).
+- Fixing UI bugs and improving game flow / post-hand transitions.
+- **Play Store path:** Internal testing → device QA → Production when v1-ready.
+- Incremental updates with tests (`python scripts/run_web_tests.py`).
+
+### Future Ideas (Brainstorming / Long-term)
+- Pit Boss + Heat / pressure system (early shuffles).
+- Play as the Pit Boss — identify the counter among 7 players.
+- Post-shoe mistake timeline and richer teaching feedback.
+- Additional counting systems (Hi-Opt, Omega II, etc.).
+- Challenge modes and flavorful rank titles.
+- Casino audio (ambiance, card sounds).
+- Real online crews (backend) — today clubs are local-only.
+- Unity migration (long-term only).
 
 ---
 
 ## 1. Project Vision & Core Goals
 
-CountQuest Blackjack is an educational, progressively challenging blackjack game whose primary purpose is to teach real card counting (starting with Hi-Lo) while remaining genuinely fun and addictive to play.
+CountQuest Blackjack is an educational, progressively challenging blackjack game that teaches real card counting (Hi-Lo first) while staying fun and addictive.
 
 **Core Principles**:
 - Mathematically accurate (Hi-Lo, true count, basic strategy, index deviations when enabled).
 - Progressive help system (5 levels) that fades as the player improves.
-- Balance deep education with engaging gameplay (Mini Clip 8 Ball Pool style polish).
-- Support both Player Mode and Dealer Mode.
-- “Quest Through the Casinos” visual theme (deep green felt, gold accents, glowing cyan for count/insight elements).
-- Modular source layout (`index.html` + `css/` + `js/`) with ordered script tags preserving global API for tests.
+- 8 Ball Pool–style lobby polish with deep training under the hood.
+- Player mode + **Dealer Mode** (live in training drills).
+- “Quest Through the Casinos” theme — deep green felt, gold accents, cyan count elements.
 
 ---
 
 ## 2. Current Architecture Overview
 
-| Layer | Path | Role |
-|-------|------|------|
-| Shell | `index.html` | HTML, Tailwind CDN, test bootstrap, module script tags |
-| Styles | `css/app.css` | Quest Through the Casinos theme, 7-seat table layout |
-| Constants | `js/01-constants.js` | SAVE_VERSION, lobby, themes, achievements, migrations |
-| Core | `js/02-core-types.js` | Hand, Shoe, card helpers |
-| Counting | `js/03-counting.js` | Hi-Lo/KO, bet spread |
-| Strategy | `js/04-strategy.js` | Basic strategy + live index deviations |
-| Help | `js/05-help-system.js` | 5-level coaching |
-| Storage | `js/06-stats-storage.js`, `js/06b-validation.js` | Save/load, validation |
-| Engine | `js/07-game-engine.js` | CountQuestApp |
-| Tests | `js/09-tests.js` | `runTests()` + bootstrap |
+### Web shell (source)
+- `index.html` — HTML shell and screen markup
+- `css/tailwind.css` — bundled Tailwind (built via `scripts/build_tailwind.py`)
+- `css/app.css` — game layout and casino table styles
+- `js/*.js` — modular vanilla JS (`00-capacitor-bridge.js` … `09-tests.js`)
+- `manifest.webmanifest`, `sw.js`, `privacy.html`
 
-**Tooling**: `scripts/load_project_source.py` concatenates shell + css + js for structure tests. `scripts/split_index.py` can re-split a monolith.
+### Distribution
+| Target | Mechanism |
+|--------|-----------|
+| **GitHub Pages** | `dist/` staged by `scripts/stage_dist.py`; workflow `.github/workflows/pages.yml` |
+| **PWA** | Service worker `cq-pwa-v3`, icons, offline shell |
+| **Android** | Capacitor 8 → `android/`; release AAB via `npm run build:android:release` |
+| **iOS** | Capacitor scaffold at `ios/` (requires macOS/Xcode to build) |
 
----
+### Core preserved systems
+Shoe, CardCounter (Hi-Lo + True Count), HelpSystem (5 levels), BasicStrategy, stats, ranks, `localStorage` persistence (`SAVE_VERSION` 18).
 
-## 2.5 Progressive Help System (Detailed Specification)
+### Native bridge
+`js/00-capacitor-bridge.js` — sets `window.__CQ_NATIVE`, safe-area class, StatusBar/SplashScreen; skips service worker registration on native.
 
-| Level | Name       | Count Visibility                     | Hints & Feedback                     | Post-Hand Feedback              | Educational Goal                     |
-|-------|------------|--------------------------------------|--------------------------------------|---------------------------------|--------------------------------------|
-| 0     | Novice     | Always visible + per-card flashes    | Exact advice + strategy always shown | Full detailed breakdown         | Build foundations                    |
-| 1     | Guided     | Running Count visible                | Bet range + hints on mistakes        | Clear explanation of decisions  | Active participation                 |
-| 2     | Practice   | Hidden during play                   | Strategy only on mistakes            | RC quiz + strategy review       | Force recall                         |
-| 3     | Challenge  | Hidden during play                   | Only on explicit request             | Full shoe summary               | Independent decision making          |
-| 4     | Expert     | Hidden during play                   | None during play                     | Analytics only at session end   | Realistic simulation / mastery test  |
-
-**Rule**: Every UI change must respect and adapt to all 5 help levels.
-
-**Index deviations in live play** (Hi-Lo, Settings → “Hi-Lo index deviations”):
-- `advise()` and `adviseInsurance()` apply catalog indices when true count is known.
-- Strategy bar shows `INDEX →` prefix when an index play applies.
-- Levels 0–1 get proactive hints at index spots; mistakes log to Review Mistakes.
+### Main pain point
+Table organization, spacing, and scrolling on the casino play screen — especially mobile (`fitCasinoPlayViewport`, `mobile_probe.py`).
 
 ---
 
-## 3. UI/UX & Theming Guidelines
+## 2.5 Progressive Help System
 
-**Primary Theme**: Quest Through the Casinos  
-- Deep green felt, gold accents, glowing cyan for count/insight elements.
+| Level | Name       | Count Visibility                  | Hints & Feedback                          | Post-Hand Feedback               |
+|-------|------------|-----------------------------------|-------------------------------------------|----------------------------------|
+| 0     | Novice     | Always visible + per-card flashes | Exact advice + strategy always shown      | Full detailed breakdown          |
+| 1     | Guided     | Running Count visible             | Bet range + hints on mistakes             | Clear explanation of decisions   |
+| 2     | Practice   | Hidden during play                | Strategy only on mistakes                 | RC quiz + strategy review        |
+| 3     | Challenge  | Hidden during play                | Only on explicit request                  | Full shoe summary                |
+| 4     | Expert     | Hidden during play                | None during play                          | Analytics only at session end    |
 
-**Table layout**: Single no-scroll 7-seat casino view. Human seat (Seat 4) uses gold highlight; cards/totals/bet follow the same grid rules as AI seats.
+**Rule**: Every UI change must respect all 5 help levels.
+
+---
+
+## 3. UI/UX & Theming
+
+**Theme:** Quest Through the Casinos  
+**Priority:** 7-seat table — mobile viewport fit, reduced scroll, card/seat positioning.
+
+**Casino shell:** `#screen-casino-play` fixed between header and action bar; `syncCasinoShellMetrics()` + `fitCasinoPlayViewport()` scale when content overflows.
 
 ---
 
 ## 4. Development & Automation Workflow
 
-High-level planning happens in this conversation. Implementation uses controlled, small prompts.
+### Key commands
+```bash
+python scripts/run_web_tests.py      # 74+ structure/logic tests
+python scripts/stage_dist.py         # Build dist/ for Pages + Capacitor
+npm run cap:sync                     # Stage + cap sync
+npm run build:android:release        # Signed Play Store AAB
+python scripts/mobile_probe.py       # Phone viewport + casino overflow gate
+python scripts/show_build_progress.py
+```
 
-### 4.1 Testing & Verification Strategy
-
-| Command | Purpose |
-|---------|---------|
-| `python scripts/run_web_tests.py` | Structure + logic parity (68 tests) |
-| `python -m unittest discover -s countquest/tests` | Python package tests |
-| `CQ_BROWSER_TESTS=1 python scripts/run_browser_tests.py` | Embedded `runTests()` (365 assertions) |
-| `python scripts/split_720_probe.py` | 1280×720 layout / no-scroll regression |
-| `python scripts/browser_smoke.py` | Quick Playwright play-through |
-
-Serve from project root so `/css/app.css` and `/js/*.js` resolve.
+### Testing strategy
+- Default gate: `run_web_tests.py`
+- Layout probes: `mobile_probe.py`, `live_mobile_probe.py` (optional `CQ_LAYOUT_PROBE=1`)
+- Minimize heavy browser test investment during pure UI tweaks unless regressions are suspected.
 
 ---
 
 ## 5. Decision Log
 
-| Date       | Decision                                      | Rationale                                              | Status      |
-|------------|-----------------------------------------------|--------------------------------------------------------|-------------|
-| 2026-07-07 | Use 7-seat traditional table layout           | Improves visibility and prepares for Dealer Mode       | Complete    |
-| 2026-07-08 | Split into css/ + js/ modules                 | Maintainability; tests use `load_project_source.py`    | Complete    |
-| 2026-07-08 | Wire index deviations into live play          | Settings toggle + strategy hints + mistake logging     | Complete    |
-| 2026-07-08 | Human seat alignment fix                      | Match AI card row layout; keep gold highlight           | Complete    |
+| Date       | Decision                                           | Status        |
+|------------|----------------------------------------------------|---------------|
+| 2026-07-07 | 7-seat traditional table layout                    | In Progress   |
+| 2026-07-07 | Modular `js/` + bundled Tailwind (not CDN)         | Confirmed     |
+| 2026-07-08 | Capacitor 8 Android/iOS wrap                       | Complete      |
+| 2026-07-08 | Play Store release signing + AAB pipeline            | Complete      |
+| 2026-07-08 | Privacy policy + Play Console prep docs            | Complete      |
+| 2026-07-08 | Pit Boss / Heat system                             | Future Idea   |
+| 2026-07-08 | Post-shoe mistake timeline                         | Future Idea   |
 
 ---
 
 ## 6. Roadmap & Current Priorities
 
-**Done**: Scroll-free 7-seat table, modular split, live index deviations, CI, tournament invites.
+**Now:**
+1. Play Console Internal testing + device QA
+2. Table/mobile layout polish
+3. Post-hand flow smoothing
 
-**Next**: Dealer Mode polish, optional bundle script, backend when needed.
+**Shipped (6-phase + platform):** Plan 21 lobby, dual currency, daily rewards, clubs, 10+ drills, VIP, tournaments — see `scripts/show_build_progress.py`.
+
+**Play Store:** Docs in `docs/PLAY_CONSOLE_*.md`, `docs/STORE_LISTING.md`.
 
 ---
 
-## 7. How to Update This Document
+## 7. Future Features (Brainstorming)
 
-Edit this file directly when decisions are made. Update the “Last Updated” date and add entries to the Decision Log.
+See prior sections in git history for Pit Boss, teaching timelines, challenge modes, rank titles, and audio — unchanged in intent, deferred until post-v1.
 
 ---
 
-## 8. Prompt Template Library
+## 8. How to Update This Document
 
-### Template 1: General Feature Implementation
+Edit when architecture or decisions change. Update **Last Updated** date and Decision Log. Do not bump **SAVE_VERSION** here unless the save schema changed.
+
+---
+
+## 9. Prompt Template
+
 ```markdown
-/goal Implement the following feature while preserving existing systems.
+/goal Implement [feature] preserving HelpSystem and SAVE_VERSION 18.
 
-Feature: [Describe]
-
-Relevant Bible sections: [List sections]
+Relevant: PROJECT_BIBLE §2.5, docs/NEXT_STEPS.md
 
 Requirements:
-- Work in css/ and js/ modules (or index.html shell only when needed)
 - Respect all 5 help levels
-- Incremental work with checkpoints
-- Run run_web_tests.py before finishing
+- Run run_web_tests.py
+- Match existing js/css patterns
 ```

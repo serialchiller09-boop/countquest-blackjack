@@ -13,9 +13,10 @@ from rich.panel import Panel
 from rich.table import Table
 
 ROOT = Path(__file__).resolve().parents[1]
-import sys
 sys.path.insert(0, str(ROOT / "scripts"))
 from load_project_source import load_app_source  # noqa: E402
+from save_version import read_save_version  # noqa: E402
+
 console = Console()
 
 POLISH_IMPROVEMENTS = [
@@ -57,24 +58,34 @@ POLISH_MARKERS = [
 ]
 
 
-def main() -> int:
-    html = load_app_source()
+def run_tests() -> tuple[bool, int]:
     proc = subprocess.run(
         [sys.executable, str(ROOT / "scripts" / "run_web_tests.py")],
         cwd=ROOT,
         capture_output=True,
         text=True,
     )
-    test_ok = proc.returncode == 0
-    test_line = "59/59 PASS" if test_ok else "FAIL — see run_web_tests.py"
-    save_ver = "17" if "const SAVE_VERSION = 17" in html else ("16" if "const SAVE_VERSION = 16" in html else "?")
+    count = 0
+    for line in (proc.stdout + proc.stderr).splitlines():
+        if line.strip().startswith("Ran ") and "tests" in line:
+            try:
+                count = int(line.split()[1])
+            except (IndexError, ValueError):
+                pass
+    return proc.returncode == 0, count
+
+
+def main() -> int:
+    html = load_app_source()
+    test_ok, test_count = run_tests()
+    save_ver = read_save_version() or "?"
     markers_ok = sum(1 for m in POLISH_MARKERS if m in html)
 
     console.print()
     console.print(
         Panel(
             "[bold]Premium polish pass[/] — animations, micro-interactions, 8BP lobby feel\n"
-            "[dim]SAVE_VERSION 14 · Plan 21 quality layer[/]",
+            f"[dim]SAVE_VERSION {save_ver} · Plan 21 quality layer[/]",
             title="[bold gold1]CountQuest Polish Status[/]",
             border_style="bright_magenta",
             padding=(1, 2),
@@ -87,7 +98,7 @@ def main() -> int:
     meta.add_column("Value")
     meta.add_row("Project", str(ROOT))
     meta.add_row("SAVE_VERSION", save_ver)
-    meta.add_row("Tests", test_line)
+    meta.add_row("Tests", f"{test_count} {'PASS' if test_ok else 'FAIL'}")
     meta.add_row("Polish markers", f"{markers_ok}/{len(POLISH_MARKERS)}")
     meta.add_row("Verify", "python scripts/open_game.py")
     console.print(meta)
@@ -115,7 +126,7 @@ def main() -> int:
     console.print(checks)
     console.print()
 
-    ok = test_ok and save_ver == "14" and markers_ok == len(POLISH_MARKERS)
+    ok = test_ok and markers_ok == len(POLISH_MARKERS)
     console.print(
         f"[bold]{'✓ Polish pass COMPLETE' if ok else '✗ Verification FAILED'}[/]  "
         f"[dim]python scripts/polish_status.py[/]"

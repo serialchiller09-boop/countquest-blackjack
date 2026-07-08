@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Master 6-phase build progress report for CountQuest Blackjack."""
+"""Master build progress report for CountQuest Blackjack."""
 
 from __future__ import annotations
 
@@ -25,9 +25,14 @@ PHASES = [
     ("2", "Dual Currency + Tables", "Chips/gems HUD, table lobby, entry fees, 1.8× payout", "COMPLETE"),
     ("3", "Daily Rewards", "Login streaks, social connect, chip/gem drops", "COMPLETE"),
     ("4", "Clubs / Counting Crews", "Hierarchy, Club Hub, weekly championship, chat", "COMPLETE"),
-    ("5", "Training Drills", "8+ live drills, history, mistakes, session summary", "COMPLETE"),
-    ("6", "Polish + VIP Pass", "VIP multipliers, integration, full test suite", "COMPLETE"),
+    ("5", "Training Drills", "10+ live drills, history, mistakes, dealer mode", "COMPLETE"),
+    ("6", "Polish + VIP Pass", "VIP multipliers, Plan 21 lobby, tournaments", "COMPLETE"),
+    ("A", "PWA + Pages", "manifest, sw.js, stage_dist, GitHub Pages deploy", "COMPLETE"),
+    ("B", "Capacitor Native", "Android/iOS scaffold, bridge, branded icons/splash", "COMPLETE"),
+    ("C", "Play Store Prep", "Signing, AAB, privacy, listing + Console docs", "DOCS READY"),
 ]
+
+DONE_STATUSES = frozenset({"COMPLETE", "DOCS READY"})
 
 
 def run_tests() -> tuple[bool, int]:
@@ -59,7 +64,7 @@ def main() -> int:
                 (f"{test_count} tests ", "cyan"),
                 ("PASS" if tests_ok else "FAIL", "bold green" if tests_ok else "bold red"),
             ),
-            title="[bold gold1]6-Phase Build Progress[/]",
+            title="[bold gold1]Build Progress[/]",
             border_style="bright_green",
             padding=(1, 2),
         )
@@ -80,17 +85,17 @@ def main() -> int:
 
     done = 0
     for num, name, scope, status in PHASES:
-        style = "bold green" if status == "COMPLETE" else "yellow"
+        style = "bold green" if status in DONE_STATUSES else "yellow"
         table.add_row(num, name, scope, Text(status, style=style))
-        if status == "COMPLETE":
+        if status in DONE_STATUSES:
             done += 1
     console.print(table)
     console.print()
 
     console.print(Rule("[bold]Quick verify[/]", style="dim"))
-    console.print("[dim]python scripts/show_daily_rewards.py[/]")
-    console.print("[dim]python scripts/show_vip_pass.py[/]")
     console.print("[dim]python scripts/run_web_tests.py[/]")
+    console.print("[dim]npm run build:android:release[/]")
+    console.print("[dim]docs/PLAY_CONSOLE_INTERNAL_TESTING.md[/]")
     console.print()
     console.print(
         Text(f"✓ {done}/{len(PHASES)} phases complete", style="bold green")

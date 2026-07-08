@@ -352,6 +352,21 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertTrue((root / "scripts" / "generate_native_icons.py").is_file())
         self.assertTrue((root / "scripts" / "cq_brand_icon.py").is_file())
 
+    def test_play_store_docs(self) -> None:
+        root = ROOT
+        for name in (
+            "STORE_LISTING.md",
+            "PLAY_CONSOLE_INTERNAL_TESTING.md",
+            "PLAY_CONSOLE_DATA_SAFETY.md",
+            "PLAY_CONSOLE_CONTENT_RATING.md",
+            "NEXT_STEPS.md",
+        ):
+            self.assertTrue((root / "docs" / name).is_file(), f"missing docs/{name}")
+
+    def test_native_hides_dev_oauth_panel(self) -> None:
+        css = (ROOT / "css" / "app.css").read_text(encoding="utf-8")
+        self.assertIn("cq-native #external-services-panel", css)
+
     def test_privacy_policy_page(self) -> None:
         root = ROOT
         page = root / "privacy.html"

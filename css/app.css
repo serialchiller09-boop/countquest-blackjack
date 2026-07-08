@@ -282,6 +282,7 @@
       pointer-events: auto;
     }
     body:not(.casino-play-active) .casino-play-shell { display: none !important; }
+    html.cq-native #external-services-panel { display: none !important; }
     .casino-table-viewport {
       flex: 1;
       min-height: 0;
@@ -1270,6 +1271,35 @@
       :root {
         --cq-seat-spot-size: 2.85rem;
         --cq-seat-col-h: 3.5rem;
+        --cq-topbar-max: 4.5rem;
+      }
+      body.casino-play-active .casino-table-topbar {
+        gap: 0.08rem;
+        max-height: var(--cq-topbar-max);
+        overflow: hidden;
+      }
+      body.casino-play-active #bet-advice {
+        font-size: 0.58rem;
+        line-height: 1.15;
+        -webkit-line-clamp: 1;
+        max-height: 1.2rem;
+      }
+      body.casino-play-active #count-hud,
+      body.casino-play-active #count-hud-bet {
+        gap: 0.12rem;
+      }
+      body.casino-play-active .count-box > div {
+        padding-top: 0.12rem !important;
+        padding-bottom: 0.12rem !important;
+      }
+      body.casino-play-active .count-box .text-lg {
+        font-size: 0.82rem !important;
+      }
+      .casino-table-topbar #shoe-status {
+        font-size: 0.52rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
       #casino-seat-grid {
         gap: 0.1rem;

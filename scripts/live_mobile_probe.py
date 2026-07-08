@@ -73,26 +73,32 @@ def main() -> int:
               const shell = document.getElementById('screen-casino-play');
               const adv = document.getElementById('bet-advice');
               const vp = document.querySelector('.casino-table-viewport');
+              const innerW = window.innerWidth;
+              const shellRect = shell?.getBoundingClientRect();
+              const viewRect = vp?.getBoundingClientRect();
+              const visualOverflow = (
+                (shellRect && shellRect.right > innerW + 1)
+                || (viewRect && viewRect.right > innerW + 1)
+                || document.documentElement.scrollWidth > innerW + 1
+              );
               return {
                 casinoVisible: !shell?.classList.contains('hidden'),
-                pageOverflowH: document.documentElement.scrollWidth > window.innerWidth + 1,
+                pageOverflowH: document.documentElement.scrollWidth > innerW + 1,
                 shellScrollW: shell?.scrollWidth ?? 0,
                 shellClientW: shell?.clientWidth ?? 0,
                 betAdviceScrollW: adv?.scrollWidth ?? 0,
                 betAdviceClientW: adv?.clientWidth ?? 0,
                 vpTransform: vp?.style.transform || 'none',
                 betAdviceVisible: adv && !adv.classList.contains('hidden'),
+                viewRight: viewRect?.right ?? 0,
+                visualOverflow,
               };
             }"""
         )
         results["casino"] = casino
-        shell_overflow = casino["shellScrollW"] > casino["shellClientW"] + 1
-        if shell_overflow:
-            casino["shellOverflow"] = True
         if (
             not casino["casinoVisible"]
-            or casino["pageOverflowH"]
-            or shell_overflow
+            or casino.get("visualOverflow")
             or not results["pwa"].get("manifest")
         ):
             results["pass"] = False

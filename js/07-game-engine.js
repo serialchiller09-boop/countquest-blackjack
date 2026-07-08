@@ -7792,6 +7792,12 @@ class CountQuestApp {
       && handend
       && !handend.classList.contains('hidden')
     ) ? handend.offsetHeight + 8 : 0;
+    const betRail = document.getElementById('casino-felt-bet-rail');
+    const betReserve = (
+      betRail
+      && !betRail.classList.contains('hidden')
+      && (this.phase === 'bet' || this.phase === 'playing')
+    ) ? betRail.offsetHeight + 6 : 0;
     const topbar = viewport.querySelector('.casino-table-topbar');
     const grid = document.getElementById('casino-seat-grid');
     const contentH = Math.max(viewport.scrollHeight, viewport.offsetHeight);
@@ -7801,17 +7807,21 @@ class CountQuestApp {
       topbar?.scrollWidth || 0,
       grid?.scrollWidth || 0,
     );
-    const maxH = Math.max(1, shellH - handendReserve);
+    const maxH = Math.max(1, shellH - handendReserve - betReserve);
     const scaleY = contentH > maxH ? maxH / contentH : 1;
     const scaleX = contentW > shellW ? shellW / contentW : 1;
-    const scale = Math.min(1, scaleX, scaleY);
-    const applied = Math.max(0.62, scale);
-    if (applied < 0.995) {
-      const inv = 100 / applied;
-      viewport.style.width = `${inv}%`;
-      viewport.style.maxWidth = `${inv}%`;
-      viewport.style.transform = `scale(${applied})`;
-      viewport.style.marginBottom = `-${contentH * (1 - applied)}px`;
+    const scale = Math.max(0.62, Math.min(1, scaleX, scaleY));
+    viewport.style.transformOrigin = 'top center';
+    if (scale < 0.995) {
+      viewport.style.width = '100%';
+      viewport.style.maxWidth = '100%';
+      viewport.style.transform = `scale(${scale})`;
+      viewport.style.marginBottom = `-${contentH * (1 - scale)}px`;
+    } else {
+      viewport.style.width = '';
+      viewport.style.maxWidth = '';
+      viewport.style.transform = '';
+      viewport.style.marginBottom = '';
     }
   }
 

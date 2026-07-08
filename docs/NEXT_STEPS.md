@@ -1,6 +1,6 @@
 # CountQuest — Next Steps (wrangled goals)
 
-**Last updated:** 2026-07-08  
+**Last updated:** 2026-07-08 (batch: docs, mobile polish, native dev-panel hide)  
 **SAVE_VERSION:** 18 (do not bump unless save schema changes)
 
 This file consolidates open work from `PROJECT_BIBLE.md`, `artifacts/Blackjack_Game_Todo_List.md`, Play Console prep, and recent native/PWA work. Completed “Next:” lines from older todo sections are **omitted** when a later section already shipped them.
@@ -29,9 +29,9 @@ Infrastructure is built (signing, AAB pipeline, privacy policy, Data safety + IA
 | 3 | **Create app draft** in Play Console | ? | Package `com.countquest.blackjack`, support email `j.pierson1990@outlook.com` |
 | 4 | **Content rating (IARC)** | 📝 Doc ready | Follow `docs/PLAY_CONSOLE_CONTENT_RATING.md` — simulated gambling **Yes**, real money **No** |
 | 5 | **Data safety form** | 📝 Doc ready | Follow `docs/PLAY_CONSOLE_DATA_SAFETY.md` — answer **No** data collected (v1 local-only) |
-| 6 | **Store listing copy** | 📝 Drafted in chat | Short (79 chars) + full description — paste into Console; consider saving to `docs/STORE_LISTING.md` |
+| 6 | **Store listing copy** | ✅ | `docs/STORE_LISTING.md` |
 | 7 | **Screenshots + feature graphic** | ❌ | Phone screenshots from emulator/Pixel; 1024×500 feature graphic |
-| 8 | **Upload AAB to Internal testing** | 🟡 AAB built | `npm run build:android:release` → upload `app-release.aab`; install on physical device |
+| 8 | **Upload AAB to Internal testing** | 📝 Guide ready | Follow `docs/PLAY_CONSOLE_INTERNAL_TESTING.md`; rebuild AAB before upload |
 | 9 | **Device QA pass** | ❌ | Native shell: safe area, splash, orientation, table layout on real phone |
 | 10 | **Target audience declaration** | ❌ | 13+, not designed for children; no Families enrollment |
 | 11 | **Production rollout** | ❌ | Only after Internal testing + feature freeze for `versionCode 1` |
@@ -60,11 +60,11 @@ These are the **current** game goals — still valid after modular split + Capac
 
 | # | Task | Why |
 |---|------|-----|
-| 1 | **Update `PROJECT_BIBLE.md`** | Still says single-file + Tailwind CDN; architecture is now `css/` + `js/` + bundled Tailwind + Capacitor. Dealer Mode is live. Uncommitted local edits exist. |
-| 2 | **Extend `show_build_progress.py`** | Stops at “Phase 6”; add Phase A (PWA/Pages), Phase B (Capacitor), Phase C (Play Store prep) |
-| 3 | **Refresh `polish_status.py`** | References SAVE_VERSION 14–17 and 59 tests — stale |
-| 4 | **Save store listing copy** to repo | Short/full descriptions only exist in chat history so far |
-| 5 | **Gitignore `android/.idea/`** | Untracked IDE noise |
+| 1 | **Update `PROJECT_BIBLE.md`** | ✅ Updated 2026-07-08 |
+| 2 | **Extend `show_build_progress.py`** | ✅ Phases A/B/C added |
+| 3 | **Refresh `polish_status.py`** | ✅ Uses `read_save_version()` + live test count |
+| 4 | **Save store listing copy** | ✅ `docs/STORE_LISTING.md` |
+| 5 | **Gitignore `android/.idea/`** | ✅ |
 | 6 | **Commit or drop** `artifacts/probe-*.png` | Local probe artifacts modified but not committed |
 
 ---
@@ -90,7 +90,7 @@ From todo list **Next:** lines where follow-up work was **not** shipped in a lat
 
 | # | Task | Notes |
 |---|------|-------|
-| 1 | **Hide developer OAuth/Stripe panel** for Play release | Or document as dev-only; Stripe on Android may violate Play policy for digital goods |
+| 1 | **Hide developer OAuth/Stripe panel** on native | ✅ Hidden via `html.cq-native #external-services-panel` |
 | 2 | **Decide v1 monetization** | Gems-only VIP (simple) vs Google Play Billing (required for real-money VIP) |
 | 3 | **iOS build** | Capacitor `ios/` scaffold exists; needs macOS + Xcode smoke test |
 | 4 | **PWA / Pages deploy verify** | `privacy.html` live after push; run `live_mobile_probe.py` on production URL |

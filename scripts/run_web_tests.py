@@ -352,6 +352,20 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertTrue((root / "scripts" / "generate_native_icons.py").is_file())
         self.assertTrue((root / "scripts" / "cq_brand_icon.py").is_file())
 
+    def test_privacy_policy_page(self) -> None:
+        root = ROOT
+        page = root / "privacy.html"
+        self.assertTrue(page.is_file())
+        text = page.read_text(encoding="utf-8")
+        self.assertIn("Privacy Policy", text)
+        self.assertIn("localStorage", text)
+        self.assertIn("simulated", text.lower())
+        self.assertIn(
+            "privacy.html",
+            (root / "scripts" / "stage_dist.py").read_text(encoding="utf-8"),
+            "privacy.html must be staged for GitHub Pages",
+        )
+
     def test_android_release_signing_scaffold(self) -> None:
         root = ROOT
         example = root / "android" / "keystore.properties.example"

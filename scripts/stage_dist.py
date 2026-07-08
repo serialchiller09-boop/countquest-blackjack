@@ -12,6 +12,7 @@ DIST = ROOT / "dist"
 
 ASSETS = (
     "index.html",
+    "privacy.html",
     "manifest.webmanifest",
     "sw.js",
     ".nojekyll",

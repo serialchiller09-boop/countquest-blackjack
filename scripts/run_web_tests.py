@@ -360,11 +360,16 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertIn("Privacy Policy", text)
         self.assertIn("localStorage", text)
         self.assertIn("simulated", text.lower())
+        self.assertIn("j.pierson1990@outlook.com", text)
         self.assertIn(
             "privacy.html",
             (root / "scripts" / "stage_dist.py").read_text(encoding="utf-8"),
             "privacy.html must be staged for GitHub Pages",
         )
+        shell = load_index_html()
+        self.assertIn('id="link-privacy-policy"', shell)
+        self.assertIn('href="privacy.html"', shell)
+        self.assertIn("j.pierson1990@outlook.com", shell)
 
     def test_android_release_signing_scaffold(self) -> None:
         root = ROOT

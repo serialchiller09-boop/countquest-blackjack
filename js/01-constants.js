@@ -7,15 +7,15 @@ const SAVE_VERSION = 18;
 function formatCasinoChipMarkup(amount) {
   const n = Math.max(1, Math.round(Number(amount) || 0));
   if (n >= 100) {
-    return `<span class="cq-casino-chip cq-casino-chip--black" aria-hidden="true"><span class="cq-chip-face">8</span></span>`;
+    return `<span class="cq-casino-chip" style="background:radial-gradient(circle at 30% 25%,#ffe9a8,#d4af37 55%,#9a7b1a);color:#3d2e08" aria-hidden="true">100</span>`;
   }
   if (n >= 25) {
-    return `<span class="cq-casino-chip cq-casino-chip--green" style="background:radial-gradient(circle at 30% 25%,#6fdc8c,#1b8f3a 55%,#0d5c24)" aria-hidden="true">25</span>`;
+    return `<span class="cq-casino-chip" style="background:radial-gradient(circle at 30% 25%,#6fdc8c,#1b8f3a 55%,#0d5c24)" aria-hidden="true">25</span>`;
   }
   if (n >= 5) {
-    return `<span class="cq-casino-chip" style="background:radial-gradient(circle at 30% 25%,#ff9ec8,#e91e8c 55%,#9c1458)" aria-hidden="true">5</span>`;
+    return `<span class="cq-casino-chip cq-casino-chip--red" style="background:radial-gradient(circle at 30% 25%,#ff6b6b,#c41e1e 55%,#8b0000)" aria-hidden="true">5</span>`;
   }
-  return `<span class="cq-casino-chip" style="background:radial-gradient(circle at 30% 25%,#fff,#e0ddd4 60%,#b8b4ac);color:#333" aria-hidden="true">1</span>`;
+  return `<span class="cq-casino-chip" style="background:radial-gradient(circle at 30% 25%,#fff,#f0ece4 60%,#d8d4cc);color:#333;border-color:#ccc" aria-hidden="true">1</span>`;
 }
 
 function updateCasinoSeatBetChipVisual(amount) {

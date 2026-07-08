@@ -438,10 +438,10 @@ class TestIndexHtmlStructure(unittest.TestCase):
     def test_authentic_casino_felt_table(self) -> None:
         shell = load_index_html()
         self.assertIn('id="cq-felt-markings"', shell)
-        self.assertIn("BLACKJACK", shell)
-        self.assertIn("PAYS 3 TO 2", shell)
-        self.assertIn("DEALER MUST HIT SOFT 17", shell)
-        self.assertIn("INSURANCE", shell)
+
+        self.assertIn("BLACKJACK PAYS 3 TO 2", shell)
+        self.assertIn("DEALER MUST STAND ON 17", shell)
+        self.assertIn("INSURANCE PAYS 2 TO 1", shell)
         self.assertIn("cq-authentic-felt", shell)
         self.assertIn("cq-dealer-clipboard", shell)
         self.assertIn("casino-felt-table.css", shell)

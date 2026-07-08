@@ -131,6 +131,7 @@
 .cq-rack-chip--purple { background: radial-gradient(circle at 32% 28%, #c9a0ff, #7c3aed 55%, #4c1d95); }
 .cq-rack-chip--red { background: radial-gradient(circle at 32% 28%, #ff8a80, #d32f2f 55%, #8b1a1a); }
 .cq-rack-chip--yellow { background: radial-gradient(circle at 32% 28%, #fff59d, #f9a825 55%, #c17900); }
+.cq-rack-chip--gold { background: radial-gradient(circle at 32% 28%, #ffe9a8, #d4af37 55%, #9a7b1a); border-color: #f5e6b8; }
 
 /* ── Interactive play layer ── */
 .cq-table-play-layer {
@@ -207,7 +208,7 @@
   width: 2.75rem;
   height: 2.75rem;
   border-radius: 50%;
-  border: 2px solid var(--cq-felt-line);
+  border: 2.5px solid #d4af37;
   background: transparent;
   box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.15);
   display: flex;
@@ -281,6 +282,10 @@
 
 .cq-casino-chip--black {
   background: radial-gradient(circle at 30% 25%, #4a4a4a 0%, #1a1a1a 45%, #000 100%);
+  border: 3px solid #fff;
+}
+
+.cq-casino-chip--red {
   border: 3px solid #fff;
 }
 

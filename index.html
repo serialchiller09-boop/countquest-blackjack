@@ -16421,17 +16421,21 @@ function runTests() {
   const navApp = window.app;
   const navOrigPhase = navApp.phase;
   const navOrigTutorial = { step: navApp.save.tutorial.step, completed: navApp.save.tutorial.completed };
-  navApp.tutorialNavBusyUntil = 0;
+  const clearTutorialNavLock = () => { navApp.tutorialNavBusyUntil = 0; };
+  clearTutorialNavLock();
   navApp.phase = 'tutorial';
   navApp.save.tutorial = { step: 0, completed: false };
   navApp.tutorialBack();
   check(navApp.phase === 'menu', 'tutorial back on page 1 exits to menu');
+  clearTutorialNavLock();
   navApp.phase = 'tutorial';
   navApp.save.tutorial = { step: 2, completed: false };
   navApp.tutorialBack();
   check(navApp.save.tutorial.step === 1, 'tutorial back decrements step');
+  clearTutorialNavLock();
   navApp.tutorialNext();
   check(navApp.save.tutorial.step === 2, 'tutorial next increments step');
+  clearTutorialNavLock();
   navApp.save.tutorial.step = 4;
   navApp.tutorialBack();
   check(navApp.save.tutorial.step === 3, 'tutorial back from final page');
@@ -16571,8 +16575,10 @@ function runTests() {
   const speedMet = evaluateDailyTrainingProgress(speedGoal, {}, 'drillSession', { drillId: 'count-speed', accuracy: 100, attempts: 1 });
   check(speedMet.met, 'speed drill daily goal met at 100%');
   const combinedGoal = DAILY_TRAINING_GOAL_TYPES.find(g => g.type === 'combinedHands');
+  const at48 = evaluateDailyTrainingProgress(combinedGoal, { hands: 48 }, 'combinedHand');
+  check(!at48.met && at48.progress.hands === 49, 'combined hands below target');
   const at49 = evaluateDailyTrainingProgress(combinedGoal, { hands: 49 }, 'combinedHand');
-  check(!at49.met && at49.progress.hands === 50, 'combined hands increments to 50');
+  check(at49.progress.hands === 50, 'combined hands increments to 50');
   check(at49.met, 'combined 50 hands goal completes');
   check(computeDailyTrainingReward(speedGoal, 3) > speedGoal.rewardChips, 'streak increases reward');
   check(document.getElementById('daily-training-panel'), 'daily training panel');
@@ -16823,7 +16829,8 @@ function runTests() {
   const evSave = defaultSave();
   evSave.chips = 5000;
   evSave.stats.helpLevel = 1;
-  const ev = getCurrentSpecialEvent();
+  // Pin to a table event — getCurrentSpecialEvent() rotates weekly (dealer-night has no table tier).
+  const ev = SPECIAL_EVENTS.find(e => e.id === 'count-rush');
   const evTier = getSpecialEventTier(ev);
   check(evTier && evTier.entryFeeChips < getTableTier(ev.baseTierId).entryFeeChips, 'event entry discount');
   const evPaid = payTableEntry(evSave, getTableTier(ev.baseTierId), {

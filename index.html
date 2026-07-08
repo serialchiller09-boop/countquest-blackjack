@@ -22,6 +22,7 @@
   </script>
   <link rel="stylesheet" href="css/tailwind.css" />
   <link rel="stylesheet" href="css/app.css" />
+  <link rel="stylesheet" href="css/casino-felt-table.css" />
 </head>
 <body class="min-h-screen text-white font-sans antialiased">
 
@@ -828,7 +829,7 @@
   <!-- UNIFIED CASINO TABLE (bet + playing — scroll-free) -->
   <section id="screen-casino-play" class="hidden casino-play-shell" aria-label="Blackjack table">
     <div id="screen-table" class="game-screen max-w-6xl mx-auto w-full h-full casino-table-viewport">
-      <div class="casino-table-topbar">
+      <div class="casino-table-topbar cq-dealer-clipboard">
         <div id="how-to-count-bet" class="text-xs text-center text-emerald-300/70 max-w-3xl mx-auto"></div>
         <div id="count-hud-bet" class="count-box grid grid-cols-2 sm:grid-cols-4 gap-1.5 max-w-4xl mx-auto transition-all duration-300"></div>
         <div id="bet-advice" class="text-center text-amber-200/90 text-[10px] px-1 hidden w-full max-w-full min-w-0 mx-auto"></div>
@@ -836,7 +837,57 @@
         <div id="strategy-hint" class="hidden strategy-hint-bar text-center max-w-4xl mx-auto"></div>
         <div id="shoe-status" class="text-center text-[10px] text-emerald-400/55 font-mono max-w-4xl mx-auto px-2"></div>
       </div>
-      <div class="game-table-wrap casino-table-surface casino-felt felt flex-1 min-h-0">
+      <div class="game-table-wrap casino-table-surface casino-felt felt cq-authentic-felt flex-1 min-h-0">
+        <div class="cq-felt-svg-wrap" aria-hidden="true">
+          <svg id="cq-felt-markings" viewBox="0 0 1200 680" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="cqFeltGrad" cx="50%" cy="42%" r="72%">
+                <stop offset="0%" stop-color="#1a9a5c"/>
+                <stop offset="45%" stop-color="#127a4a"/>
+                <stop offset="100%" stop-color="#0a4d2e"/>
+              </radialGradient>
+              <filter id="cqFeltTextEmboss" x="-4%" y="-4%" width="108%" height="108%">
+                <feDropShadow dx="0" dy="1" stdDeviation="1" flood-color="#000" flood-opacity="0.45"/>
+              </filter>
+              <path id="cqArcLeft21" d="M 95 520 A 220 220 0 0 1 95 340" fill="none"/>
+              <path id="cqArcRight21" d="M 1105 520 A 220 220 0 0 0 1105 340" fill="none"/>
+              <path id="cqArcFarLeft" d="M 48 560 A 180 180 0 0 1 48 380" fill="none"/>
+            </defs>
+            <rect width="1200" height="680" fill="url(#cqFeltGrad)"/>
+            <ellipse cx="600" cy="620" rx="540" ry="280" fill="none" stroke="rgba(255,255,255,0.92)" stroke-width="4"/>
+            <ellipse cx="600" cy="610" rx="460" ry="230" fill="none" stroke="rgba(255,255,255,0.75)" stroke-width="2"/>
+            <g fill="none" stroke="rgba(255,255,255,0.88)" stroke-width="2.5">
+              <circle cx="165" cy="530" r="34"/><circle cx="310" cy="478" r="34"/><circle cx="455" cy="448" r="34"/>
+              <circle cx="600" cy="438" r="38"/><circle cx="745" cy="448" r="34"/><circle cx="890" cy="478" r="34"/>
+              <circle cx="1035" cy="530" r="34"/>
+            </g>
+            <text x="600" y="200" text-anchor="middle" class="cq-felt-paint-text cq-felt-paint-text-shadow" font-family="Bebas Neue, Impact, sans-serif" font-size="64" font-weight="700" filter="url(#cqFeltTextEmboss)">
+              <tspan fill="#c41e1e">BLACKJACK </tspan><tspan fill="#1a1208" font-size="48">PAYS 3 TO 2</tspan>
+            </text>
+            <text x="600" y="248" text-anchor="middle" class="cq-felt-paint-text cq-felt-title-sub cq-felt-paint-text-shadow" font-family="Bebas Neue, Impact, sans-serif" font-size="36" font-weight="700" fill="#1a1208" letter-spacing="3" filter="url(#cqFeltTextEmboss)">DEALER MUST HIT SOFT 17</text>
+            <text x="600" y="468" text-anchor="middle" class="cq-felt-paint-text cq-felt-paint-text-shadow" font-family="Bebas Neue, Impact, sans-serif" font-size="44" font-weight="700" fill="#f5d300" letter-spacing="4" filter="url(#cqFeltTextEmboss)">INSURANCE</text>
+            <text font-family="Bebas Neue, Impact, sans-serif" font-size="28" font-weight="700" fill="#f8f6f0" filter="url(#cqFeltTextEmboss)">
+              <textPath href="#cqArcLeft21" startOffset="50%" text-anchor="middle">PAYS 2 TO 1</textPath>
+            </text>
+            <text font-family="Bebas Neue, Impact, sans-serif" font-size="28" font-weight="700" fill="#f8f6f0" filter="url(#cqFeltTextEmboss)">
+              <textPath href="#cqArcRight21" startOffset="50%" text-anchor="middle">PAYS 2 TO 1</textPath>
+            </text>
+            <text font-family="Bebas Neue, Impact, sans-serif" font-size="24" font-weight="700" fill="#f8f6f0" filter="url(#cqFeltTextEmboss)">
+              <textPath href="#cqArcFarLeft" startOffset="50%" text-anchor="middle">2 PAYS TO 1</textPath>
+            </text>
+          </svg>
+        </div>
+        <div class="cq-chip-rack" aria-hidden="true">
+          <span class="cq-rack-chip cq-rack-chip--pink"></span>
+          <span class="cq-rack-chip cq-rack-chip--black"></span>
+          <span class="cq-rack-chip cq-rack-chip--green"></span>
+          <span class="cq-rack-chip cq-rack-chip--white"></span>
+          <span class="cq-rack-chip cq-rack-chip--purple"></span>
+          <span class="cq-rack-chip cq-rack-chip--red"></span>
+          <span class="cq-rack-chip cq-rack-chip--yellow"></span>
+          <span class="cq-rack-chip cq-rack-chip--black"></span>
+        </div>
+        <div class="cq-table-play-layer">
         <div class="casino-dealer-zone">
           <p class="text-[10px] uppercase tracking-wider text-emerald-300/65 mb-1">Dealer</p>
           <div id="dealer-cards" class="flex justify-center gap-1.5 flex-wrap min-h-[3.5rem]"></div>
@@ -862,7 +913,8 @@
           <div class="casino-seat casino-seat-human" data-seat="4" id="casino-seat-human">
             <div class="casino-seat-spot casino-seat-cards-mount">
               <div id="casino-seat-bet-indicator" class="casino-seat-bet-indicator hidden" aria-hidden="true">
-                <span class="casino-seat-bet-chip">$<span id="bet-placed-amount">0</span></span>
+                <span id="casino-seat-bet-chip-visual" class="casino-seat-bet-chip"></span>
+                <span id="bet-placed-amount" class="sr-only">0</span>
               </div>
             </div>
             <div id="player-hands" class="casino-seat-cards-wrap"></div>
@@ -871,6 +923,7 @@
           <div class="casino-seat casino-seat-empty casino-seat-ai-ready" data-seat="5" data-ai-slot="5" id="casino-seat-5"><div class="casino-seat-spot casino-seat-cards-mount" aria-hidden="true"><span class="casino-seat-available"><span class="casino-seat-available-icon"></span><span class="casino-seat-available-text">Open Seat</span></span></div><span class="casino-seat-label"><span class="casino-seat-num">5</span><span class="casino-seat-status">Open Seat</span></span></div>
           <div class="casino-seat casino-seat-empty casino-seat-ai-ready" data-seat="6" data-ai-slot="6" id="casino-seat-6"><div class="casino-seat-spot casino-seat-cards-mount" aria-hidden="true"><span class="casino-seat-available"><span class="casino-seat-available-icon"></span><span class="casino-seat-available-text">Open Seat</span></span></div><span class="casino-seat-label"><span class="casino-seat-num">6</span><span class="casino-seat-status">Open Seat</span></span></div>
           <div class="casino-seat casino-seat-empty casino-seat-ai-ready" data-seat="7" data-ai-slot="7" id="casino-seat-7"><div class="casino-seat-spot casino-seat-cards-mount" aria-hidden="true"><span class="casino-seat-available"><span class="casino-seat-available-icon"></span><span class="casino-seat-available-text">Open Seat</span></span></div><span class="casino-seat-label"><span class="casino-seat-num">7</span><span class="casino-seat-status">Open Seat</span></span></div>
+        </div>
         </div>
       </div>
       <div id="result-toast" class="hidden text-center text-sm font-bold max-w-3xl mx-auto mt-1"></div>

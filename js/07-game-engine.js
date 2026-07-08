@@ -5459,7 +5459,7 @@ class CountQuestApp {
       : '';
     const totalBet = tableAiSeatTotalBet(seat) || seat.bet || 0;
     const betChip = totalBet
-      ? `<span class="casino-seat-bet-chip">$${totalBet}</span>`
+      ? `<span class="casino-seat-bet-chip">${formatCasinoChipMarkup(totalBet)}</span>`
       : `<span class="casino-seat-available"><span class="casino-seat-available-icon"></span></span>`;
     let status = totalBet ? `$${totalBet}` : 'Ready';
     let statusCls = '';
@@ -5609,7 +5609,7 @@ class CountQuestApp {
 
     Sounds.play('chip');
     this.animateChipFly(amount);
-    document.getElementById('bet-placed-amount').textContent = amount;
+    updateCasinoSeatBetChipVisual(amount);
     const seatBet = document.getElementById('casino-seat-bet-indicator');
     if (seatBet) { seatBet.classList.remove('hidden'); seatBet.setAttribute('aria-hidden', 'false'); }
     await sleep(450);
@@ -7715,8 +7715,7 @@ class CountQuestApp {
   }
 
   updateSeatBetIndicator(amount) {
-    const el = document.getElementById('bet-placed-amount');
-    if (el) el.textContent = amount;
+    updateCasinoSeatBetChipVisual(amount);
     const ind = document.getElementById('casino-seat-bet-indicator');
     if (ind && (this.phase === 'bet' || this.phase === 'countConfirm')) {
       ind.classList.remove('hidden');
@@ -7892,7 +7891,8 @@ class CountQuestApp {
       const badges = isRec
         ? '<span class="absolute -top-2 -right-1 text-[9px] bg-gold text-stone-900 px-1 rounded">REC</span>'
         : isHighRoller ? '<span class="high-roller-tag">High Roller</span>' : '';
-      return `<button class="bet-chip px-5 py-2 ${colors} relative" data-bet="${c}"${isHighRoller ? ' title="Large bet — for experienced players"' : ''}>
+      const denom = c >= 100 ? '100' : c >= 25 ? '25' : c >= 5 ? '5' : '1';
+      return `<button class="bet-chip px-5 py-2 ${colors} relative" data-bet="${c}" data-denom="${denom}"${isHighRoller ? ' title="Large bet — for experienced players"' : ''}>
         $${c}${badges}
       </button>`;
     };
@@ -7904,8 +7904,7 @@ class CountQuestApp {
     betInput.max = this.practice ? 1_000_000 : Math.max(this.minBet, this.bankroll);
     betInput.step = 1;
     betInput.value = rec || this.minBet;
-    const seatAmt = document.getElementById('bet-placed-amount');
-    if (seatAmt) seatAmt.textContent = betInput.value;
+    updateCasinoSeatBetChipVisual(betInput.value);
     const seatInd = document.getElementById('casino-seat-bet-indicator');
     if (seatInd) {
       seatInd.classList.remove('hidden');

@@ -435,6 +435,21 @@ class TestIndexHtmlStructure(unittest.TestCase):
                 self.assertTrue((ROOT / "js" / name).is_file(), f"missing js/{name}")
         self.assertTrue((ROOT / "css" / "app.css").is_file())
 
+    def test_authentic_casino_felt_table(self) -> None:
+        shell = load_index_html()
+        self.assertIn('id="cq-felt-markings"', shell)
+        self.assertIn("BLACKJACK", shell)
+        self.assertIn("PAYS 3 TO 2", shell)
+        self.assertIn("DEALER MUST HIT SOFT 17", shell)
+        self.assertIn("INSURANCE", shell)
+        self.assertIn("cq-authentic-felt", shell)
+        self.assertIn("cq-dealer-clipboard", shell)
+        self.assertIn("casino-felt-table.css", shell)
+        self.assertTrue((ROOT / "css" / "casino-felt-table.css").is_file())
+        css = (ROOT / "css" / "casino-felt-table.css").read_text(encoding="utf-8")
+        self.assertIn("cq-chip-rack", css)
+        self.assertIn("cq-casino-chip", css)
+
     def test_unified_casino_table_layout(self) -> None:
         html = load_app_source()
         self.assertIn("casino-play-shell", html)

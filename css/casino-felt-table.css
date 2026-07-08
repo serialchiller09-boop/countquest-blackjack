@@ -1,0 +1,401 @@
+/* Authentic casino felt table — CountQuest training overlay */
+
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+
+:root {
+  --cq-felt-paint-red: #c41e1e;
+  --cq-felt-paint-black: #1a1208;
+  --cq-felt-paint-yellow: #f5d300;
+  --cq-felt-paint-white: #f8f6f0;
+  --cq-felt-green-deep: #0d5c38;
+  --cq-felt-green-mid: #127a4a;
+  --cq-felt-green-light: #1a9a5c;
+  --cq-felt-line: rgba(255, 255, 255, 0.92);
+  --cq-felt-font: 'Bebas Neue', Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  --cq-clipboard-wood: #3d2817;
+  --cq-clipboard-wood-light: #5c3d24;
+}
+
+/* ── Dealer clipboard HUD (count display) ── */
+.cq-dealer-clipboard.casino-table-topbar {
+  background: linear-gradient(180deg, var(--cq-clipboard-wood-light) 0%, var(--cq-clipboard-wood) 100%);
+  border: 2px solid #2a1a0e;
+  border-radius: 0.35rem;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 4px 14px rgba(0, 0, 0, 0.45);
+  padding: 0.35rem 0.5rem 0.4rem;
+  margin-bottom: 0.2rem;
+}
+
+.cq-dealer-clipboard .count-box {
+  backdrop-filter: none;
+}
+
+.cq-dealer-clipboard .count-box > div,
+.cq-dealer-clipboard .count-box [data-count] {
+  background: #0a1612 !important;
+  border: 1px solid #2d4a3a !important;
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.5) !important;
+  color: #7dffb8 !important;
+  font-family: 'Courier New', Consolas, monospace;
+}
+
+.cq-dealer-clipboard #how-to-count-bet,
+.cq-dealer-clipboard #shoe-status {
+  color: rgba(220, 235, 225, 0.75) !important;
+}
+
+.cq-dealer-clipboard #bet-advice,
+.cq-dealer-clipboard #strategy-hint {
+  color: #f5e6b8 !important;
+}
+
+/* ── Authentic felt surface ── */
+.cq-authentic-felt.casino-table-surface {
+  position: relative;
+  overflow: hidden;
+  border: 4px solid #0a3d24;
+  border-radius: 2.5rem 2.5rem 1.25rem 1.25rem;
+  background: radial-gradient(ellipse 95% 75% at 50% 38%, var(--cq-felt-green-light) 0%, var(--cq-felt-green-mid) 42%, var(--cq-felt-green-deep) 100%);
+  box-shadow:
+    inset 0 0 120px rgba(0, 0, 0, 0.35),
+    inset 0 -40px 80px rgba(0, 0, 0, 0.2),
+    0 12px 40px rgba(0, 0, 0, 0.5);
+  padding: 0;
+  min-height: 0;
+}
+
+.cq-felt-svg-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.cq-felt-svg-wrap svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.cq-felt-paint-text {
+  font-family: var(--cq-felt-font);
+  letter-spacing: 0.04em;
+  paint-order: stroke fill;
+}
+
+.cq-felt-paint-text-shadow {
+  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.35)) drop-shadow(0 2px 3px rgba(0, 0, 0, 0.25));
+}
+
+/* ── Chip rack (decorative, top center) ── */
+.cq-chip-rack {
+  position: absolute;
+  top: 0.35rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.12rem;
+  padding: 0.2rem 0.55rem 0.15rem;
+  background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%);
+  border-radius: 0.25rem 0.25rem 0.15rem 0.15rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  pointer-events: none;
+}
+
+.cq-rack-chip {
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 50%;
+  position: relative;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.5), 0 3px 6px rgba(0, 0, 0, 0.35);
+  border: 2px solid rgba(255, 255, 255, 0.35);
+}
+
+.cq-rack-chip::after {
+  content: '';
+  position: absolute;
+  inset: 18%;
+  border-radius: 50%;
+  border: 1px dashed rgba(255, 255, 255, 0.45);
+}
+
+.cq-rack-chip--pink { background: radial-gradient(circle at 32% 28%, #ff9ec8, #e91e8c 55%, #9c1458); }
+.cq-rack-chip--black { background: radial-gradient(circle at 32% 28%, #555, #222 50%, #000); }
+.cq-rack-chip--green { background: radial-gradient(circle at 32% 28%, #6fdc8c, #1b8f3a 55%, #0d5c24); }
+.cq-rack-chip--white { background: radial-gradient(circle at 32% 28%, #fff, #e8e4dc 60%, #c8c4bc); border-color: #ccc; }
+.cq-rack-chip--purple { background: radial-gradient(circle at 32% 28%, #c9a0ff, #7c3aed 55%, #4c1d95); }
+.cq-rack-chip--red { background: radial-gradient(circle at 32% 28%, #ff8a80, #d32f2f 55%, #8b1a1a); }
+.cq-rack-chip--yellow { background: radial-gradient(circle at 32% 28%, #fff59d, #f9a825 55%, #c17900); }
+
+/* ── Interactive play layer ── */
+.cq-table-play-layer {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  padding: 2.1rem 0.35rem 0.3rem;
+}
+
+.cq-authentic-felt .casino-dealer-zone {
+  flex-shrink: 0;
+  text-align: center;
+  padding: 0.15rem 0 0.25rem;
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.cq-authentic-felt .casino-dealer-zone > p:first-child {
+  display: none;
+}
+
+.cq-authentic-felt .casino-dealer-zone #dealer-cards {
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+}
+
+.cq-authentic-felt .casino-dealer-zone #dealer-total {
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.85);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Arc seat layout (7 positions along felt) */
+.cq-authentic-felt #casino-seat-grid {
+  display: block;
+  position: relative;
+  flex: 1;
+  min-height: 7rem;
+  margin-top: auto;
+  padding: 0;
+  gap: 0;
+  overflow: visible;
+}
+
+.cq-authentic-felt #casino-seat-grid::before {
+  display: none;
+}
+
+.cq-authentic-felt .casino-seat {
+  position: absolute;
+  width: 13.5%;
+  min-width: 2.4rem;
+  max-width: 5.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  transform-origin: center bottom;
+}
+
+.cq-authentic-felt #casino-seat-1 { left: 2%; bottom: 8%; }
+.cq-authentic-felt #casino-seat-2 { left: 14%; bottom: 22%; }
+.cq-authentic-felt #casino-seat-3 { left: 27%; bottom: 32%; }
+.cq-authentic-felt #casino-seat-human { left: 50%; bottom: 38%; transform: translateX(-50%); width: 18%; max-width: 7rem; z-index: 4; }
+.cq-authentic-felt #casino-seat-5 { right: 27%; bottom: 32%; left: auto; }
+.cq-authentic-felt #casino-seat-6 { right: 14%; bottom: 22%; left: auto; }
+.cq-authentic-felt #casino-seat-7 { right: 2%; bottom: 8%; left: auto; }
+
+.cq-authentic-felt .casino-seat-spot {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  border: 2px solid var(--cq-felt-line);
+  background: transparent;
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.15rem;
+}
+
+.cq-authentic-felt .casino-seat-empty .casino-seat-spot {
+  opacity: 0.55;
+}
+
+.cq-authentic-felt .casino-seat-label {
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 0.2rem;
+  padding: 0.05rem 0.2rem;
+  max-height: none;
+}
+
+.cq-authentic-felt .casino-seat-num,
+.cq-authentic-felt .casino-seat-status {
+  font-size: 0.42rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.cq-authentic-felt .casino-seat-human .casino-seat-cards-wrap {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 0.35rem;
+  filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.45));
+}
+
+.cq-authentic-felt .casino-seat-ai-cards {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 0.2rem;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4));
+}
+
+/* ── 3D casino chips ── */
+.cq-casino-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 50%;
+  font-family: var(--cq-felt-font);
+  font-size: 0.55rem;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  position: relative;
+  box-shadow:
+    0 3px 0 rgba(0, 0, 0, 0.45),
+    0 5px 14px rgba(0, 0, 0, 0.4),
+    inset 0 2px 4px rgba(255, 255, 255, 0.15);
+}
+
+.cq-casino-chip::before {
+  content: '';
+  position: absolute;
+  inset: 14%;
+  border-radius: 50%;
+  border: 2px dashed rgba(255, 255, 255, 0.5);
+}
+
+.cq-casino-chip--black {
+  background: radial-gradient(circle at 30% 25%, #4a4a4a 0%, #1a1a1a 45%, #000 100%);
+  border: 3px solid #fff;
+}
+
+.cq-casino-chip--black .cq-chip-face {
+  background: radial-gradient(circle, #e91e8c 0%, #9c1458 100%);
+  width: 55%;
+  height: 55%;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.cq-authentic-felt .casino-seat-bet-chip,
+.cq-authentic-felt .casino-seat-bet-indicator .casino-seat-bet-chip {
+  background: none;
+  border: none;
+  padding: 0;
+  min-width: 0;
+  font-size: inherit;
+}
+
+.cq-authentic-felt .bet-chip {
+  border-radius: 50%;
+  font-family: var(--cq-felt-font);
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.4), 0 5px 12px rgba(0, 0, 0, 0.35);
+}
+
+.cq-authentic-felt .bet-chip[data-denom="100"] {
+  background: radial-gradient(circle at 30% 25%, #555, #111 50%, #000);
+  border-color: #fff !important;
+  color: #fff;
+}
+
+.cq-authentic-felt .bet-chip[data-denom="25"] {
+  background: radial-gradient(circle at 30% 25%, #6fdc8c, #1b8f3a 55%, #0d5c24);
+  border-color: #fff !important;
+}
+
+.cq-authentic-felt .bet-chip[data-denom="5"] {
+  background: radial-gradient(circle at 30% 25%, #ff9ec8, #e91e8c 55%, #9c1458);
+  border-color: #fff !important;
+}
+
+.cq-authentic-felt .bet-chip[data-denom="1"] {
+  background: radial-gradient(circle at 30% 25%, #fff, #e0ddd4 60%, #b8b4ac);
+  border-color: #999 !important;
+  color: #333;
+}
+
+/* ── Bicycle-style cards on authentic felt ── */
+.cq-authentic-felt .playing-card {
+  border-radius: 0.4rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), 0 6px 16px rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.cq-authentic-felt .playing-card.back {
+  background: #b91c1c;
+  border: 2px solid #fff;
+  overflow: hidden;
+}
+
+.cq-authentic-felt .playing-card.back .card-inner {
+  inset: 0.28rem;
+  border-radius: 0.28rem;
+  border: 2px solid #fff;
+  background:
+    repeating-linear-gradient(45deg, transparent, transparent 3px, rgba(255, 255, 255, 0.08) 3px, rgba(255, 255, 255, 0.08) 6px),
+    repeating-linear-gradient(-45deg, transparent, transparent 3px, rgba(255, 255, 255, 0.06) 3px, rgba(255, 255, 255, 0.06) 6px),
+    radial-gradient(ellipse at center, #dc2626 0%, #991b1b 70%, #7f1d1d 100%);
+}
+
+.cq-authentic-felt .playing-card.back .card-inner::before {
+  content: '';
+  position: absolute;
+  inset: 0.35rem;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 0.15rem;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath fill='rgba(255,255,255,0.12)' d='M20 2 L38 20 L20 38 L2 20 Z'/%3E%3C/svg%3E") center/1.2rem repeat;
+}
+
+.cq-authentic-felt .playing-card.red {
+  color: #c41e1e;
+}
+
+.cq-authentic-felt .playing-card .corner {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-weight: 700;
+}
+
+/* Bet rail — felt-integrated */
+.cq-authentic-felt .casino-felt-bet-rail {
+  background: rgba(0, 0, 0, 0.25);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  margin: 0.15rem 0.5rem;
+  border-radius: 0.5rem;
+}
+
+.cq-authentic-felt .casino-felt-bet-panel .felt-bet-controls button#btn-deal {
+  font-family: var(--cq-felt-font);
+  letter-spacing: 0.06em;
+}
+
+/* Mobile: simplify arc text visibility, keep markings */
+@media (max-width: 640px) {
+  .cq-chip-rack { transform: translateX(-50%) scale(0.85); top: 0.2rem; }
+  .cq-authentic-felt .casino-seat-spot { width: 2.2rem; height: 2.2rem; }
+  .cq-felt-svg-wrap .cq-felt-title-sub { display: none; }
+}
+
+@media (max-width: 400px) {
+  .cq-authentic-felt #casino-seat-grid .casino-seat { width: 12%; }
+  .cq-authentic-felt .casino-seat-spot { width: 1.9rem; height: 1.9rem; }
+}

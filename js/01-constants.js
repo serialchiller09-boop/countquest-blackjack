@@ -3,6 +3,28 @@
 const SAVE_KEY = 'countquest-v2';
 const SAVE_VERSION = 18;
 
+/** 3D casino chip markup for felt table betting spots. */
+function formatCasinoChipMarkup(amount) {
+  const n = Math.max(1, Math.round(Number(amount) || 0));
+  if (n >= 100) {
+    return `<span class="cq-casino-chip cq-casino-chip--black" aria-hidden="true"><span class="cq-chip-face">8</span></span>`;
+  }
+  if (n >= 25) {
+    return `<span class="cq-casino-chip cq-casino-chip--green" style="background:radial-gradient(circle at 30% 25%,#6fdc8c,#1b8f3a 55%,#0d5c24)" aria-hidden="true">25</span>`;
+  }
+  if (n >= 5) {
+    return `<span class="cq-casino-chip" style="background:radial-gradient(circle at 30% 25%,#ff9ec8,#e91e8c 55%,#9c1458)" aria-hidden="true">5</span>`;
+  }
+  return `<span class="cq-casino-chip" style="background:radial-gradient(circle at 30% 25%,#fff,#e0ddd4 60%,#b8b4ac);color:#333" aria-hidden="true">1</span>`;
+}
+
+function updateCasinoSeatBetChipVisual(amount) {
+  const chip = document.getElementById('casino-seat-bet-chip-visual');
+  const hiddenAmt = document.getElementById('bet-placed-amount');
+  if (hiddenAmt) hiddenAmt.textContent = String(amount);
+  if (chip) chip.innerHTML = formatCasinoChipMarkup(amount);
+}
+
 /** Plan 21 lobby — 8 Ball Pool production home (Clubs = dedicated left button) */
 const LOBBY_NAV_ITEMS = [
   { id: 'training-aids', icon: '📖', label: 'Aids', action: 'tutorial', title: 'Training Aids' },

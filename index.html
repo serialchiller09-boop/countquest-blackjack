@@ -465,6 +465,85 @@
       color: rgba(52,211,153,.42);
       font-weight: 600;
     }
+    .casino-seat-ai {
+      grid-template-rows: var(--cq-seat-spot-size) minmax(1.35rem, auto) minmax(0, 0.85rem);
+      grid-template-areas: "spot" "cards" "label";
+      height: auto;
+      max-height: none;
+      overflow: visible;
+      border-color: rgba(167,243,208,.22);
+      background: linear-gradient(180deg, rgba(52,211,153,.06) 0%, rgba(0,0,0,.28) 100%);
+    }
+    .casino-seat-ai .casino-seat-spot {
+      border-style: solid;
+      border-color: rgba(167,243,208,.35);
+      padding: 0.12rem;
+    }
+    .casino-seat-ai-cards {
+      grid-area: cards;
+      width: 100%;
+      min-height: 1.35rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 0.12rem;
+      padding: 0.06rem 0.1rem;
+      overflow-x: auto;
+      overflow-y: visible;
+    }
+    .casino-seat-ai-hand {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.04rem;
+      flex: 0 0 auto;
+    }
+    .casino-seat-ai-hand-row {
+      display: flex;
+      justify-content: center;
+      gap: 0.05rem;
+      flex-wrap: nowrap;
+    }
+    .casino-ai-mini-card {
+      width: 1.15rem;
+      height: 1.55rem;
+      border-radius: 0.2rem;
+      background: #fff;
+      color: #1c1917;
+      font-size: 0.48rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,.35);
+      line-height: 1;
+    }
+    .casino-ai-mini-card.red { color: #dc2626; }
+    .casino-ai-mini-card.back {
+      background: linear-gradient(145deg, #1e3a5f, #0f172a);
+      color: rgba(147,197,253,.75);
+      font-size: 0.55rem;
+    }
+    .casino-seat-ai-total {
+      font-size: 0.42rem;
+      font-family: ui-monospace, monospace;
+      color: rgba(167,243,208,.65);
+      line-height: 1;
+    }
+    .casino-seat-ai .casino-seat-label .casino-seat-num {
+      font-size: 0.46rem;
+      color: rgba(167,243,208,.75);
+      text-transform: none;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+    .casino-seat-ai-result-win { color: rgba(52,211,153,.85); }
+    .casino-seat-ai-result-loss { color: rgba(248,113,113,.85); }
+    .casino-seat-ai-result-push { color: rgba(167,243,208,.55); }
     .casino-seat-human {
       grid-template-rows: var(--cq-seat-spot-size) minmax(2.5rem, auto) minmax(0, 0.8rem);
       grid-template-areas: "spot" "cards" "label";
@@ -963,6 +1042,29 @@
       .casino-seat-human .casino-seat-cards-wrap.casino-seat-cards-split .casino-player-hand,
       .casino-seat-human .casino-seat-cards-wrap:has(.casino-player-hand:nth-child(2)) .casino-player-hand {
         min-width: 3.5rem;
+      }
+      .casino-seat-human .casino-seat-cards-wrap.casino-seat-cards-split-3 .casino-hand-cards .playing-card,
+      .casino-seat-human .casino-seat-cards-wrap:has(.casino-player-hand:nth-child(3)) .casino-hand-cards .playing-card {
+        width: 1.45rem;
+        height: 2rem;
+      }
+      .casino-seat-human .casino-seat-cards-wrap.casino-seat-cards-split-4 .casino-hand-cards .playing-card,
+      .casino-seat-human .casino-seat-cards-wrap:has(.casino-player-hand:nth-child(4)) .casino-hand-cards .playing-card {
+        width: 1.25rem;
+        height: 1.72rem;
+      }
+      .casino-seat-human .casino-seat-cards-wrap:has(.casino-player-hand:nth-child(3)) .casino-player-hand {
+        min-width: 2.65rem;
+        max-width: 30%;
+      }
+      .casino-seat-human .casino-seat-cards-wrap:has(.casino-player-hand:nth-child(4)) .casino-player-hand {
+        min-width: 2.15rem;
+        max-width: 23%;
+        padding: 0.05rem 0.06rem 0.03rem;
+      }
+      .casino-seat-human .casino-seat-cards-wrap:has(.casino-player-hand:nth-child(4)) .casino-player-hand > p {
+        font-size: 0.42rem !important;
+        line-height: 1.05;
       }
       .casino-seat-bet-chip { min-width: 1.85rem; min-height: 1.85rem; font-size: 0.55rem; }
     }
@@ -1765,7 +1867,7 @@
     </div>
     <div id="training-daily-goal" class="felt rounded-xl p-4 border border-cyan-800/25 space-y-2"></div>
     <div id="training-drill-list" class="grid gap-3"></div>
-    <p id="training-mode-footer" class="text-center text-xs text-emerald-500/50 px-2">More drills coming soon — each card below will become a full training session.</p>
+    <p id="training-mode-footer" class="text-center text-xs text-emerald-500/50 px-2">All drills are live — pick a card to start a focused training session.</p>
     <button id="btn-training-history" type="button" class="w-full py-3 rounded-xl bg-cyan-950/40 hover:bg-cyan-950/60 border border-cyan-700/30 text-sm text-cyan-200">📈 Training History</button>
     <button id="btn-training-mistakes" type="button" class="w-full py-3 rounded-xl bg-red-950/40 hover:bg-red-950/60 border border-red-700/30 text-sm text-red-200">📋 Review Mistakes</button>
     <button id="btn-training-back" type="button" class="w-full py-3 rounded-xl bg-white/10 hover:bg-white/15 text-sm">← Main Menu</button>
@@ -2947,25 +3049,25 @@ const TABLE_TIERS = [
   {
     id: 'casual', name: 'Casual', icon: '🎲',
     entryFeeChips: 200, entryFeeGems: 0,
-    minChips: 800, minHelpLevel: 1, minRank: 0,
+    minChips: 800, minHelpLevel: 0, minRank: 0,
     minBet: 25, maxBet: 500, unitSize: 25,
-    desc: 'Comfortable blinds — Help Level 1+ with a real bankroll buffer.',
+    desc: 'Comfortable blinds — build your bankroll with mid-stakes action.',
     theme: 'classic',
   },
   {
     id: 'high-roller', name: 'High Roller', icon: '🎰',
     entryFeeChips: 1000, entryFeeGems: 0,
-    minChips: 5000, minHelpLevel: 2, minRank: 1,
+    minChips: 5000, minHelpLevel: 0, minRank: 1,
     minBet: 100, maxBet: 2500, unitSize: 100,
-    desc: 'Serious action — Apprentice rank & Help Level 2+ required.',
+    desc: 'Serious action — Apprentice rank and a deep bankroll required.',
     theme: 'neon',
   },
   {
     id: 'pro', name: 'Pro', icon: '👑',
     entryFeeChips: 5000, entryFeeGems: 1,
-    minChips: 20000, minHelpLevel: 3, minRank: 2,
+    minChips: 20000, minHelpLevel: 0, minRank: 2,
     minBet: 500, maxBet: 10000, unitSize: 500,
-    desc: 'Elite tier — 1 gem + 5,000 chips entry. Expert rank, Help Level 3+.',
+    desc: 'Elite tier — 1 gem + 5,000 chips entry. Expert rank required.',
     theme: 'monte',
   },
 ];
@@ -6805,6 +6907,59 @@ function createDealerAISeats(count = DEALER_MODE.defaultPlayers) {
   }));
 }
 
+/** Seat numbers around the human (seat 4) on the 7-seat casino table. */
+const TABLE_AI_SEAT_NUMS = [1, 2, 3, 5, 6, 7];
+const TABLE_DEAL_ORDER = [1, 2, 3, 4, 5, 6, 7];
+const TABLE_AI_MAX_SPLITS = 3;
+
+function createTableAiSeats() {
+  const picks = shuffleArray([...DEALER_AI_ROSTER]).slice(0, TABLE_AI_SEAT_NUMS.length);
+  const seats = {};
+  TABLE_AI_SEAT_NUMS.forEach((seatNum, i) => {
+    const p = picks[i];
+    seats[seatNum] = {
+      seatNum,
+      name: p.name,
+      avatar: p.avatar,
+      bet: 0,
+      insurance: 0,
+      hands: [],
+      results: [],
+    };
+  });
+  return seats;
+}
+
+function tableAiSplitCount(seat) {
+  return Math.max(0, (seat.hands?.length || 1) - 1);
+}
+
+function tableAiSeatTotalBet(seat) {
+  return (seat.hands || []).reduce((sum, hs) => sum + (hs.bet || 0), 0);
+}
+
+function renderTableAiMiniCard(card, hidden = false) {
+  if (hidden) return '<div class="casino-ai-mini-card back">?</div>';
+  const red = card.suit === 'H' || card.suit === 'D';
+  return `<div class="casino-ai-mini-card ${red ? 'red' : ''}">${card.rank}</div>`;
+}
+
+function tableAiStrategyAction(handState, dealerUpRank, rules, splitCount, snap, systemId = 'hi-lo') {
+  const canDouble = handState.hand.size === 2 && !handState.doubled;
+  const canSplit = handState.hand.size === 2
+    && handState.hand.cards[0].rank === handState.hand.cards[1].rank
+    && !handState.fromSplit && !handState.splitAces
+    && splitCount < TABLE_AI_MAX_SPLITS;
+  const stratOpts = { trueCount: snap?.trueCount ?? null, countingSystemId: systemId };
+  let advice = advise(handState.hand, dealerUpRank, canDouble, canSplit, stratOpts);
+  let action = advice.action;
+  if (action === 'surrender') action = 'stand';
+  if (action === 'split' && canSplit) return 'split';
+  if (action === 'double' && canDouble) return 'double';
+  if (action === 'double') return 'hit';
+  return action;
+}
+
 function dealerAIBetForSeat(snapshot, minBet, maxBet) {
   const units = betSpreadUnitsFromCountSnapshot(snapshot);
   return Math.min(maxBet, Math.max(minBet, minBet * units));
@@ -7833,6 +7988,7 @@ class CountQuestApp {
     this.revealHoleAnim = false;
     this.lastHiLoTagDealt = 0;
     this.dealing = false;
+    this.tableAiSeats = null;
     this.drillState = null;
     this.dailyChallenge = null;
     this.dailyTracker = null;
@@ -9717,6 +9873,7 @@ class CountQuestApp {
     this.save.settings.minBet = tier.minBet;
     this.save.settings.unitSize = tier.unitSize;
     this.applyTheme(tier.theme);
+    this.tableAiSeats = null;
     this.save.sessionActive = true;
     this.save.sessionHands = 0;
     this.save.sessionNetPL = 0;
@@ -10422,6 +10579,7 @@ class CountQuestApp {
     this.save.sessionNetPL = 0;
     this.session = { start: this.bankroll, wagered: 0, netPL: 0, hands: 0, insTaken: 0, insWon: 0,
       decisions: 0, decisionsCorrect: 0, countQuizCorrect: 0, countQuizTotal: 0, betStreak: 0 };
+    this.tableAiSeats = null;
     this.shoe = new Shoe(this.settings.numDecks);
     this.counter = this.createCounter();
     const profile = drill === 'count-shoe' ? 'drill-count' : drill === 'decisions' ? 'drill-decisions'
@@ -10560,6 +10718,7 @@ class CountQuestApp {
     this.save.sessionMode = null;
     this.save.sessionDrill = null;
     this.save.sessionTableTier = null;
+    this.tableAiSeats = null;
     this.persist();
     this.phase = 'menu';
     this.render();
@@ -13064,6 +13223,162 @@ class CountQuestApp {
     document.getElementById('modal-shoe').showModal();
   }
 
+  usesTableAiSeats() {
+    return !this.save.sessionDrill && !!this.session;
+  }
+
+  ensureTableAiSeats() {
+    if (!this.usesTableAiSeats()) {
+      this.tableAiSeats = null;
+      return;
+    }
+    if (!this.tableAiSeats) this.tableAiSeats = createTableAiSeats();
+  }
+
+  placeTableAiBets() {
+    if (!this.tableAiSeats || !this.shoe) return;
+    const snap = this.counter.getCountSnapshot(this.shoe);
+    const maxBet = this.session?.tableMaxBet || Math.max(this.minBet * 6, Math.floor(this.bankroll * 0.08));
+    for (const seat of Object.values(this.tableAiSeats)) {
+      const bet = dealerAIBetForSeat(snap, this.minBet, maxBet);
+      seat.bet = bet;
+      seat.insurance = 0;
+      seat.results = [];
+      seat.hands = [{
+        hand: new Hand(), bet, finished: false,
+        doubled: false, fromSplit: false, splitAces: false,
+      }];
+    }
+  }
+
+  placeTableAiInsurance() {
+    if (!this.tableAiSeats || !this.shoe) return;
+    const snap = this.counter.getCountSnapshot(this.shoe);
+    for (const seat of Object.values(this.tableAiSeats)) {
+      seat.insurance = 0;
+      const mainBet = seat.hands[0]?.bet || this.minBet;
+      if (dealerAITakesInsurance(snap)) seat.insurance = Math.max(1, Math.floor(mainBet / 2));
+    }
+  }
+
+  async tableAiSplitHand(seat, handIdx) {
+    const hs = seat.hands[handIdx];
+    const [a, b] = hs.hand.cards;
+    const isAces = a.rank === 'A';
+    const h1 = new Hand([a]);
+    const h2 = new Hand([b]);
+    this.dealCardAndUpdateRunningCount(h1, `ai-${seat.seatNum}-split`);
+    this.dealCardAndUpdateRunningCount(h2, `ai-${seat.seatNum}-split`);
+    seat.hands.splice(handIdx, 1,
+      { hand: h1, bet: hs.bet, finished: isAces, doubled: false, fromSplit: true, splitAces: isAces },
+      { hand: h2, bet: hs.bet, finished: isAces, doubled: false, fromSplit: true, splitAces: isAces },
+    );
+    seat.bet = tableAiSeatTotalBet(seat);
+  }
+
+  async playTableAiSeats() {
+    if (!this.tableAiSeats) return;
+    const up = this.dealer.cards[0]?.rank;
+    if (!up) return;
+    const snap = this.shoe ? this.counter.getCountSnapshot(this.shoe) : null;
+    const systemId = this.activeCountingSystem();
+    for (const seatNum of TABLE_AI_SEAT_NUMS) {
+      const seat = this.tableAiSeats[seatNum];
+      if (!seat) continue;
+      let guard = 0;
+      while (seat.hands.some(h => !h.finished) && guard++ < 48) {
+        const hi = seat.hands.findIndex(h => !h.finished);
+        if (hi < 0) break;
+        const hs = seat.hands[hi];
+        if (hs.hand.isBlackjack()) { hs.finished = true; continue; }
+        const action = tableAiStrategyAction(hs, up, this.rules, tableAiSplitCount(seat), snap, systemId);
+        if (action === 'split') {
+          await this.tableAiSplitHand(seat, hi);
+          this.render();
+          await sleep(140);
+          continue;
+        }
+        if (action === 'double') {
+          hs.doubled = true;
+          hs.bet *= 2;
+          seat.bet = tableAiSeatTotalBet(seat);
+          this.dealCardAndUpdateRunningCount(hs.hand, `ai-${seatNum}-double`);
+          hs.finished = true;
+        } else if (action === 'hit') {
+          this.dealCardAndUpdateRunningCount(hs.hand, `ai-${seatNum}-hit`);
+          if (hs.hand.isBust() || hs.hand.is21()) hs.finished = true;
+        } else {
+          hs.finished = true;
+        }
+        this.render();
+        await sleep(110);
+      }
+      seat.bet = tableAiSeatTotalBet(seat);
+    }
+  }
+
+  async playTableAiThenDealer() {
+    await this.playTableAiSeats();
+    await this.dealerPlay();
+  }
+
+  settleTableAiSeats() {
+    if (!this.tableAiSeats) return;
+    for (const seat of Object.values(this.tableAiSeats)) {
+      seat.results = (seat.hands || []).map(hs => ({
+        r: dealerExpectedPlayerResult(hs.hand, this.dealer, hs.fromSplit),
+        label: seat.name,
+      }));
+    }
+  }
+
+  renderTableAiSeatHtml(seat) {
+    const showCards = ['playing', 'handEnd'].includes(this.phase);
+    const hands = seat.hands || [];
+    const handHtml = showCards && hands.length
+      ? hands.map((hs, hi) => {
+          const cards = hs.hand?.cards || [];
+          if (!cards.length) return '';
+          const total = hs.hand.size ? hs.hand.value() : '';
+          const suffix = hs.doubled ? ' ×2' : '';
+          return `<div class="casino-seat-ai-hand">
+            ${hands.length > 1 ? `<span class="casino-seat-ai-total">H${hi + 1}</span>` : ''}
+            <div class="casino-seat-ai-hand-row">${cards.map(c => renderTableAiMiniCard(c)).join('')}</div>
+            <span class="casino-seat-ai-total">${total}${suffix}</span>
+          </div>`;
+        }).join('')
+      : '';
+    const totalBet = tableAiSeatTotalBet(seat) || seat.bet || 0;
+    const betChip = totalBet
+      ? `<span class="casino-seat-bet-chip">$${totalBet}</span>`
+      : `<span class="casino-seat-available"><span class="casino-seat-available-icon"></span></span>`;
+    let status = totalBet ? `$${totalBet}` : 'Ready';
+    let statusCls = '';
+    if (this.phase === 'handEnd' && seat.results?.length) {
+      const wins = seat.results.filter(r => r.r === 'win' || r.r === 'blackjack').length;
+      const losses = seat.results.filter(r => r.r === 'loss' || r.r === 'surrender').length;
+      if (wins && !losses) { status = 'Won'; statusCls = 'casino-seat-ai-result-win'; }
+      else if (losses && !wins) { status = 'Lost'; statusCls = 'casino-seat-ai-result-loss'; }
+      else if (wins === losses) { status = 'Push'; statusCls = 'casino-seat-ai-result-push'; }
+      else { status = `${wins}W`; statusCls = 'casino-seat-ai-result-win'; }
+    } else if (seat.insurance > 0) {
+      status = `Ins $${seat.insurance}`;
+    }
+    return `<div class="casino-seat-spot casino-seat-cards-mount">${betChip}</div>
+      <div class="casino-seat-ai-cards">${handHtml || ''}</div>
+      <span class="casino-seat-label">
+        <span class="casino-seat-num">${seat.avatar} ${seat.name}</span>
+        <span class="casino-seat-status ${statusCls}">${status}</span>
+      </span>`;
+  }
+
+  renderEmptyCasinoSeatHtml(seatNum) {
+    return `<div class="casino-seat-spot casino-seat-cards-mount" aria-hidden="true">
+        <span class="casino-seat-available"><span class="casino-seat-available-icon"></span><span class="casino-seat-available-text">Open Seat</span></span>
+      </div>
+      <span class="casino-seat-label"><span class="casino-seat-num">${seatNum}</span><span class="casino-seat-status">Open Seat</span></span>`;
+  }
+
   beginBetPhase() {
     if (!this.ensureActiveSession()) {
       this.phase = 'menu';
@@ -13072,6 +13387,7 @@ class CountQuestApp {
     }
     this.refillPractice();
     this.ensureShoe();
+    this.ensureTableAiSeats();
     this.dealer.clear();
     this.handNetPL = 0;
     this.dealAnimIndex = 0;
@@ -13179,6 +13495,7 @@ class CountQuestApp {
     this.activeIdx = 0;
     this.splitDone = false;
     this.insuranceBet = 0;
+    this.placeTableAiBets();
 
     Sounds.play('chip');
     this.animateChipFly(amount);
@@ -13242,15 +13559,27 @@ class CountQuestApp {
     this.hideHole = false;
     this.dealer.clear();
     this.playerHands[0].hand.clear();
-    await this.dealCardAnimated(this.playerHands[0].hand, 'player');
-    await this.dealCardAnimated(this.dealer, 'dealer up');
-    await this.dealCardAnimated(this.playerHands[0].hand, 'player');
+    const useTableAi = !!this.tableAiSeats;
+    const dealToSeat = async (seatNum) => {
+      if (seatNum === 4) await this.dealCardAnimated(this.playerHands[0].hand, 'player');
+      else if (this.tableAiSeats?.[seatNum]) await this.dealCardAnimated(this.tableAiSeats[seatNum].hands[0].hand, `ai-${seatNum}`);
+    };
+    if (useTableAi) {
+      for (const seatNum of TABLE_DEAL_ORDER) await dealToSeat(seatNum);
+      await this.dealCardAnimated(this.dealer, 'dealer up');
+      for (const seatNum of TABLE_DEAL_ORDER) await dealToSeat(seatNum);
+    } else {
+      await this.dealCardAnimated(this.playerHands[0].hand, 'player');
+      await this.dealCardAnimated(this.dealer, 'dealer up');
+      await this.dealCardAnimated(this.playerHands[0].hand, 'player');
+    }
     this.hideHole = true;
     await this.dealCardAnimated(this.dealer, 'dealer hole', true);
 
     const up = this.dealer.cards[0]?.rank;
     if (!up) throw new Error('Dealer upcard missing');
     if (up === 'A') {
+      this.placeTableAiInsurance();
       this.dealing = false;
       this.showInsuranceModal();
       this.render();
@@ -13531,7 +13860,8 @@ class CountQuestApp {
       if (!st.finished) { this.render(); return; }
       this.activeIdx++;
     }
-    this.dealerPlay();
+    if (this.tableAiSeats) this.playTableAiThenDealer();
+    else this.dealerPlay();
   }
 
   async dealerPlay() {
@@ -13574,6 +13904,7 @@ class CountQuestApp {
       const label = this.playerHands.length > 1 ? `Hand ${i+1}` : 'You';
       return { ...this.settleHand(st, label), label };
     });
+    this.settleTableAiSeats();
   }
 
   finishHand() {
@@ -14385,7 +14716,7 @@ class CountQuestApp {
     if (this.phase === 'practice-range') this.renderPracticeRange();
     if (this.phase === 'bet' || this.phase === 'countConfirm') { this.renderBet(); this.renderCasinoSeats(); }
     if (this.phase === 'playing') { this.renderTable(); this.renderCasinoSeats(); }
-    if (this.phase === 'handEnd') this.renderHandEnd();
+    if (this.phase === 'handEnd') { this.renderHandEnd(); this.renderCasinoSeats(); }
     if (this.phase === 'drill-count') this.renderDrillCount();
     if (this.phase === 'drill-speed') this.renderSpeedDrill();
     if (this.phase === 'drill-card-burst') this.renderCardBurstDrill();
@@ -14907,11 +15238,10 @@ class CountQuestApp {
 
   renderTrainingMode() {
     const live = TRAINING_DRILLS.filter(d => d.status === 'live').length;
-    const soon = TRAINING_DRILLS.filter(d => d.status === 'soon').length;
     const histCount = getTrainingHistorySessions(this.save).length;
     document.getElementById('training-mode-subtitle').textContent = histCount
       ? `${live} drill${live === 1 ? '' : 's'} ready · ${histCount} session${histCount === 1 ? '' : 's'} logged`
-      : `${live} drill${live === 1 ? '' : 's'} ready · ${soon} coming soon`;
+      : `${live} drill${live === 1 ? '' : 's'} ready — all live`;
     document.getElementById('training-drill-list').innerHTML = TRAINING_DRILLS.map(d => this.renderTrainingDrillCard(d)).join('');
     this.renderDailyTrainingPanel('training');
   }
@@ -15263,9 +15593,17 @@ class CountQuestApp {
     const st = this.playerHands.length ? this.activeState() : null;
     const active = this.phase === 'playing' && st && !st.finished;
     human.classList.toggle('active-hand', !!active);
-    for (let seat = 1; seat <= 7; seat++) {
-      const el = document.getElementById(`casino-seat-${seat}`);
-      if (el && seat !== 4) el.classList.toggle('casino-seat-empty', true);
+    for (const seatNum of TABLE_AI_SEAT_NUMS) {
+      const el = document.getElementById(`casino-seat-${seatNum}`);
+      if (!el) continue;
+      const ai = this.tableAiSeats?.[seatNum];
+      if (ai) {
+        el.className = 'casino-seat casino-seat-ai';
+        el.innerHTML = this.renderTableAiSeatHtml(ai);
+      } else {
+        el.className = 'casino-seat casino-seat-empty casino-seat-ai-ready';
+        el.innerHTML = this.renderEmptyCasinoSeatHtml(seatNum);
+      }
     }
   }
 
@@ -15859,6 +16197,11 @@ function runTests() {
   check(typeof navApp.openBetSpreadDrill === 'function', 'openBetSpreadDrill handler');
 
   check(TABLE_TIERS.length === 4, 'four table tiers');
+  check(TABLE_TIERS.every(t => t.minHelpLevel === 0), 'table tiers open at any help level');
+  check(TABLE_AI_SEAT_NUMS.length === 6, 'six ai table seats');
+  check(Object.keys(createTableAiSeats()).length === 6, 'create table ai seats');
+  check(typeof tableAiStrategyAction === 'function', 'table ai strategy helper');
+  check(typeof renderTableAiMiniCard === 'function', 'table ai mini card render');
   eq(TABLE_WIN_MULTIPLIER, 1.8, 'table win multiplier');
   const tierBeginner = getTableTier('beginner');
   const tierPro = getTableTier('pro');

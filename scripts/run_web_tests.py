@@ -358,10 +358,12 @@ class TestIndexHtmlStructure(unittest.TestCase):
             end = min(next_markers) if next_markers else len(grid_html)
             spot_before_label(grid_html[start:end])
         self.assertIn("casino-seat-cards-mount", grid_html)
-        label_count = len(re.findall(r'class="casino-seat-label', html))
+        label_count = len(re.findall(r'class="casino-seat-label', grid_html))
         self.assertEqual(label_count, 7)
-        spot_count = len(re.findall(r'class="casino-seat-spot', html))
+        spot_count = len(re.findall(r'class="casino-seat-spot', grid_html))
         self.assertEqual(spot_count, 7)
+        self.assertIn("casino-seat-ai", html)
+        self.assertIn("createTableAiSeats", html)
 
     def test_casino_scroll_budget_at_720(self) -> None:
         """Static chrome + content budget at 1280x720 — values parsed from shipped CSS."""

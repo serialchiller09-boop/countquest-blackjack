@@ -309,7 +309,7 @@
       border-radius: 1.1rem 1.1rem 2rem 2rem;
       padding: 0.3rem 0.4rem 0.35rem;
       position: relative;
-      overflow: hidden;
+      overflow: visible;
       background: radial-gradient(ellipse 125% 90% at 50% 12%, var(--cq-felt-light) 0%, var(--cq-felt-mid) 40%, var(--cq-felt-deep) 100%);
       box-shadow: inset 0 0 70px rgba(0,0,0,.48), 0 10px 36px rgba(0,0,0,.42), 0 0 28px var(--cq-gold-glow);
     }
@@ -340,6 +340,7 @@
       align-items: end;
       padding: 0.35rem 0.5rem 0.5rem;
       position: relative;
+      overflow: visible;
     }
     #casino-seat-grid::before {
       content: '';
@@ -421,12 +422,20 @@
       color: rgba(167,243,208,.32);
     }
     .casino-seat-empty {
-      background: linear-gradient(180deg, rgba(10,61,40,.12) 0%, rgba(0,0,0,.24) 100%);
-      border-color: rgba(167,243,208,.1);
+      background: linear-gradient(180deg, rgba(10,61,40,.1) 0%, rgba(0,0,0,.22) 100%);
+      border-color: rgba(167,243,208,.12);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
+      opacity: 0.92;
     }
     .casino-seat-empty .casino-seat-spot {
       border-style: dashed;
-      border-color: rgba(167,243,208,.26);
+      border-color: rgba(167,243,208,.3);
+      background: radial-gradient(circle at 50% 40%, rgba(31,122,85,.14) 0%, rgba(0,0,0,.32) 75%);
+      box-shadow: inset 0 0 10px rgba(0,0,0,.22);
+    }
+    .casino-seat-empty .casino-seat-num {
+      color: rgba(167,243,208,.42);
+      font-weight: 600;
     }
     .casino-seat-available {
       display: flex;
@@ -544,6 +553,10 @@
     .casino-seat-ai-result-win { color: rgba(52,211,153,.85); }
     .casino-seat-ai-result-loss { color: rgba(248,113,113,.85); }
     .casino-seat-ai-result-push { color: rgba(167,243,208,.55); }
+    #casino-seat-human {
+      overflow: visible;
+      z-index: 4;
+    }
     .casino-seat-human {
       grid-template-rows: var(--cq-seat-spot-size) minmax(2.5rem, auto) minmax(0, 0.8rem);
       grid-template-areas: "spot" "cards" "label";
@@ -554,17 +567,19 @@
       border: 2px solid rgba(245, 158, 11, 0.55);
       box-shadow: 0 0 20px var(--cq-gold-glow), inset 0 0 24px rgba(245,158,11,.08), inset 0 1px 0 rgba(253,230,138,.12);
       background: linear-gradient(180deg, rgba(245,158,11,.08) 0%, rgba(0,0,0,.36) 100%);
-      z-index: 3;
+      z-index: 4;
     }
     .casino-seat-human .casino-seat-cards-wrap {
       grid-area: cards;
-      width: 100%;
+      position: relative;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(140%, 26rem);
       min-height: 2.5rem;
       max-height: none;
-      padding: 0.15rem 0.2rem 0.1rem;
-      gap: 0.15rem;
-      overflow-x: auto;
-      overflow-y: visible;
+      padding: 0.2rem 0.35rem 0.12rem;
+      gap: 0.18rem;
+      overflow: visible;
     }
     .casino-seat-human .casino-seat-cards-wrap .playing-card {
       width: 2.65rem;
@@ -573,25 +588,20 @@
     .casino-seat-human .casino-seat-cards-wrap.casino-seat-cards-split,
     .casino-seat-human .casino-seat-cards-wrap:has(.casino-player-hand:nth-child(2)) {
       flex-direction: row;
-      flex-wrap: nowrap;
-      justify-content: flex-start;
-      gap: 0.28rem;
-      overflow-x: auto;
-      overflow-y: visible;
-      scrollbar-width: thin;
-      -webkit-overflow-scrolling: touch;
-      width: 100%;
-      max-width: 100%;
-      margin-left: 0;
-      margin-right: 0;
-      padding-left: 0.15rem;
-      padding-right: 0.15rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-content: flex-start;
+      gap: 0.22rem 0.3rem;
+      overflow: visible;
+      width: min(220%, 34rem);
+      padding-left: 0.2rem;
+      padding-right: 0.2rem;
     }
     .casino-seat-human .casino-seat-cards-wrap.casino-seat-cards-split .casino-player-hand,
     .casino-seat-human .casino-seat-cards-wrap:has(.casino-player-hand:nth-child(2)) .casino-player-hand {
-      flex: 0 0 auto;
-      min-width: 4.25rem;
-      max-width: none;
+      flex: 1 1 4rem;
+      min-width: 3.5rem;
+      max-width: 48%;
     }
     .casino-seat-human .casino-seat-cards-wrap.casino-seat-cards-split-3 .casino-player-hand,
     .casino-seat-human .casino-seat-cards-wrap:has(.casino-player-hand:nth-child(3)) .casino-player-hand {
@@ -604,9 +614,37 @@
     .casino-hand-cards {
       display: flex;
       justify-content: center;
+      align-items: flex-end;
       flex-wrap: nowrap;
-      gap: 0.12rem;
+      gap: 0;
       min-height: 0;
+      overflow: visible;
+      max-width: 100%;
+    }
+    .casino-hand-cards .playing-card {
+      flex-shrink: 0;
+      position: relative;
+    }
+    .casino-hand-cards .playing-card + .playing-card {
+      margin-left: -0.5rem;
+    }
+    .casino-hand-cards-cards-5 .playing-card + .playing-card { margin-left: -0.62rem; }
+    .casino-hand-cards-cards-6 .playing-card + .playing-card { margin-left: -0.72rem; }
+    .casino-hand-cards-cards-7 .playing-card + .playing-card,
+    .casino-hand-cards-cards-8 .playing-card + .playing-card { margin-left: -0.82rem; }
+    .casino-hand-cards-cards-6 .playing-card,
+    .casino-hand-cards-cards-7 .playing-card,
+    .casino-hand-cards-cards-8 .playing-card {
+      width: 2.35rem !important;
+      height: 3.2rem !important;
+    }
+    .casino-hand-cards-cards-7 .playing-card,
+    .casino-hand-cards-cards-8 .playing-card {
+      width: 2.1rem !important;
+      height: 2.85rem !important;
+    }
+    .casino-seat-human .casino-seat-cards-wrap.casino-seat-cards-wide {
+      width: min(200%, 32rem);
     }
     .casino-seat-human .casino-seat-cards-wrap.casino-seat-cards-split .casino-hand-cards .playing-card,
     .casino-seat-human .casino-seat-cards-wrap:has(.casino-player-hand:nth-child(2)) .casino-hand-cards .playing-card {
@@ -651,8 +689,8 @@
       letter-spacing: 0.12em;
     }
     .casino-player-hand {
-      padding: 0.15rem 0.2rem 0.1rem;
-      margin-bottom: 0.1rem;
+      padding: 0.18rem 0.28rem 0.12rem;
+      margin-bottom: 0.08rem;
     }
     .casino-seat-human.active-hand {
       border-color: rgba(251, 191, 36, 0.85);
@@ -670,8 +708,79 @@
     }
     #player-hands.casino-seat-cards-wrap {
       max-height: none;
-      overflow-x: auto;
-      overflow-y: visible;
+      overflow: visible;
+    }
+    /* Hand-end dock — stays on the live table instead of swapping screens */
+    #screen-handend.casino-handend-overlay {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: max(0.35rem, env(safe-area-inset-bottom));
+      z-index: 28;
+      padding: 0 0.45rem;
+      max-width: 40rem;
+      margin: 0 auto;
+      width: 100%;
+      pointer-events: auto;
+    }
+    #screen-handend.casino-handend-overlay > .felt {
+      padding: 0.55rem 0.75rem;
+      border-radius: 1rem;
+      box-shadow: 0 -6px 28px rgba(0,0,0,.5), 0 0 24px rgba(245,158,11,.12);
+      border: 1px solid rgba(245,158,11,.25);
+      max-height: min(42vh, 16rem);
+      overflow-y: auto;
+    }
+    #screen-handend.casino-handend-overlay h3 {
+      font-size: 0.95rem;
+      margin-bottom: 0.15rem;
+    }
+    #screen-handend.casino-handend-overlay #handend-summary {
+      font-size: 0.95rem;
+      line-height: 1.35;
+    }
+    #screen-handend.casino-handend-overlay #handend-feedback {
+      padding: 0.45rem 0.55rem;
+      font-size: 0.72rem;
+      line-height: 1.35;
+      max-height: 3.5rem;
+      overflow-y: auto;
+    }
+    #screen-handend.casino-handend-overlay #handend-review {
+      font-size: 0.68rem;
+      padding: 0.4rem 0.5rem;
+      max-height: 4.5rem;
+      overflow-y: auto;
+    }
+    #screen-handend.casino-handend-overlay .handend-actions {
+      padding-top: 0.35rem;
+      gap: 0.45rem;
+    }
+    #screen-handend.casino-handend-overlay .handend-actions button {
+      padding-top: 0.55rem;
+      padding-bottom: 0.55rem;
+      font-size: 0.82rem;
+    }
+    body.casino-handend-active .casino-table-surface::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,.28);
+      pointer-events: none;
+      z-index: 2;
+      border-radius: inherit;
+    }
+    body.casino-handend-active #casino-seat-human,
+    body.casino-handend-active .casino-dealer-zone {
+      position: relative;
+      z-index: 3;
+    }
+    dialog.casino-count-quiz-dialog {
+      margin: auto auto 6.5rem auto;
+      max-width: 22rem;
+    }
+    dialog.casino-count-quiz-dialog::backdrop {
+      background: rgba(0,0,0,.35);
     }
     .casino-seat-cards-wrap .playing-card { width: 2.1rem; height: 2.9rem; }
     .casino-seat-cards-wrap .playing-card .center-suit { font-size: 0.95rem; }
@@ -787,8 +896,8 @@
       .casino-seat-human .casino-seat-cards-wrap {
         min-height: 2.85rem;
         max-height: none;
-        overflow-x: auto;
-        overflow-y: visible;
+        overflow: visible;
+        width: min(150%, 22rem);
       }
       .casino-seat-human .casino-seat-cards-wrap .playing-card {
         width: 2rem;
@@ -918,6 +1027,25 @@
       .casino-seat-human .casino-seat-cards-wrap:has(.casino-player-hand:nth-child(2)) .casino-hand-cards .playing-card {
         width: 1.85rem;
         height: 2.55rem;
+      }
+      .casino-seat-human .casino-seat-cards-wrap {
+        width: min(160%, 20rem);
+      }
+      .casino-seat-human .casino-seat-cards-wrap.casino-seat-cards-split,
+      .casino-seat-human .casino-seat-cards-wrap:has(.casino-player-hand:nth-child(2)) {
+        width: min(240%, 28rem);
+      }
+      #screen-handend.casino-handend-overlay > .felt {
+        max-height: min(36vh, 11.5rem);
+        padding: 0.4rem 0.55rem;
+      }
+      #screen-handend.casino-handend-overlay #handend-feedback {
+        max-height: 2.75rem;
+        font-size: 0.65rem;
+      }
+      dialog.casino-count-quiz-dialog {
+        margin-bottom: 5.5rem;
+        max-width: 20rem;
       }
       .casino-felt-bet-rail { padding: 0.15rem 0.35rem; margin: 0.04rem 0.15rem 0.1rem; }
       .casino-felt-bet-panel .bet-chip { min-height: 1.75rem; min-width: 1.75rem; font-size: 0.58rem; }
@@ -2631,9 +2759,10 @@
       <div id="handend-feedback" class="text-sm text-emerald-200/80 bg-black/20 rounded-xl p-4"></div>
       <div id="handend-count" class="font-mono text-sm text-cyan-300"></div>
       <div id="handend-review" class="hidden text-left bg-black/25 rounded-xl p-4 text-sm text-emerald-100/90 whitespace-pre-wrap"></div>
-      <div class="flex justify-center gap-3 flex-wrap pt-2">
+      <div class="handend-actions flex justify-center gap-3 flex-wrap pt-2">
         <button id="btn-next-hand" class="px-8 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 text-stone-900 font-bold shadow-lg">Next Hand</button>
         <button id="btn-end-session" class="px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/10">End Session</button>
+        <button id="btn-handend-count-quiz" type="button" class="hidden px-5 py-3 rounded-xl bg-cyan-900/50 border border-cyan-600/40 text-cyan-100 text-sm font-medium">Count Check</button>
       </div>
     </div>
   </section>
@@ -7958,7 +8087,7 @@ const PHASE_SCREEN_IDS = {
   'drill-true-count': 'screen-drill-true-count', 'drill-index': 'screen-drill-index',
   'drill-bet-spread': 'screen-drill-bet-spread', 'drill-card-burst': 'screen-drill-card-burst',
   'drill-decks-left': 'screen-drill-decks-left', 'dealer-mode': 'screen-dealer-mode',
-  bet: 'screen-casino-play', playing: 'screen-casino-play', handEnd: 'screen-handend',
+  bet: 'screen-casino-play', playing: 'screen-casino-play', handEnd: 'screen-casino-play',
 };
 
 function lobbyTapFeedback(kind = 'tap') {
@@ -8213,7 +8342,9 @@ class CountQuestApp {
   }
 
   dismissCountQuiz() {
-    document.getElementById('modal-count-quiz').close();
+    const modal = document.getElementById('modal-count-quiz');
+    modal.close();
+    modal.classList.remove('casino-count-quiz-dialog');
     this.resetCountQuizModal();
     const after = this._afterCountQuiz;
     this._afterCountQuiz = null;
@@ -8338,25 +8469,36 @@ class CountQuestApp {
     modal.onclick = (e) => { if (e.target === modal) close(); };
   }
 
+  openCountQuizModal(focusInput = true) {
+    this.resetCountQuizModal();
+    this._afterCountQuiz = null;
+    const isCombined = this.help.modeProfile === 'drill-combined';
+    const modal = document.getElementById('modal-count-quiz');
+    modal.classList.add('casino-count-quiz-dialog');
+    document.querySelector('#modal-count-quiz h3').textContent = isCombined
+      ? 'Combined Practice — Count Check'
+      : 'Running Count Quiz';
+    document.querySelector('#modal-count-quiz > p').textContent = isCombined
+      ? 'What is the running count after that hand? You\'ll get strategy feedback too. ±1 counts as correct.'
+      : 'What is the running count right now? A guess within ±1 of the actual count counts as correct.';
+    modal.showModal();
+    const quizInput = document.getElementById('count-quiz-input');
+    const rcLimit = this.runningCountGuessLimit();
+    quizInput.min = -rcLimit;
+    quizInput.max = rcLimit;
+    quizInput.placeholder = `Your guess (±${rcLimit})`;
+    if (focusInput) quizInput.focus();
+  }
+
   /** Show count quiz / shoe report after hand end (may be deferred behind level-up). */
   showPostHandModals() {
-    if (this.help.postHandQuiz() || this.help.postHandQuizOptional()) {
-      this.resetCountQuizModal();
-      this._afterCountQuiz = null;
-      const isCombined = this.help.modeProfile === 'drill-combined';
-      document.querySelector('#modal-count-quiz h3').textContent = isCombined
-        ? 'Combined Practice — Count Check'
-        : 'Running Count Quiz';
-      document.querySelector('#modal-count-quiz > p').textContent = isCombined
-        ? 'What is the running count after that hand? You\'ll get strategy feedback too. ±1 counts as correct.'
-        : 'What is the running count right now? A guess within ±1 of the actual count counts as correct.';
-      document.getElementById('modal-count-quiz').showModal();
-      const quizInput = document.getElementById('count-quiz-input');
-      const rcLimit = this.runningCountGuessLimit();
-      quizInput.min = -rcLimit;
-      quizInput.max = rcLimit;
-      quizInput.placeholder = `Your guess (±${rcLimit})`;
-      quizInput.focus();
+    const wantsQuiz = this.help.postHandQuiz();
+    const optionalQuiz = this.help.postHandQuizOptional();
+    if (wantsQuiz) {
+      setTimeout(() => this.openCountQuizModal(), 280);
+    } else if (optionalQuiz) {
+      this._handendQuizOptional = true;
+      this.renderHandEnd();
     }
     if (this.pendingShoeReport) {
       this.showShoeAnalysis(this.pendingShoeReport);
@@ -13424,6 +13566,7 @@ class CountQuestApp {
     document.getElementById('bet-chip-display')?.classList.add('hidden');
     document.getElementById('casino-seat-bet-indicator')?.classList.add('hidden');
     this.countConfirmed = false;
+    this._handendQuizOptional = false;
     // Snapshot RC before this hand — used in hand-end review to show count drift.
     this.roundReview = { runningCountAtHandStart: this.counter.runningCount, decisions: [], bet: 0, suggested: 0 };
     const countSnapshot = this.counter.getCountSnapshot(this.shoe);
@@ -14285,6 +14428,13 @@ class CountQuestApp {
       panel.textContent = text;
       panel.hidden = !panel.hidden;
     });
+    this.bindClick('btn-handend-count-quiz', () => {
+      if (this.phase !== 'handEnd') return;
+      this._handendQuizOptional = false;
+      this.openCountQuizModal();
+      const btn = document.getElementById('btn-handend-count-quiz');
+      if (btn) btn.classList.add('hidden');
+    });
     this.bindClick('btn-next-hand', () => {
       if (this.phase !== 'handEnd') return;
       if (this.sessionMode === 'tournament') {
@@ -14713,13 +14863,14 @@ class CountQuestApp {
     const subScreens = ['screen-training','screen-training-history','screen-training-mistakes','screen-drill-session-summary','screen-practice-range','screen-tutorial','screen-campaign','screen-daily','screen-daily-rewards','screen-table-lobby','screen-tournament','screen-special-event','screen-dealer-mode','screen-clubs','screen-drill-count','screen-drill-speed','screen-drill-true-count','screen-drill-index','screen-drill-bet-spread','screen-drill-card-burst','screen-drill-decks-left'];
 
     const inGame = ['bet','countConfirm','playing','handEnd'].includes(this.phase);
-    const atTable = ['bet','playing','countConfirm'].includes(this.phase);
+    const atTable = ['bet','playing','countConfirm','handEnd'].includes(this.phase);
     header.classList.toggle('hidden', !inGame);
     const allDone = this.playerHands.length > 0 && this.playerHands.every(h => h.finished) && this.activeIdx >= this.playerHands.length;
     const showBetRail = this.phase === 'bet' || this.phase === 'countConfirm';
     const showPlayActions = this.phase === 'playing' && !allDone;
     document.documentElement.classList.toggle('casino-play-active', atTable);
     document.body.classList.toggle('casino-play-active', atTable);
+    document.body.classList.toggle('casino-handend-active', this.phase === 'handEnd');
     document.body.classList.toggle('casino-bet-active', showBetRail);
     document.body.classList.toggle('casino-action-bar-visible', showPlayActions);
     actionBar.classList.toggle('hidden', !showPlayActions);
@@ -14730,7 +14881,8 @@ class CountQuestApp {
     betPanel?.classList.toggle('bet-phase-visible', showBetRail);
     document.getElementById('count-hud-bet')?.classList.toggle('hidden', this.phase !== 'bet' && this.phase !== 'countConfirm');
     document.getElementById('count-hud')?.classList.toggle('hidden', this.phase !== 'playing');
-    handend.classList.toggle('hidden', this.phase !== 'handEnd');
+    handend?.classList.toggle('hidden', this.phase !== 'handEnd');
+    handend?.classList.toggle('casino-handend-overlay', this.phase === 'handEnd');
     subScreens.forEach(id => {
       const el = document.getElementById(id);
       const key = id.replace('screen-','');
@@ -14746,7 +14898,7 @@ class CountQuestApp {
     if (this.phase === 'practice-range') this.renderPracticeRange();
     if (this.phase === 'bet' || this.phase === 'countConfirm') { this.renderBet(); this.renderCasinoSeats(); }
     if (this.phase === 'playing') { this.renderTable(); this.renderCasinoSeats(); }
-    if (this.phase === 'handEnd') { this.renderHandEnd(); this.renderCasinoSeats(); }
+    if (this.phase === 'handEnd') { this.renderTable(); this.renderHandEnd(); this.renderCasinoSeats(); }
     if (this.phase === 'drill-count') this.renderDrillCount();
     if (this.phase === 'drill-speed') this.renderSpeedDrill();
     if (this.phase === 'drill-card-burst') this.renderCardBurstDrill();
@@ -15747,14 +15899,21 @@ class CountQuestApp {
 
     const ph = document.getElementById('player-hands');
     const splitN = this.playerHands.length;
+    const maxCards = splitN ? Math.max(...this.playerHands.map(h => h.hand.cards.length)) : 0;
     ph.classList.toggle('casino-seat-cards-split', splitN > 1);
     ph.classList.toggle('casino-seat-cards-split-3', splitN >= 3);
     ph.classList.toggle('casino-seat-cards-split-4', splitN >= 4);
+    ph.classList.toggle('casino-seat-cards-wide', maxCards >= 5);
     ph.innerHTML = this.playerHands.map((h, i) => {
       const active = i === this.activeIdx && !h.finished;
+      const cardN = h.hand.cards.length;
+      const cardsCls = cardN >= 8 ? 'casino-hand-cards-cards-8'
+        : cardN >= 7 ? 'casino-hand-cards-cards-7'
+        : cardN >= 6 ? 'casino-hand-cards-cards-6'
+        : cardN >= 5 ? 'casino-hand-cards-cards-5' : '';
       return `<div class="casino-player-hand ${active ? 'ring-1 ring-amber-400/60 rounded-lg p-1' : ''}">
         ${this.playerHands.length > 1 ? `<p class="text-[9px] uppercase tracking-wider text-emerald-300/60 mb-0.5 text-center">Hand ${i + 1}${active ? ' ◀' : ''}</p>` : ''}
-        <div class="casino-hand-cards">${h.hand.cards.map((c, ci) => {
+        <div class="casino-hand-cards ${cardsCls}">${h.hand.cards.map((c, ci) => {
           const isLast = showDealAnim && ci === h.hand.cards.length - 1;
           return this.renderCard(c, false, isLast ? animBase : null);
         }).join('')}</div>
@@ -15840,6 +15999,11 @@ class CountQuestApp {
           + (mistakes.length ? `Strategy: ${mistakes.length} suboptimal play(s) this hand.` : 'Strategy: all decisions matched basic strategy.');
       }
     } else rev.classList.add('hidden');
+    const quizBtn = document.getElementById('btn-handend-count-quiz');
+    if (quizBtn) {
+      const showOpt = !!this._handendQuizOptional && !this.help.postHandQuiz();
+      quizBtn.classList.toggle('hidden', !showOpt);
+    }
     document.getElementById('result-toast').classList.add('hidden');
   }
 }

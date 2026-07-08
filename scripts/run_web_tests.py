@@ -172,7 +172,7 @@ class TestWebLogicHard(unittest.TestCase):
         self.assertIn("calculateCountAccuracyPercent(st) >= 75", self.html)
 
     def test_save_version_and_counting_fields(self) -> None:
-        self.assertIn("const SAVE_VERSION = 17", self.html)
+        self.assertIn("const SAVE_VERSION = 18", self.html)
         self.assertIn("countingUnlocks", self.html)
         self.assertIn("countingSystem", self.html)
         self.assertIn("syncWalletSave", self.html)
@@ -254,7 +254,7 @@ class TestWebLogicHard(unittest.TestCase):
 class TestIndexHtmlStructure(unittest.TestCase):
     def test_save_version_eleven(self) -> None:
         html = (ROOT / "index.html").read_text(encoding="utf-8")
-        self.assertIn("const SAVE_VERSION = 17", html)
+        self.assertIn("const SAVE_VERSION = 18", html)
         self.assertIn("countingSystem: 'hi-lo'", html)
         self.assertIn("chips: 2500, gems: 10", html)
         self.assertIn("club: defaultClubMembership()", html)
@@ -604,7 +604,7 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertIn("joinTable", html)
         self.assertIn("settleTableSessionIfNeeded", html)
         self.assertIn("renderCurrencyDisplays", html)
-        self.assertIn("SAVE_VERSION = 17", html)
+        self.assertIn("SAVE_VERSION = 18", html)
         self.assertIn("Play Tables", html)
         self.assertIn("entryFeeChips: 50", html)
         self.assertIn("entryFeeGems: 1", html)
@@ -764,6 +764,11 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertIn("canEnterTournament", html)
         self.assertIn("buildClubInviteUrl", html)
         self.assertIn("handleInviteDeepLink", html)
+        self.assertIn("buildTournamentInviteUrl", html)
+        self.assertIn("handleTournamentInviteDeepLink", html)
+        self.assertIn("handleDeepLinks", html)
+        self.assertIn("TournamentInviteRegistry", html)
+        self.assertIn("btn-tournament-invite", html)
         self.assertIn("defaultTournament", html)
 
     def test_plan21_lobby_present(self) -> None:

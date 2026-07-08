@@ -17,6 +17,9 @@ from rich.text import Text
 ROOT = Path(__file__).resolve().parents[1]
 console = Console()
 
+sys.path.insert(0, str(ROOT / "scripts"))
+from save_version import read_save_version  # noqa: E402
+
 PHASES = [
     ("1", "UI / Polish", "Tutorial nav, beginner labels, full-width layout, count quiz", "COMPLETE"),
     ("2", "Dual Currency + Tables", "Chips/gems HUD, table lobby, entry fees, 1.8× payout", "COMPLETE"),
@@ -44,7 +47,7 @@ def run_tests() -> tuple[bool, int]:
 
 def main() -> int:
     html = (ROOT / "index.html").read_text(encoding="utf-8")
-    save_ver = "14" if "SAVE_VERSION = 14" in html else ("13" if "SAVE_VERSION = 13" in html else ("12" if "SAVE_VERSION = 12" in html else ("11" if "SAVE_VERSION = 11" in html else "?")))
+    save_ver = read_save_version() or "?"
     tests_ok, test_count = run_tests()
 
     console.print()

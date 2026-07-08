@@ -16,6 +16,9 @@ from rich.text import Text
 ROOT = Path(__file__).resolve().parents[1]
 console = Console()
 
+sys.path.insert(0, str(ROOT / "scripts"))
+from save_version import read_save_version  # noqa: E402
+
 PHASE1_FEATURES = [
     ("lobby-clubs-btn", "Large standalone Clubs button (left topbar)", "8BP layout"),
     ("lobby-hero-play", "Circular hero Play 1v1 button", "8BP layout"),
@@ -61,18 +64,18 @@ def main() -> int:
         capture_output=True,
         text=True,
     )
-    ver = "14" if "SAVE_VERSION = 14" in html else ("13" if "SAVE_VERSION = 13" in html else "?")
+    ver = read_save_version()
     tests = Table(title="Verification", box=box.SIMPLE)
     tests.add_column("Check", style="white")
     tests.add_column("Result", justify="center")
-    tests.add_row(f"SAVE_VERSION {ver}", "[green]OK[/]" if ver == "13" else "[red]FAIL[/]")
+    tests.add_row(f"SAVE_VERSION {ver or '?'}", "[green]OK[/]" if ver else "[red]FAIL[/]")
     tests.add_row("run_web_tests.py", "[green]PASS[/]" if proc.returncode == 0 else "[red]FAIL[/]")
     tests.add_row("lobby-8bp container", "[green]OK[/]" if "lobby-8bp" in html else "[red]FAIL[/]")
     console.print(tests)
     console.print()
     if proc.returncode != 0:
         console.print(Text(proc.stdout + proc.stderr, style="red"))
-    return 0 if proc.returncode == 0 and ver == "13" else 1
+    return 0 if proc.returncode == 0 and ver else 1
 
 
 if __name__ == "__main__":

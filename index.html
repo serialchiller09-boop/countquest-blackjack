@@ -3095,7 +3095,7 @@
 // §1 CONSTANTS
 // ═══════════════════════════════════════════════════════════════
 const SAVE_KEY = 'countquest-v2';
-const SAVE_VERSION = 17;
+const SAVE_VERSION = 18;
 
 /** Plan 21 lobby — 8 Ball Pool production home (Clubs = dedicated left button) */
 const LOBBY_NAV_ITEMS = [
@@ -3546,6 +3546,8 @@ function defaultTournament() {
     match: null,
     entryFee: 0,
     entryGems: 0,
+    inviteCode: null,
+    pendingInvite: null,
     stats: { played: 0, won: 0, bestPlacement: null },
   };
 }
@@ -3710,6 +3712,144 @@ function handleInviteDeepLink(app, params) {
   app.toast(result.error || 'Invalid invite link', 'error');
   app.openClubs();
   return true;
+}
+
+const TOURNAMENT_INVITE_REGISTRY_KEY = 'countquest-tournament-invites';
+const TOURNAMENT_INVITE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+
+const TournamentInviteRegistry = {
+  _cache: null,
+  load() {
+    if (this._cache) return this._cache;
+    try {
+      const raw = localStorage.getItem(TOURNAMENT_INVITE_REGISTRY_KEY);
+      this._cache = raw ? JSON.parse(raw) : [];
+      if (!Array.isArray(this._cache)) this._cache = [];
+    } catch {
+      this._cache = [];
+    }
+    return this._cache;
+  },
+  save(invites) {
+    this._cache = invites;
+    try { localStorage.setItem(TOURNAMENT_INVITE_REGISTRY_KEY, JSON.stringify(invites)); } catch { /* quota */ }
+  },
+  getAll() { return this.load(); },
+  getByCode(code) {
+    const normalized = (code || '').trim().toUpperCase();
+    return this.getAll().find(i => i.code === normalized) || null;
+  },
+  upsert(invite) {
+    const invites = this.getAll();
+    const idx = invites.findIndex(i => i.id === invite.id || i.code === invite.code);
+    if (idx >= 0) invites[idx] = invite;
+    else invites.push(invite);
+    this.save(invites);
+    return invite;
+  },
+  invalidate() { this._cache = null; },
+};
+
+function generateTournamentInviteCode(registry = TournamentInviteRegistry.getAll()) {
+  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = '';
+  let guard = 0;
+  do {
+    code = Array.from({ length: 6 }, () => alphabet[Math.floor(Math.random() * alphabet.length)]).join('');
+    guard += 1;
+  } while (registry.some(i => i.code === code) && guard < 40);
+  return code;
+}
+
+function buildTournamentInviteUrl(code) {
+  const url = new URL(location.href);
+  url.search = '';
+  url.searchParams.set('tournament', code);
+  return url.toString();
+}
+
+function lookupTournamentInvite(code) {
+  const invite = TournamentInviteRegistry.getByCode(code);
+  if (!invite || invite.status !== 'open') return null;
+  if (invite.expiresAt && invite.expiresAt < Date.now()) {
+    invite.status = 'expired';
+    TournamentInviteRegistry.upsert(invite);
+    return null;
+  }
+  return invite;
+}
+
+function createTournamentInvite(save) {
+  ensurePlayerId(save);
+  const registry = TournamentInviteRegistry.getAll();
+  const code = generateTournamentInviteCode(registry);
+  const t = ensureTournament(save);
+  const invite = {
+    id: `tinv_${Date.now().toString(36)}${Math.random().toString(36).slice(2, 5)}`,
+    code,
+    inviterId: save.playerId,
+    inviterName: (save.stats?.playerName || 'Player').trim().slice(0, 24) || 'Player',
+    createdAt: Date.now(),
+    expiresAt: Date.now() + TOURNAMENT_INVITE_TTL_MS,
+    status: 'open',
+    acceptedBy: null,
+    acceptedAt: null,
+    tournamentActive: !!t.active,
+  };
+  TournamentInviteRegistry.upsert(invite);
+  t.inviteCode = code;
+  return { ok: true, invite, url: buildTournamentInviteUrl(code) };
+}
+
+function acceptTournamentInviteMeta(save, invite) {
+  ensurePlayerId(save);
+  if (!invite) return { ok: false, error: 'Invite not found' };
+  if (invite.inviterId === save.playerId) return { ok: false, error: 'This is your own invite link' };
+  invite.status = 'accepted';
+  invite.acceptedBy = save.playerId;
+  invite.acceptedAt = Date.now();
+  TournamentInviteRegistry.upsert(invite);
+  const t = ensureTournament(save);
+  t.pendingInvite = {
+    code: invite.code,
+    inviterName: invite.inviterName,
+    inviterId: invite.inviterId,
+    acceptedAt: invite.acceptedAt,
+  };
+  return { ok: true, invite };
+}
+
+function handleTournamentInviteDeepLink(app, params) {
+  const code = params.get('tournament') || params.get('tournament-invite');
+  if (!code) return false;
+  ensurePlayerId(app.save);
+  const invite = lookupTournamentInvite(code);
+  if (!invite) {
+    app.toast('Tournament invite expired or invalid', 'error');
+    app.openTournament();
+    return true;
+  }
+  const result = acceptTournamentInviteMeta(app.save, invite);
+  if (result.ok) {
+    app.persist();
+    Sounds.play('level');
+    app.toast(`${invite.inviterName} invited you to a Pro Tournament!`, 'level', 5000);
+    app.openTournament();
+    return true;
+  }
+  app.toast(result.error || 'Invalid tournament invite', 'error');
+  app.openTournament();
+  return true;
+}
+
+function handleDeepLinks(app, params) {
+  if (params.get('tournament') || params.get('tournament-invite')) {
+    return handleTournamentInviteDeepLink(app, params);
+  }
+  if (params.get('join') || params.get('club')) {
+    return handleInviteDeepLink(app, params);
+  }
+  return false;
 }
 
 function canJoinTable(save, tier) {
@@ -6728,6 +6868,12 @@ function migrateSave(raw) {
       s.specialEvent.dealerBestAcc = s.specialEvent.dealerBestAcc || 0;
     }
   }
+  if (!s.version || s.version < 18) {
+    if (s.tournament) {
+      s.tournament.inviteCode = s.tournament.inviteCode ?? null;
+      s.tournament.pendingInvite = s.tournament.pendingInvite ?? null;
+    }
+  }
   backfillTrainingHistoryFromLegacy(s);
   s.version = SAVE_VERSION;
   return s;
@@ -8370,7 +8516,7 @@ class CountQuestApp {
         this.toast(`Account linked! +${returnHandled.bonus.chips} chips · +${returnHandled.bonus.gems} 💎`, 'level', 4500);
       }
     } else {
-      handleInviteDeepLink(this, urlParams);
+      handleDeepLinks(this, urlParams);
     }
     this.updateSoundButton();
     this.render();
@@ -8839,6 +8985,24 @@ class CountQuestApp {
   openTournament() {
     this.phase = 'tournament';
     this.render();
+  }
+
+  async copyTournamentInvite() {
+    const result = createTournamentInvite(this.save);
+    if (!result.ok) {
+      this.toast('Could not create tournament invite', 'error');
+      return;
+    }
+    this.persist();
+    const url = result.url;
+    try {
+      if (navigator.clipboard?.writeText) await navigator.clipboard.writeText(url);
+      else throw new Error('clipboard unavailable');
+      this.toast('Tournament invite link copied!', 'success', 4000);
+    } catch {
+      prompt('Copy tournament invite link:', url);
+      this.toast('Copy the invite link from the dialog', 'info', 4000);
+    }
   }
 
   openSpecialEvent() {
@@ -9923,13 +10087,20 @@ class CountQuestApp {
               · ${TOURNAMENT_HANDS_PER_MATCH}-hand duels · ${TOURNAMENT_MATCH_CHIPS.toLocaleString()} match chips
             </p>
             <p class="text-xs text-emerald-400/70 mt-2">Balance: 🪙 ${w.chips.toLocaleString()} · 💎 ${w.gems}</p>
+            ${t.pendingInvite ? `<p class="text-xs text-violet-200/90 mt-2 rounded-lg bg-violet-950/40 border border-violet-600/30 px-3 py-2">🤝 <strong>${t.pendingInvite.inviterName}</strong> challenged you — enter the same Pro bracket!</p>` : ''}
             ${!check.ok ? `<p class="text-xs text-amber-300/90 mt-2">🔒 ${check.reasons[0]}</p>` : ''}
-            <button type="button" id="btn-tournament-start" class="mt-3 w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 text-stone-900 font-bold" ${check.ok ? '' : 'disabled'}>
-              Enter Tournament
-            </button>
+            <div class="mt-3 grid gap-2">
+              <button type="button" id="btn-tournament-start" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 text-stone-900 font-bold" ${check.ok ? '' : 'disabled'}>
+                Enter Tournament
+              </button>
+              <button type="button" id="btn-tournament-invite" class="w-full py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-sm text-emerald-100">
+                Invite Friend (copy link)
+              </button>
+            </div>
           </div>
           ${t.stats?.played ? `<p class="text-center text-xs text-emerald-500/60 mt-2">Played ${t.stats.played} · Best finish: ${t.stats.bestPlacement ? '#' + t.stats.bestPlacement : '—'}</p>` : ''}`;
         document.getElementById('btn-tournament-start')?.addEventListener('click', () => this.startTournament());
+        document.getElementById('btn-tournament-invite')?.addEventListener('click', () => this.copyTournamentInvite());
       }
       if (subtitle) subtitle.textContent = '8-player single elimination — beat the bracket to claim the prize pool';
       return;
@@ -9942,8 +10113,12 @@ class CountQuestApp {
       const roundLabel = TOURNAMENT_ROUND_LABELS[Math.min(t.round - 1, 2)] || 'Final';
       statusBar.innerHTML = `<div class="flex flex-wrap justify-between gap-2 items-center">
         <span><strong class="text-gold">${roundLabel}</strong> · ${t.contenders.length} players left</span>
-        <span class="font-mono text-xs text-cyan-300/80">Entry ${t.entryFee.toLocaleString()} 🪙 paid</span>
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="font-mono text-xs text-cyan-300/80">Entry ${t.entryFee.toLocaleString()} 🪙 paid</span>
+          <button type="button" id="btn-tournament-invite-active" class="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/15 text-[11px] text-emerald-100">Invite Friend</button>
+        </div>
       </div>`;
+      document.getElementById('btn-tournament-invite-active')?.addEventListener('click', () => this.copyTournamentInvite());
     }
 
     const pairing = getPlayerTournamentPairing(t);
@@ -10011,6 +10186,7 @@ class CountQuestApp {
     t.match = null;
     t.entryFee = paid.fee;
     t.entryGems = paid.gems;
+    t.pendingInvite = null;
     t.stats.played = (t.stats.played || 0) + 1;
     simulateTournamentRoundAI(t);
     this.persist();
@@ -16811,7 +16987,12 @@ function runTests() {
   check(TOURNAMENT_BRACKET_SIZE === 8, 'tournament bracket size');
   check(typeof canEnterTournament === 'function', 'canEnterTournament');
   check(typeof handleInviteDeepLink === 'function', 'invite deep link');
+  check(typeof handleDeepLinks === 'function', 'unified deep link router');
   check(typeof buildClubInviteUrl === 'function', 'buildClubInviteUrl');
+  check(typeof buildTournamentInviteUrl === 'function', 'buildTournamentInviteUrl');
+  check(typeof handleTournamentInviteDeepLink === 'function', 'tournament invite deep link');
+  check(typeof createTournamentInvite === 'function', 'createTournamentInvite');
+  check(typeof TournamentInviteRegistry.getAll === 'function', 'tournament invite registry');
   check(document.getElementById('screen-tournament'), 'tournament screen');
   check(document.getElementById('tournament-bracket-tree'), 'tournament bracket tree');
   check(typeof navApp.openTournament === 'function', 'openTournament');
@@ -16895,6 +17076,18 @@ function runTests() {
   check(tourSave.tournament.bracket.length === 8, 'tournament bracket generated');
   const inviteUrl = buildClubInviteUrl('ABC123');
   check(inviteUrl.includes('join=ABC123'), 'invite url has join param');
+  const tourInvite = createTournamentInvite(tourSave);
+  check(tourInvite.ok && tourInvite.url.includes('tournament='), 'tournament invite url');
+  const tourLookup = lookupTournamentInvite(tourInvite.invite.code);
+  check(tourLookup && tourLookup.inviterId === tourSave.playerId, 'tournament invite registry lookup');
+  const tourUrl = buildTournamentInviteUrl('XYZ789');
+  check(tourUrl.includes('tournament=XYZ789'), 'tournament url has tournament param');
+  const acceptSave = defaultSave();
+  ensurePlayerId(acceptSave);
+  acceptSave.playerId = 'player_accept_test';
+  const accepted = acceptTournamentInviteMeta(acceptSave, tourLookup);
+  check(accepted.ok && acceptSave.tournament.pendingInvite?.inviterName, 'accept tournament invite');
+  check(acceptTournamentInviteMeta(tourSave, tourLookup).ok === false, 'cannot accept own tournament invite');
 
   console.log(`✓ All CountQuest tests passed (${passed} assertions)`);
   return passed;

@@ -394,10 +394,11 @@ Pinned in `requirements.txt` (`rich>=15.0.0`, `textual>=8.2.0`).
 **What it does:**
 - **8-player Pro Tournament** — single-elimination bracket UI (`screen-tournament`), Pro tier entry (5000 chips + 1 gem), 5-hand duel matches with isolated match bankroll vs AI target score
 - **Prize pool** — 🥇 25K+3💎 · 🥈 10K+1💎 · 🥉 5K semifinalists; AI vs AI rounds simulate automatically
-- **Friend invite deep links** — `?join=CODE` auto-joins crew on load; club hub copies full shareable URL via `buildClubInviteUrl`
+- **Club invite deep links** — `?join=CODE` auto-joins crew on load; club hub copies full shareable URL via `buildClubInviteUrl`
+- **Tournament friend invites** — `?tournament=CODE` opens Pro bracket challenge; copy link from tournament screen
 
-**Files:** `index.html`, `scripts/show_tournament.py`, `scripts/run_web_tests.py`
+**Files:** `index.html`, `scripts/show_tournament.py`, `scripts/run_web_tests.py`, `.github/workflows/tests.yml`
 
-**Verify:** `python scripts/show_tournament.py` · Lobby → Tournaments · `index.html?join=INVITE`
+**Verify:** `python scripts/show_tournament.py` · `CQ_BROWSER_TESTS=1 python scripts/run_browser_tests.py` · `?tournament=CODE`
 
-**SAVE_VERSION:** 13
+**SAVE_VERSION:** 18

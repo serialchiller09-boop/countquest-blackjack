@@ -8,3 +8,4 @@ data/progress.json
 .DS_Store
 Thumbs.db
 _tmp_script_*.js
+gh-auth-*.txt

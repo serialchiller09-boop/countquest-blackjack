@@ -1,0 +1,33 @@
+name: Tests
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+
+jobs:
+  python-and-browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Playwright
+        run: |
+          pip install playwright
+          playwright install chromium
+
+      - name: Web logic and structure tests
+        run: python scripts/run_web_tests.py
+
+      - name: CountQuest package tests
+        run: python -m unittest discover -s countquest/tests -v
+
+      - name: Embedded browser runTests()
+        env:
+          CQ_BROWSER_TESTS: "1"
+        run: python scripts/run_browser_tests.py

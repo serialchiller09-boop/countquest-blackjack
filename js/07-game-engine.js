@@ -2668,6 +2668,8 @@ class CountQuestApp {
   }
 
   startSession(practice, mode = practice ? 'practice-range' : 'campaign', drill = null, chapterId = null) {
+    this.closeAllModals();
+    this._dailyRewardModalShown = true;
     this.save.settings.practiceMode = practice;
     this.save.sessionMode = mode;
     this.save.sessionDrill = drill;
@@ -3052,7 +3054,8 @@ class CountQuestApp {
   maybeShowDailyRewardModal() {
     if (this._dailyRewardModalShown || new URLSearchParams(location.search).has('test')) return;
     ensureDailyRewardsCurrent(this.save);
-    if (!canClaimDailyLogin(this.save) || this.phase !== 'menu') return;
+    const atCasino = ['bet', 'countConfirm', 'playing', 'handEnd'].includes(this.phase);
+    if (!canClaimDailyLogin(this.save) || this.phase !== 'menu' || this.save.sessionActive || atCasino) return;
     this._dailyRewardModalShown = true;
     this.showDailyRewardClaimModal();
   }
@@ -5494,6 +5497,7 @@ class CountQuestApp {
       this.render();
       return;
     }
+    this.closeAllModals();
     this.refillPractice();
     this.ensureShoe();
     this.ensureTableAiSeats();

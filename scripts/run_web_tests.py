@@ -452,6 +452,14 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertIn("cq-chip-rack", css)
         self.assertIn("cq-casino-chip", css)
 
+    def test_casino_session_closes_blocking_modals(self) -> None:
+        engine = (ROOT / "js" / "07-game-engine.js").read_text(encoding="utf-8")
+        start = engine.split("startSession(practice")[1][:800]
+        self.assertIn("closeAllModals()", start)
+        modal_guard = engine.split("maybeShowDailyRewardModal() {")[1][:400]
+        self.assertIn("this.save.sessionActive", modal_guard)
+        self.assertIn("atCasino", modal_guard)
+
     def test_unified_casino_table_layout(self) -> None:
         html = load_app_source()
         self.assertIn("casino-play-shell", html)

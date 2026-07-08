@@ -97,7 +97,7 @@ def main() -> int:
     meta.add_column("Key", style="dim")
     meta.add_column("Value")
     meta.add_row("Project", str(ROOT))
-    meta.add_row("SAVE_VERSION", save_ver)
+    meta.add_row("SAVE_VERSION", str(save_ver))
     meta.add_row("Tests", f"{test_count} {'PASS' if test_ok else 'FAIL'}")
     meta.add_row("Polish markers", f"{markers_ok}/{len(POLISH_MARKERS)}")
     meta.add_row("Verify", "python scripts/open_game.py")

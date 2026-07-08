@@ -315,9 +315,10 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertIn('"display": "standalone"', manifest)
         self.assertIn("icons/icon-192.png", manifest)
         sw = (root / "sw.js").read_text(encoding="utf-8")
-        self.assertIn("cq-pwa-v2", sw)
+        self.assertIn("cq-pwa-v3", sw)
         self.assertIn("./css/tailwind.css", sw)
         self.assertNotIn("cdn.tailwindcss.com", sw)
+        self.assertIn("./js/00-capacitor-bridge.js", sw)
         self.assertIn("./js/07-game-engine.js", sw)
 
     def test_tailwind_bundled_offline(self) -> None:
@@ -333,6 +334,26 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertGreater(len(built), 10_000)
         for needle in (".text-gold", ".min-h-screen", ".flex", ".backdrop-blur"):
             self.assertIn(needle, built, f"missing utility {needle}")
+
+    def test_capacitor_scaffold(self) -> None:
+        root = ROOT
+        shell = load_index_html()
+        self.assertTrue((root / "capacitor.config.json").is_file())
+        self.assertTrue((root / "scripts" / "stage_dist.py").is_file())
+        self.assertTrue((root / "js" / "00-capacitor-bridge.js").is_file())
+        self.assertIn('src="js/00-capacitor-bridge.js"', shell)
+        self.assertIn("!window.__CQ_NATIVE", shell)
+        cfg = (root / "capacitor.config.json").read_text(encoding="utf-8")
+        self.assertIn('"webDir": "dist"', cfg)
+        self.assertIn("com.countquest.blackjack", cfg)
+        pkg = (root / "package.json").read_text(encoding="utf-8")
+        self.assertIn("@capacitor/core", pkg)
+        self.assertIn("@capacitor/android", pkg)
+        self.assertIn("@capacitor/ios", pkg)
+        self.assertTrue((root / "android").is_dir(), "run scripts/setup_capacitor.py")
+        self.assertTrue((root / "ios").is_dir(), "run scripts/setup_capacitor.py")
+        bridge = (root / "js" / "00-capacitor-bridge.js").read_text(encoding="utf-8")
+        self.assertIn("__CQ_NATIVE", bridge)
 
     def test_modular_file_layout(self) -> None:
         shell = load_index_html()

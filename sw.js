@@ -1,5 +1,5 @@
 /* CountQuest PWA service worker — cache app shell for offline repeat visits. */
-const CACHE_VERSION = 'cq-pwa-v2';
+const CACHE_VERSION = 'cq-pwa-v3';
 const SHELL_ASSETS = [
   './',
   './index.html',
@@ -9,6 +9,7 @@ const SHELL_ASSETS = [
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/apple-touch-icon.png',
+  './js/00-capacitor-bridge.js',
   './js/01-constants.js',
   './js/02-core-types.js',
   './js/03-counting.js',

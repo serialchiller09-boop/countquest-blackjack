@@ -24,12 +24,7 @@ jobs:
       - uses: actions/checkout@v7
 
       - name: Stage static PWA bundle
-        run: |
-          python scripts/build_tailwind.py
-          python scripts/generate_pwa_icons.py
-          mkdir -p dist
-          cp index.html manifest.webmanifest sw.js .nojekyll dist/
-          cp -r css js icons dist/
+        run: python scripts/stage_dist.py
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

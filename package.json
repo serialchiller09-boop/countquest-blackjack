@@ -1,10 +1,28 @@
 {
   "name": "countquest-blackjack",
   "private": true,
+  "version": "1.0.0",
+  "description": "CountQuest Blackjack — Hi-Lo card counting trainer",
   "scripts": {
-    "build:css": "python scripts/build_tailwind.py"
+    "build:css": "python scripts/build_tailwind.py",
+    "build:web": "python scripts/stage_dist.py",
+    "cap:sync": "npm run build:web && npx cap sync",
+    "cap:android": "npm run cap:sync && npx cap open android",
+    "cap:ios": "npm run cap:sync && npx cap open ios",
+    "cap:run:android": "npm run cap:sync && npx cap run android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.4.1",
+    "@capacitor/core": "^8.4.1",
+    "@capacitor/ios": "^8.4.1",
+    "@capacitor/splash-screen": "^8.0.1",
+    "@capacitor/status-bar": "^8.0.1"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.4.1",
     "tailwindcss": "^3.4.17"
+  },
+  "capacitor": {
+    "platforms": ["android", "ios"]
   }
 }

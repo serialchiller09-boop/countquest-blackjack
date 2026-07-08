@@ -13,3 +13,13 @@ browser_smoke_*.png
 artifacts/probe-*.png
 node_modules/
 tools/
+dist/
+android/.gradle/
+android/app/build/
+android/local.properties
+android/capacitor-cordova-android-plugins/
+ios/App/Pods/
+ios/App/App/public/
+ios/DerivedData/
+ios/capacitor-cordova-ios-plugins/
+.capacitor/

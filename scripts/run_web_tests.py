@@ -456,9 +456,14 @@ class TestIndexHtmlStructure(unittest.TestCase):
         engine = (ROOT / "js" / "07-game-engine.js").read_text(encoding="utf-8")
         start = engine.split("startSession(practice")[1][:800]
         self.assertIn("closeAllModals()", start)
+        self.assertNotIn("_dailyRewardModalShown = true", start)
         modal_guard = engine.split("maybeShowDailyRewardModal() {")[1][:400]
         self.assertIn("this.save.sessionActive", modal_guard)
         self.assertIn("atCasino", modal_guard)
+        go_menu = engine.split("goMenu() {")[1][:500]
+        self.assertIn("_resetDailyRewardModalGate()", go_menu)
+        reset_fn = engine.split("_resetDailyRewardModalGate() {")[1][:300]
+        self.assertIn("_dailyRewardModalShown = false", reset_fn)
 
     def test_unified_casino_table_layout(self) -> None:
         html = load_app_source()

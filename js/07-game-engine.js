@@ -2669,7 +2669,6 @@ class CountQuestApp {
 
   startSession(practice, mode = practice ? 'practice-range' : 'campaign', drill = null, chapterId = null) {
     this.closeAllModals();
-    this._dailyRewardModalShown = true;
     this.save.settings.practiceMode = practice;
     this.save.sessionMode = mode;
     this.save.sessionDrill = drill;
@@ -2830,6 +2829,7 @@ class CountQuestApp {
     this.tableAiSeats = null;
     this.persist();
     this.phase = 'menu';
+    this._resetDailyRewardModalGate();
     this.render();
   }
 
@@ -2838,7 +2838,15 @@ class CountQuestApp {
     this.dealerSession = null;
     this.closeAllModals();
     this.phase = 'menu';
+    this._resetDailyRewardModalGate();
     this.render();
+  }
+
+  /** Allow daily-reward auto-prompt again when back on menu with no active session. */
+  _resetDailyRewardModalGate() {
+    if (this.save.sessionActive || this.phase !== 'menu') return;
+    this._dailyRewardModalShown = false;
+    setTimeout(() => this.maybeShowDailyRewardModal(), 400);
   }
 
   openPracticeRange() { this.phase = 'practice-range'; this.render(); }

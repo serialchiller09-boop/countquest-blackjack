@@ -136,14 +136,13 @@ def main() -> int:
             }"""
         )
         page.wait_for_function("() => window.app.phase === 'playing'", timeout=20000)
-        page.wait_for_timeout(1200)
         phase_after = page.evaluate("() => window.app.phase")
         results["deal"] = {
             "phaseBefore": phase_before,
             "phaseAfter": phase_after,
             "dealApiPhase": deal_ok,
             "pageErrors": list(page_errors),
-            "ok": phase_after == "playing" and not page_errors,
+            "ok": deal_ok == "playing" and phase_after == "playing" and not page_errors,
         }
         if not results["deal"]["ok"]:
             results["pass"] = False
@@ -153,12 +152,10 @@ def main() -> int:
     httpd.shutdown()
 
     (out_dir / "casino_dom_check.json").write_text(json.dumps(results, indent=2), encoding="utf-8")
+    (out_dir / "stability_verify.json").write_text(json.dumps(results, indent=2), encoding="utf-8")
     (out_dir / "deal_flow.log").write_text(
-        f"phase_before={phase_before}\nphase_after={phase_after}\nerrors={page_errors}\n",
-        encoding="utf-8",
-    )
-    (out_dir / "mobile_probe.json").write_text(
-        json.dumps({"stability_verify": results}, indent=2),
+        f"phase_before={phase_before}\nphase_after={phase_after}\n"
+        f"deal_api_phase={deal_ok}\nerrors={page_errors}\n",
         encoding="utf-8",
     )
 

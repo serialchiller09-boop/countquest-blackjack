@@ -3574,7 +3574,7 @@ function defaultClubGoal() {
   return { text: '', updatedAt: null, updatedBy: null };
 }
 
-function migrateClubRecord(club) {
+function migrateClubRecord(club, allClubs) {
   if (!club) return club;
   club.leaderId = club.leaderId || club.ownerId || null;
   delete club.ownerId;
@@ -3586,7 +3586,7 @@ function migrateClubRecord(club) {
     club.members[0].role = 'leader';
     club.leaderId = club.members[0].id;
   }
-  ensureClubInviteCode(club);
+  ensureClubInviteCode(club, allClubs);
   ensureClubBankroll(club);
   if (!club.bankroll.chips && club.id === 'club_demo_aces') {
     club.bankroll.chips = 1200;
@@ -3598,7 +3598,8 @@ function migrateClubRecord(club) {
 }
 
 function migrateAllClubs(clubs) {
-  return (clubs || []).map(migrateClubRecord);
+  const list = clubs || [];
+  return list.map(c => migrateClubRecord(c, list));
 }
 
 function sortClubMembers(members) {
@@ -3734,20 +3735,34 @@ function seedDemoClubsIfEmpty() {
 }
 
 const ClubsRegistry = {
+  _cache: null,
   load() {
+    if (this._cache) return this._cache;
+    let clubs;
+    let raw = null;
     try {
-      const raw = localStorage.getItem(CLUBS_REGISTRY_KEY);
-      if (!raw) return migrateAllClubs(seedDemoClubsIfEmpty());
-      const parsed = JSON.parse(raw);
-      const clubs = Array.isArray(parsed) && parsed.length ? parsed : seedDemoClubsIfEmpty();
-      const migrated = migrateAllClubs(clubs);
-      try { localStorage.setItem(CLUBS_REGISTRY_KEY, JSON.stringify(migrated)); } catch { /* quota */ }
-      return migrated;
+      raw = localStorage.getItem(CLUBS_REGISTRY_KEY);
+      if (!raw) {
+        clubs = seedDemoClubsIfEmpty();
+      } else {
+        const parsed = JSON.parse(raw);
+        clubs = Array.isArray(parsed) && parsed.length ? parsed : seedDemoClubsIfEmpty();
+      }
     } catch {
-      return migrateAllClubs(seedDemoClubsIfEmpty());
+      clubs = seedDemoClubsIfEmpty();
     }
+    // Pin cache before migration — ensureClubInviteCode must not re-enter load().
+    this._cache = clubs;
+    const migrated = migrateAllClubs(clubs);
+    this._cache = migrated;
+    const serialized = JSON.stringify(migrated);
+    if (!raw || raw !== serialized) {
+      try { localStorage.setItem(CLUBS_REGISTRY_KEY, serialized); } catch { /* quota */ }
+    }
+    return this._cache;
   },
   save(clubs) {
+    this._cache = clubs;
     try { localStorage.setItem(CLUBS_REGISTRY_KEY, JSON.stringify(clubs)); } catch { /* quota */ }
   },
   getAll() { return this.load(); },
@@ -3761,6 +3776,7 @@ const ClubsRegistry = {
     return club;
   },
   remove(id) { this.save(this.getAll().filter(c => c.id !== id)); },
+  invalidate() { this._cache = null; },
 };
 
 function searchClubs(query) {
@@ -3967,11 +3983,23 @@ function getPlayerClub(save) {
     save.club = defaultClubMembership();
     return null;
   }
+  const profile = getPlayerClubProfile(save);
+  const me = (club.members || []).find(m => m.id === profile.id);
+  const roleBefore = me ? normalizeClubRole(me.role) : null;
+  const weekBefore = club.weekly?.weekKey;
   syncMemberProfileInClub(club, save);
   ensureClubHubData(club, save);
-  const me = (club.members || []).find(m => m.id === save.playerId);
   if (me && save.club) save.club.role = normalizeClubRole(me.role);
-  ClubsRegistry.upsert(club);
+  const profileChanged = me && (
+    me.displayName !== profile.displayName
+    || me.rank !== profile.rank
+    || me.helpLevel !== profile.helpLevel
+  );
+  const weekRolled = weekBefore && club.weekly?.weekKey !== weekBefore;
+  const roleChanged = me && roleBefore !== normalizeClubRole(me.role);
+  if (profileChanged || weekRolled || roleChanged || club._pendingPlayerPayout) {
+    ClubsRegistry.upsert(club);
+  }
   return club;
 }
 
@@ -4016,8 +4044,9 @@ function generateClubInviteCode() {
   return code;
 }
 
-function ensureClubInviteCode(club) {
+function ensureClubInviteCode(club, allClubs = null) {
   if (!club.inviteCode) {
+    const registry = allClubs || ClubsRegistry._cache || ClubsRegistry.getAll();
     let code;
     let attempts = 0;
     do {
@@ -4025,7 +4054,7 @@ function ensureClubInviteCode(club) {
       attempts += 1;
     } while (
       attempts < 50
-      && ClubsRegistry.getAll().some(c => c.inviteCode === code && c.id !== club.id)
+      && registry.some(c => c.inviteCode === code && c.id !== club.id)
     );
     club.inviteCode = code;
   }
@@ -4139,6 +4168,7 @@ function regenerateClubInviteCode(save) {
   if (!hasClubPermission(ctx.actor.role, 'editClub')) {
     return { ok: false, error: 'Only Leaders and Co-Leaders can regenerate invite codes' };
   }
+  const registry = ClubsRegistry.getAll();
   let code;
   let attempts = 0;
   do {
@@ -4146,7 +4176,7 @@ function regenerateClubInviteCode(save) {
     attempts += 1;
   } while (
     attempts < 50
-    && ClubsRegistry.getAll().some(c => c.inviteCode === code && c.id !== ctx.club.id)
+    && registry.some(c => c.inviteCode === code && c.id !== ctx.club.id)
   );
   ctx.club.inviteCode = code;
   ClubsRegistry.upsert(ctx.club);
@@ -16262,6 +16292,11 @@ function runTests() {
   check(clubMemberCount(ClubsRegistry.getById(crewCreated.club.id)) === 2, 'club member count');
   check(leaveClub(crewSave).ok && !crewSave.club.clubId, 'leave club');
   check(document.getElementById('screen-clubs'), 'clubs screen');
+  ClubsRegistry.invalidate();
+  try { localStorage.removeItem(CLUBS_REGISTRY_KEY); } catch { /* */ }
+  const freshClubs = ClubsRegistry.getAll();
+  check(Array.isArray(freshClubs) && freshClubs.length >= 2, 'clubs registry loads without recursion');
+  check(freshClubs.every(c => c.inviteCode?.length === CLUB_INVITE_CODE_LENGTH), 'demo clubs get invite codes on load');
   check(typeof navApp.openClubs === 'function', 'openClubs handler');
   check(typeof recordClubWeeklyActivity === 'function', 'weekly activity recorder');
   check(typeof postClubChatMessage === 'function', 'club chat helper');

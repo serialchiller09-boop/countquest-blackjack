@@ -849,6 +849,17 @@
       flex: 1.2 1 auto;
       max-width: 9rem;
     }
+    body.casino-play-active .casino-table-topbar {
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+    }
+    body.casino-play-active .casino-table-topbar > * {
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+    }
     body.casino-play-active #bet-advice {
       overflow: hidden;
       text-overflow: ellipsis;
@@ -856,6 +867,13 @@
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 2;
       max-height: 2.4rem;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+    }
+    body.casino-play-active #bet-advice > * {
+      max-width: 100%;
+      min-width: 0;
     }
     body.casino-play-active .casino-felt-bet-panel {
       overflow: hidden;

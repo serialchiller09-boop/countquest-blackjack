@@ -96,7 +96,14 @@ def main() -> int:
             }"""
         )
         results["casino_390"] = casino
-        if not casino.get("casinoVisible") or casino.get("pageOverflowH"):
+        shell_overflow = (casino.get("shellScrollW") or 0) > (casino.get("shellClientW") or 0) + 1
+        if shell_overflow:
+            casino["shellOverflow"] = True
+        if (
+            not casino.get("casinoVisible")
+            or casino.get("pageOverflowH")
+            or shell_overflow
+        ):
             results["pass"] = False
         browser.close()
 

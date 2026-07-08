@@ -7780,6 +7780,8 @@ class CountQuestApp {
     const shell = document.getElementById('screen-casino-play');
     if (!viewport || !shell || shell.classList.contains('hidden')) return;
     viewport.style.transform = '';
+    viewport.style.width = '';
+    viewport.style.maxWidth = '';
     viewport.style.marginBottom = '';
     const shellH = shell.clientHeight;
     const shellW = shell.clientWidth;
@@ -7790,11 +7792,13 @@ class CountQuestApp {
       && handend
       && !handend.classList.contains('hidden')
     ) ? handend.offsetHeight + 8 : 0;
+    const topbar = viewport.querySelector('.casino-table-topbar');
     const grid = document.getElementById('casino-seat-grid');
     const contentH = Math.max(viewport.scrollHeight, viewport.offsetHeight);
     const contentW = Math.max(
       viewport.scrollWidth,
       viewport.offsetWidth,
+      topbar?.scrollWidth || 0,
       grid?.scrollWidth || 0,
     );
     const maxH = Math.max(1, shellH - handendReserve);
@@ -7803,6 +7807,9 @@ class CountQuestApp {
     const scale = Math.min(1, scaleX, scaleY);
     const applied = Math.max(0.62, scale);
     if (applied < 0.995) {
+      const inv = 100 / applied;
+      viewport.style.width = `${inv}%`;
+      viewport.style.maxWidth = `${inv}%`;
       viewport.style.transform = `scale(${applied})`;
       viewport.style.marginBottom = `-${contentH * (1 - applied)}px`;
     }
@@ -7853,9 +7860,9 @@ class CountQuestApp {
       adv.classList.remove('hidden');
       const why = recommendedBetWhyText(this.betSuggestion);
       const recLine = this.help.showExactBet()
-        ? `<div class="flex flex-wrap items-center justify-center gap-1"><strong>Recommended: $${rec}</strong>${infoTipButton(why, 'Why this bet amount?')}</div>`
-        : `<span>${this.help.formatBetRange(this.betSuggestion, this.bankroll, this.minBet)}</span>`;
-      adv.innerHTML = `<div class="max-w-xl mx-auto"><div>${recLine}</div><p class="text-xs text-emerald-400/70 truncate">${why}</p></div>`;
+        ? `<div class="flex flex-wrap items-center justify-center gap-1 min-w-0 max-w-full"><strong class="truncate max-w-full">Recommended: $${rec}</strong>${infoTipButton(why, 'Why this bet amount?')}</div>`
+        : `<span class="block truncate max-w-full">${this.help.formatBetRange(this.betSuggestion, this.bankroll, this.minBet)}</span>`;
+      adv.innerHTML = `<div class="w-full min-w-0 max-w-full mx-auto"><div class="min-w-0">${recLine}</div><p class="text-xs text-emerald-400/70 truncate min-w-0">${why}</p></div>`;
     } else { adv.classList.add('hidden'); }
     const dealBtn = document.getElementById('btn-deal');
     if (dealBtn) dealBtn.textContent = isBetDrill ? 'Submit Bet' : 'Deal Cards';

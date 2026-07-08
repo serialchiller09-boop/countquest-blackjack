@@ -25,6 +25,7 @@ jobs:
 
       - name: Stage static PWA bundle
         run: |
+          python scripts/build_tailwind.py
           python scripts/generate_pwa_icons.py
           mkdir -p dist
           cp index.html manifest.webmanifest sw.js .nojekyll dist/

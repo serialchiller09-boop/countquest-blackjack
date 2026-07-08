@@ -1,9 +1,10 @@
 /* CountQuest PWA service worker — cache app shell for offline repeat visits. */
-const CACHE_VERSION = 'cq-pwa-v1';
+const CACHE_VERSION = 'cq-pwa-v2';
 const SHELL_ASSETS = [
   './',
   './index.html',
   './manifest.webmanifest',
+  './css/tailwind.css',
   './css/app.css',
   './icons/icon-192.png',
   './icons/icon-512.png',
@@ -18,10 +19,6 @@ const SHELL_ASSETS = [
   './js/07-game-engine.js',
   './js/08-tutorial.js',
   './js/09-tests.js',
-];
-
-const CDN_ASSETS = [
-  'https://cdn.tailwindcss.com/',
 ];
 
 self.addEventListener('install', (event) => {
@@ -42,7 +39,7 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   if (request.method !== 'GET') return;
   const url = new URL(request.url);
-  if (url.origin !== self.location.origin && !CDN_ASSETS.some((c) => request.url.startsWith(c))) return;
+  if (url.origin !== self.location.origin) return;
 
   event.respondWith(
     caches.match(request).then((cached) => {

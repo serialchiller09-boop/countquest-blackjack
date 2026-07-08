@@ -20,12 +20,7 @@
     window.__runTestsBootstrapped = false;
     if (window.__CQ_TEST_MODE) { try { localStorage.clear(); sessionStorage.clear(); } catch (_) {} }
   </script>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: { extend: { colors: { felt: { DEFAULT:'#1a6b4a', dark:'#0d3d2a' }, gold:'#f59e0b' } } }
-    };
-  </script>
+  <link rel="stylesheet" href="css/tailwind.css" />
   <link rel="stylesheet" href="css/app.css" />
 </head>
 <body class="min-h-screen text-white font-sans antialiased">

@@ -11,3 +11,5 @@ _tmp_script_*.js
 gh-auth-*.txt
 browser_smoke_*.png
 artifacts/probe-*.png
+node_modules/
+tools/

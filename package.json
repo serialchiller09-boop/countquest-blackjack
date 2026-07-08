@@ -1,0 +1,10 @@
+{
+  "name": "countquest-blackjack",
+  "private": true,
+  "scripts": {
+    "build:css": "python scripts/build_tailwind.py"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
+  }
+}

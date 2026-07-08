@@ -16,7 +16,7 @@
       --cq-seat-col-h: 6.5rem;
       --cq-topbar-max: 4.5rem;
     }
-    /* Critical fallbacks when Tailwind CDN is slow or unavailable (file://, offline) */
+    /* Critical fallbacks when bundled Tailwind is slow to parse (file://, very old browsers) */
     .hidden { display: none !important; }
     #stats-sidebar { width: 20rem; max-width: 90vw; transform: translateX(100%); z-index: 50; }
     #stats-sidebar.open { transform: translateX(0); }

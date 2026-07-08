@@ -315,11 +315,28 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertIn('"display": "standalone"', manifest)
         self.assertIn("icons/icon-192.png", manifest)
         sw = (root / "sw.js").read_text(encoding="utf-8")
-        self.assertIn("cq-pwa-v1", sw)
+        self.assertIn("cq-pwa-v2", sw)
+        self.assertIn("./css/tailwind.css", sw)
+        self.assertNotIn("cdn.tailwindcss.com", sw)
         self.assertIn("./js/07-game-engine.js", sw)
+
+    def test_tailwind_bundled_offline(self) -> None:
+        shell = load_index_html()
+        root = ROOT
+        self.assertNotIn("cdn.tailwindcss.com", shell)
+        self.assertNotIn("tailwind.config", shell)
+        self.assertIn('href="css/tailwind.css"', shell)
+        self.assertTrue((root / "css" / "tailwind.css").is_file())
+        self.assertTrue((root / "css" / "tailwind-src.css").is_file())
+        self.assertTrue((root / "tailwind.config.js").is_file())
+        built = (root / "css" / "tailwind.css").read_text(encoding="utf-8")
+        self.assertGreater(len(built), 10_000)
+        for needle in (".text-gold", ".min-h-screen", ".flex", ".backdrop-blur"):
+            self.assertIn(needle, built, f"missing utility {needle}")
 
     def test_modular_file_layout(self) -> None:
         shell = load_index_html()
+        self.assertIn('href="css/tailwind.css"', shell)
         self.assertIn('href="css/app.css"', shell)
         for name in JS_MODULES:
             with self.subTest(module=name):

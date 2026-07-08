@@ -23,6 +23,7 @@ def main() -> int:
         return 1
 
     run([NPM, "install"])
+    run([sys.executable, "scripts/generate_native_icons.py"])
     run([sys.executable, "scripts/stage_dist.py"])
 
     android = ROOT / "android"

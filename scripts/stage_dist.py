@@ -27,6 +27,7 @@ def run(cmd: list[str]) -> None:
 def main() -> int:
     run([sys.executable, "scripts/build_tailwind.py"])
     run([sys.executable, "scripts/generate_pwa_icons.py"])
+    run([sys.executable, "scripts/generate_native_icons.py"])
 
     if DIST.exists():
         shutil.rmtree(DIST)

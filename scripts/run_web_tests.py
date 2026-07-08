@@ -335,6 +335,23 @@ class TestIndexHtmlStructure(unittest.TestCase):
         for needle in (".text-gold", ".min-h-screen", ".flex", ".backdrop-blur"):
             self.assertIn(needle, built, f"missing utility {needle}")
 
+    def test_native_brand_icons(self) -> None:
+        root = ROOT
+        bg = (root / "android" / "app" / "src" / "main" / "res" / "values" / "ic_launcher_background.xml").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("#0a1612", bg)
+        launcher = root / "android" / "app" / "src" / "main" / "res" / "mipmap-xxxhdpi" / "ic_launcher.png"
+        self.assertTrue(launcher.is_file())
+        self.assertGreater(launcher.stat().st_size, 500)
+        splash = root / "android" / "app" / "src" / "main" / "res" / "drawable" / "splash.png"
+        self.assertTrue(splash.is_file())
+        ios_icon = root / "ios" / "App" / "App" / "Assets.xcassets" / "AppIcon.appiconset" / "AppIcon-512@2x.png"
+        self.assertTrue(ios_icon.is_file())
+        self.assertGreater(ios_icon.stat().st_size, 5000)
+        self.assertTrue((root / "scripts" / "generate_native_icons.py").is_file())
+        self.assertTrue((root / "scripts" / "cq_brand_icon.py").is_file())
+
     def test_capacitor_scaffold(self) -> None:
         root = ROOT
         shell = load_index_html()

@@ -291,6 +291,7 @@
       width: 100%;
       max-width: 72rem;
       margin: 0 auto;
+      transform-origin: top center;
     }
     .casino-table-topbar {
       flex-shrink: 0;
@@ -309,7 +310,7 @@
       border-radius: 1.1rem 1.1rem 2rem 2rem;
       padding: 0.3rem 0.4rem 0.35rem;
       position: relative;
-      overflow: visible;
+      overflow: hidden;
       background: radial-gradient(ellipse 125% 90% at 50% 12%, var(--cq-felt-light) 0%, var(--cq-felt-mid) 40%, var(--cq-felt-deep) 100%);
       box-shadow: inset 0 0 70px rgba(0,0,0,.48), 0 10px 36px rgba(0,0,0,.42), 0 0 28px var(--cq-gold-glow);
     }
@@ -340,7 +341,32 @@
       align-items: end;
       padding: 0.35rem 0.5rem 0.5rem;
       position: relative;
-      overflow: visible;
+      overflow: hidden;
+    }
+    .casino-dealer-zone #dealer-cards {
+      display: flex;
+      flex-wrap: nowrap;
+      justify-content: center;
+      align-items: flex-end;
+      overflow: hidden;
+      gap: 0;
+      max-width: 100%;
+    }
+    .casino-dealer-zone #dealer-cards .playing-card {
+      flex-shrink: 0;
+    }
+    .casino-dealer-zone #dealer-cards .playing-card + .playing-card {
+      margin-left: -0.55rem;
+    }
+    .casino-dealer-zone #dealer-cards.dealer-cards-wide .playing-card + .playing-card {
+      margin-left: -0.68rem;
+    }
+    .casino-dealer-zone #dealer-cards.dealer-cards-many .playing-card {
+      width: 2.35rem !important;
+      height: 3.2rem !important;
+    }
+    .casino-dealer-zone #dealer-cards.dealer-cards-many .playing-card + .playing-card {
+      margin-left: -0.78rem;
     }
     #casino-seat-grid::before {
       content: '';
@@ -479,7 +505,7 @@
       grid-template-areas: "spot" "cards" "label";
       height: auto;
       max-height: none;
-      overflow: visible;
+      overflow: hidden;
       border-color: rgba(167,243,208,.22);
       background: linear-gradient(180deg, rgba(52,211,153,.06) 0%, rgba(0,0,0,.28) 100%);
     }
@@ -496,10 +522,9 @@
       flex-wrap: wrap;
       justify-content: center;
       align-items: flex-start;
-      gap: 0.12rem;
+      gap: 0.1rem;
       padding: 0.06rem 0.1rem;
-      overflow-x: auto;
-      overflow-y: visible;
+      overflow: hidden;
     }
     .casino-seat-ai-hand {
       display: flex;
@@ -511,9 +536,24 @@
     .casino-seat-ai-hand-row {
       display: flex;
       justify-content: center;
-      gap: 0.05rem;
+      align-items: flex-end;
+      gap: 0;
       flex-wrap: nowrap;
+      overflow: hidden;
+      max-width: 100%;
     }
+    .casino-seat-ai-hand-row .casino-ai-mini-card + .casino-ai-mini-card {
+      margin-left: -0.32rem;
+    }
+    .casino-seat-ai-hand-row.ai-mini-cards-5 .casino-ai-mini-card + .casino-ai-mini-card { margin-left: -0.4rem; }
+    .casino-seat-ai-hand-row.ai-mini-cards-6 .casino-ai-mini-card,
+    .casino-seat-ai-hand-row.ai-mini-cards-7 .casino-ai-mini-card {
+      width: 1rem;
+      height: 1.35rem;
+      font-size: 0.4rem;
+    }
+    .casino-seat-ai-hand-row.ai-mini-cards-6 .casino-ai-mini-card + .casino-ai-mini-card,
+    .casino-seat-ai-hand-row.ai-mini-cards-7 .casino-ai-mini-card + .casino-ai-mini-card { margin-left: -0.48rem; }
     .casino-ai-mini-card {
       width: 1.15rem;
       height: 1.55rem;
@@ -554,7 +594,7 @@
     .casino-seat-ai-result-loss { color: rgba(248,113,113,.85); }
     .casino-seat-ai-result-push { color: rgba(167,243,208,.55); }
     #casino-seat-human {
-      overflow: visible;
+      overflow: hidden;
       z-index: 4;
     }
     .casino-seat-human {
@@ -563,7 +603,7 @@
       height: auto;
       max-height: none;
       min-height: var(--cq-seat-col-h);
-      overflow: visible;
+      overflow: hidden;
       border: 2px solid rgba(245, 158, 11, 0.55);
       box-shadow: 0 0 20px var(--cq-gold-glow), inset 0 0 24px rgba(245,158,11,.08), inset 0 1px 0 rgba(253,230,138,.12);
       background: linear-gradient(180deg, rgba(245,158,11,.08) 0%, rgba(0,0,0,.36) 100%);
@@ -579,7 +619,7 @@
       max-height: none;
       padding: 0.2rem 0.35rem 0.12rem;
       gap: 0.18rem;
-      overflow: visible;
+      overflow: hidden;
     }
     .casino-seat-human .casino-seat-cards-wrap .playing-card {
       width: 2.65rem;
@@ -592,7 +632,7 @@
       justify-content: center;
       align-content: flex-start;
       gap: 0.22rem 0.3rem;
-      overflow: visible;
+      overflow: hidden;
       width: min(220%, 34rem);
       padding-left: 0.2rem;
       padding-right: 0.2rem;
@@ -618,7 +658,7 @@
       flex-wrap: nowrap;
       gap: 0;
       min-height: 0;
-      overflow: visible;
+      overflow: hidden;
       max-width: 100%;
     }
     .casino-hand-cards .playing-card {
@@ -631,7 +671,9 @@
     .casino-hand-cards-cards-5 .playing-card + .playing-card { margin-left: -0.62rem; }
     .casino-hand-cards-cards-6 .playing-card + .playing-card { margin-left: -0.72rem; }
     .casino-hand-cards-cards-7 .playing-card + .playing-card,
-    .casino-hand-cards-cards-8 .playing-card + .playing-card { margin-left: -0.82rem; }
+    .casino-hand-cards-cards-8 .playing-card + .playing-card,
+    .casino-hand-cards-cards-9 .playing-card + .playing-card { margin-left: -0.82rem; }
+    .casino-hand-cards-cards-9 .playing-card + .playing-card { margin-left: -0.9rem; }
     .casino-hand-cards-cards-6 .playing-card,
     .casino-hand-cards-cards-7 .playing-card,
     .casino-hand-cards-cards-8 .playing-card {
@@ -639,9 +681,14 @@
       height: 3.2rem !important;
     }
     .casino-hand-cards-cards-7 .playing-card,
-    .casino-hand-cards-cards-8 .playing-card {
+    .casino-hand-cards-cards-8 .playing-card,
+    .casino-hand-cards-cards-9 .playing-card {
       width: 2.1rem !important;
       height: 2.85rem !important;
+    }
+    .casino-hand-cards-cards-9 .playing-card {
+      width: 1.9rem !important;
+      height: 2.6rem !important;
     }
     .casino-seat-human .casino-seat-cards-wrap.casino-seat-cards-wide {
       width: min(200%, 32rem);
@@ -708,7 +755,7 @@
     }
     #player-hands.casino-seat-cards-wrap {
       max-height: none;
-      overflow: visible;
+      overflow: hidden;
     }
     /* Hand-end dock — stays on the live table instead of swapping screens */
     #screen-handend.casino-handend-overlay {
@@ -728,8 +775,7 @@
       border-radius: 1rem;
       box-shadow: 0 -6px 28px rgba(0,0,0,.5), 0 0 24px rgba(245,158,11,.12);
       border: 1px solid rgba(245,158,11,.25);
-      max-height: min(42vh, 16rem);
-      overflow-y: auto;
+      overflow: hidden;
     }
     #screen-handend.casino-handend-overlay h3 {
       font-size: 0.95rem;
@@ -743,14 +789,19 @@
       padding: 0.45rem 0.55rem;
       font-size: 0.72rem;
       line-height: 1.35;
-      max-height: 3.5rem;
-      overflow-y: auto;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
     }
     #screen-handend.casino-handend-overlay #handend-review {
       font-size: 0.68rem;
       padding: 0.4rem 0.5rem;
-      max-height: 4.5rem;
-      overflow-y: auto;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3;
+      white-space: pre-wrap;
     }
     #screen-handend.casino-handend-overlay .handend-actions {
       padding-top: 0.35rem;
@@ -896,7 +947,7 @@
       .casino-seat-human .casino-seat-cards-wrap {
         min-height: 2.85rem;
         max-height: none;
-        overflow: visible;
+        overflow: hidden;
         width: min(150%, 22rem);
       }
       .casino-seat-human .casino-seat-cards-wrap .playing-card {
@@ -1036,12 +1087,14 @@
         width: min(240%, 28rem);
       }
       #screen-handend.casino-handend-overlay > .felt {
-        max-height: min(36vh, 11.5rem);
         padding: 0.4rem 0.55rem;
       }
       #screen-handend.casino-handend-overlay #handend-feedback {
-        max-height: 2.75rem;
         font-size: 0.65rem;
+        -webkit-line-clamp: 2;
+      }
+      #screen-handend.casino-handend-overlay #handend-review {
+        -webkit-line-clamp: 2;
       }
       dialog.casino-count-quiz-dialog {
         margin-bottom: 5.5rem;
@@ -1067,7 +1120,7 @@
         grid-template-rows: auto;
         gap: 0.12rem;
         padding: 0.18rem 0.1rem 0.28rem;
-        overflow: visible;
+        overflow: hidden;
       }
       .casino-seat { min-width: 0; }
       #casino-seat-grid::before { bottom: 1.35rem; opacity: 0.15; }
@@ -8180,7 +8233,7 @@ class CountQuestApp {
     ensureDailyRewardsCurrent(this.save);
     this.bindUI();
     this._onCasinoShellResize = () => {
-      if (['bet', 'playing', 'countConfirm'].includes(this.phase)) this.syncCasinoShellMetrics();
+      if (['bet', 'playing', 'countConfirm', 'handEnd'].includes(this.phase)) this.syncCasinoShellMetrics();
     };
     window.addEventListener('resize', this._onCasinoShellResize);
     this.initBranding();
@@ -13513,9 +13566,11 @@ class CountQuestApp {
           if (!cards.length) return '';
           const total = hs.hand.size ? hs.hand.value() : '';
           const suffix = hs.doubled ? ' ×2' : '';
+          const aiCardN = cards.length;
+          const aiRowCls = aiCardN >= 6 ? 'ai-mini-cards-6' : aiCardN >= 5 ? 'ai-mini-cards-5' : '';
           return `<div class="casino-seat-ai-hand">
             ${hands.length > 1 ? `<span class="casino-seat-ai-total">H${hi + 1}</span>` : ''}
-            <div class="casino-seat-ai-hand-row">${cards.map(c => renderTableAiMiniCard(c)).join('')}</div>
+            <div class="casino-seat-ai-hand-row ${aiRowCls}">${cards.map(c => renderTableAiMiniCard(c)).join('')}</div>
             <span class="casino-seat-ai-total">${total}${suffix}</span>
           </div>`;
         }).join('')
@@ -15789,7 +15844,7 @@ class CountQuestApp {
     }
   }
 
-  /** Sync header/action-bar CSS vars so fixed casino shell fits viewport (no transform scaling). */
+  /** Sync header/action-bar CSS vars and scale table to fit viewport (no scrollbars). */
   syncCasinoShellMetrics() {
     const header = document.getElementById('app-header');
     const actionBar = document.getElementById('action-bar');
@@ -15799,8 +15854,35 @@ class CountQuestApp {
     const actionVisible = actionBar && !actionBar.classList.contains('hidden');
     const actionReserve = actionVisible ? actionBar.offsetHeight : 8;
     document.documentElement.style.setProperty('--cq-action-bar-h', `${actionReserve}px`);
+    this.fitCasinoPlayViewport();
+  }
+
+  fitCasinoPlayViewport() {
     const viewport = document.querySelector('.casino-table-viewport');
-    if (viewport) viewport.style.transform = '';
+    const shell = document.getElementById('screen-casino-play');
+    if (!viewport || !shell || shell.classList.contains('hidden')) return;
+    viewport.style.transform = '';
+    viewport.style.marginBottom = '';
+    const shellH = shell.clientHeight;
+    const shellW = shell.clientWidth;
+    if (shellH < 1 || shellW < 1) return;
+    const handend = document.getElementById('screen-handend');
+    const handendReserve = (
+      this.phase === 'handEnd'
+      && handend
+      && !handend.classList.contains('hidden')
+    ) ? handend.offsetHeight + 10 : 0;
+    const contentH = viewport.scrollHeight;
+    const contentW = viewport.scrollWidth;
+    const maxH = Math.max(1, shellH - handendReserve);
+    const scaleY = contentH > maxH ? maxH / contentH : 1;
+    const scaleX = contentW > shellW ? shellW / contentW : 1;
+    const scale = Math.min(1, scaleX, scaleY);
+    const applied = Math.max(0.68, scale);
+    if (applied < 0.995) {
+      viewport.style.transform = `scale(${applied})`;
+      viewport.style.marginBottom = `-${contentH * (1 - applied)}px`;
+    }
   }
 
   renderBet() {
@@ -15879,7 +15961,11 @@ class CountQuestApp {
 
     const animBase = Math.max(0, this.dealAnimIndex - 1);
     const showDealAnim = this.dealing;
-    document.getElementById('dealer-cards').innerHTML = this.dealer.cards.map((c, i) => {
+    const dealerEl = document.getElementById('dealer-cards');
+    const dealerCardN = this.dealer.cards.length;
+    dealerEl.classList.toggle('dealer-cards-wide', dealerCardN >= 5);
+    dealerEl.classList.toggle('dealer-cards-many', dealerCardN >= 7);
+    dealerEl.innerHTML = this.dealer.cards.map((c, i) => {
       const isLast = showDealAnim && i === this.dealer.cards.length - 1;
       const anim = isLast ? animBase : null;
       return this.renderCard(c, this.hideHole && i === 1, anim);
@@ -15907,7 +15993,8 @@ class CountQuestApp {
     ph.innerHTML = this.playerHands.map((h, i) => {
       const active = i === this.activeIdx && !h.finished;
       const cardN = h.hand.cards.length;
-      const cardsCls = cardN >= 8 ? 'casino-hand-cards-cards-8'
+      const cardsCls = cardN >= 9 ? 'casino-hand-cards-cards-9'
+        : cardN >= 8 ? 'casino-hand-cards-cards-8'
         : cardN >= 7 ? 'casino-hand-cards-cards-7'
         : cardN >= 6 ? 'casino-hand-cards-cards-6'
         : cardN >= 5 ? 'casino-hand-cards-cards-5' : '';

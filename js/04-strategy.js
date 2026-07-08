@@ -61,8 +61,27 @@ function findMatchingIndexPlay(hand, dealerUpcardRank) {
   return INDEX_PLAY_CATALOG.find(p => p.category !== 'insurance' && p.dealerUp === up && handRanksMatchIndexPlay(hand, p)) || null;
 }
 
-function applyIndexPlayDeviation(hand, dealerUpcardRank, canDouble, canSplit, trueCount, countingSystemId = 'hi-lo') {
-  if (countingSystemId !== 'hi-lo' || trueCount == null || Number.isNaN(trueCount)) return null;
+function isIndexDeviationRationale(rationale) {
+  return typeof rationale === 'string' && rationale.startsWith('Index ');
+}
+
+function formatStrategyHintText(advice) {
+  const prefix = isIndexDeviationRationale(advice.rationale) ? 'INDEX' : 'Strategy';
+  return `${prefix} → ${advice.action.toUpperCase()}: ${advice.rationale}`;
+}
+
+function getLiveIndexContext(hand, dealerUpcardRank, trueCount, countingSystemId = 'hi-lo', useIndexDeviations = true) {
+  if (!useIndexDeviations || countingSystemId !== 'hi-lo' || trueCount == null || Number.isNaN(trueCount)) {
+    return { hasIndexPlay: false, useIndex: false, play: null };
+  }
+  const play = findMatchingIndexPlay(hand, dealerUpcardRank);
+  if (!play) return { hasIndexPlay: false, useIndex: false, play: null };
+  const idx = getIndexPlayCorrectAction(play, trueCount);
+  return { hasIndexPlay: true, useIndex: !!idx.useIndex, play };
+}
+
+function applyIndexPlayDeviation(hand, dealerUpcardRank, canDouble, canSplit, trueCount, countingSystemId = 'hi-lo', useIndexDeviations = true) {
+  if (!useIndexDeviations || countingSystemId !== 'hi-lo' || trueCount == null || Number.isNaN(trueCount)) return null;
   const play = findMatchingIndexPlay(hand, dealerUpcardRank);
   if (!play) return null;
   const idx = getIndexPlayCorrectAction(play, trueCount);
@@ -78,9 +97,9 @@ function applyIndexPlayDeviation(hand, dealerUpcardRank, canDouble, canSplit, tr
 }
 
 /** Insurance deviation vs dealer Ace (Hi-Lo true count +3 index). */
-function adviseInsurance(trueCount, countingSystemId = 'hi-lo') {
+function adviseInsurance(trueCount, countingSystemId = 'hi-lo', useIndexDeviations = true) {
   const play = INDEX_PLAY_CATALOG.find(p => p.id === 'ins-tc3');
-  if (!play || countingSystemId !== 'hi-lo' || trueCount == null || Number.isNaN(trueCount)) {
+  if (!useIndexDeviations || !play || countingSystemId !== 'hi-lo' || trueCount == null || Number.isNaN(trueCount)) {
     return { action: 'no-insurance', rationale: 'Skip insurance — basic strategy (count not used).' };
   }
   const idx = getIndexPlayCorrectAction(play, trueCount);
@@ -93,8 +112,8 @@ function adviseInsurance(trueCount, countingSystemId = 'hi-lo') {
 }
 
 function advise(hand, dealerUpcardRank, canDouble, canSplit, opts = {}) {
-  const { trueCount = null, countingSystemId = 'hi-lo' } = opts;
-  const indexAdvice = applyIndexPlayDeviation(hand, dealerUpcardRank, canDouble, canSplit, trueCount, countingSystemId);
+  const { trueCount = null, countingSystemId = 'hi-lo', useIndexDeviations = true } = opts;
+  const indexAdvice = applyIndexPlayDeviation(hand, dealerUpcardRank, canDouble, canSplit, trueCount, countingSystemId, useIndexDeviations);
   if (indexAdvice) return indexAdvice;
   const dealerUpcardValue = parseDealerUpcardAsNumber(dealerUpcardRank);
   if (canSplit && hand.size === 2 && hand.cards[0].rank === hand.cards[1].rank) {

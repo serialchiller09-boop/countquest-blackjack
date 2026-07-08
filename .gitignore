@@ -9,3 +9,5 @@ data/progress.json
 Thumbs.db
 _tmp_script_*.js
 gh-auth-*.txt
+browser_smoke_*.png
+artifacts/probe-*.png

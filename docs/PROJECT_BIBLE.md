@@ -1,23 +1,21 @@
 # CountQuest Blackjack — Project Bible
 
-## Current State & Next Focus (as of 2026-07-07)
+## Current State & Next Focus (as of 2026-07-08)
 
 ### Current State
-- We are in the middle of redesigning the main play screen into a traditional 7-seat no-scroll casino blackjack table.
-- Recent attempts using Grok Build’s autonomous `/goal` mode have introduced visible bugs in the interface and created unstable test scripts.
-- Core systems (HelpSystem, CardCounter, BasicStrategy, persistence) remain functional, but the UI is currently in a messy/inconsistent state.
-- The autonomous workflow is not delivering reliable results at this stage.
+- **Modular web app**: `index.html` shell + `css/app.css` + ten ordered `js/` modules (`01-constants.js` … `09-tests.js`).
+- **7-seat casino table** is scroll-free at 1280×720; human (YOU) seat card alignment matches AI seat layout.
+- **Core systems** solid: HelpSystem (5 levels), Hi-Lo/KO counting, basic strategy, index deviations in live play, localStorage persistence (SAVE_VERSION 18).
+- **CI green**: 68 web tests, CountQuest package tests, 365 embedded browser assertions.
+- **Meta-game** (clubs, tournaments, daily rewards, VIP) is local-only — no backend.
 
 ### Next Focus
-- **Pause heavy autonomous `/goal` runs** for now.
-- Return to smaller, more frequent, and controlled prompts with Grok Build (similar to the earlier style).
-- Prioritize **fixing the current bugs** in the table layout and making the UI stable and usable again.
-- Focus on getting a clean, scroll-free 7-seat table working before trying to push for more autonomy.
-- Keep the Project Bible updated as the single source of truth.
-- Re-evaluate the automation approach once the core table UI is in a stable state.
+- **Dealer Mode polish** — tighten payout flow and table UX under the same 7-seat layout rules.
+- **Optional build step** — bundle modules back to a single file for offline `file://` distribution if needed.
+- **Backend later** — only when moving clubs/tournaments off localStorage.
 
 **Status**: Living Document — Update this file whenever major decisions, architecture changes, or new patterns are established.  
-**Last Updated**: 2026-07-07  
+**Last Updated**: 2026-07-08  
 **Purpose**: Single source of truth for vision, architecture, decisions, automation workflows, and development guidelines.
 
 ---
@@ -30,17 +28,28 @@ CountQuest Blackjack is an educational, progressively challenging blackjack game
 - Mathematically accurate (Hi-Lo, true count, basic strategy, index deviations when enabled).
 - Progressive help system (5 levels) that fades as the player improves.
 - Balance deep education with engaging gameplay (Mini Clip 8 Ball Pool style polish).
-- Support both Player Mode and future Dealer Mode.
+- Support both Player Mode and Dealer Mode.
 - “Quest Through the Casinos” visual theme (deep green felt, gold accents, glowing cyan for count/insight elements).
-- Keep everything in a single self-contained `index.html` file for as long as practical.
+- Modular source layout (`index.html` + `css/` + `js/`) with ordered script tags preserving global API for tests.
 
 ---
 
 ## 2. Current Architecture Overview
 
-- Single-file web app (`index.html` + Tailwind CDN + vanilla JS).
-- Core preserved systems: Shoe, CardCounter (Hi-Lo + True Count), HelpSystem (5 levels), BasicStrategy engine, stats, ranks, and localStorage persistence.
-- Current main pain point: Table organization and scrolling on the main play screen.
+| Layer | Path | Role |
+|-------|------|------|
+| Shell | `index.html` | HTML, Tailwind CDN, test bootstrap, module script tags |
+| Styles | `css/app.css` | Quest Through the Casinos theme, 7-seat table layout |
+| Constants | `js/01-constants.js` | SAVE_VERSION, lobby, themes, achievements, migrations |
+| Core | `js/02-core-types.js` | Hand, Shoe, card helpers |
+| Counting | `js/03-counting.js` | Hi-Lo/KO, bet spread |
+| Strategy | `js/04-strategy.js` | Basic strategy + live index deviations |
+| Help | `js/05-help-system.js` | 5-level coaching |
+| Storage | `js/06-stats-storage.js`, `js/06b-validation.js` | Save/load, validation |
+| Engine | `js/07-game-engine.js` | CountQuestApp |
+| Tests | `js/09-tests.js` | `runTests()` + bootstrap |
+
+**Tooling**: `scripts/load_project_source.py` concatenates shell + css + js for structure tests. `scripts/split_index.py` can re-split a monolith.
 
 ---
 
@@ -56,6 +65,11 @@ CountQuest Blackjack is an educational, progressively challenging blackjack game
 
 **Rule**: Every UI change must respect and adapt to all 5 help levels.
 
+**Index deviations in live play** (Hi-Lo, Settings → “Hi-Lo index deviations”):
+- `advise()` and `adviseInsurance()` apply catalog indices when true count is known.
+- Strategy bar shows `INDEX →` prefix when an index play applies.
+- Levels 0–1 get proactive hints at index spots; mistakes log to Review Mistakes.
+
 ---
 
 ## 3. UI/UX & Theming Guidelines
@@ -63,19 +77,25 @@ CountQuest Blackjack is an educational, progressively challenging blackjack game
 **Primary Theme**: Quest Through the Casinos  
 - Deep green felt, gold accents, glowing cyan for count/insight elements.
 
-**Current Priority**: Redesign the main play screen into a single no-scroll view showing a traditional 7-seat casino blackjack table.
+**Table layout**: Single no-scroll 7-seat casino view. Human seat (Seat 4) uses gold highlight; cards/totals/bet follow the same grid rules as AI seats.
 
 ---
 
 ## 4. Development & Automation Workflow
 
-High-level planning happens in this conversation. Prompts are generated here and handed off to Grok Build using `/goal`.
+High-level planning happens in this conversation. Implementation uses controlled, small prompts.
 
 ### 4.1 Testing & Verification Strategy
 
-Grok Build has repeatedly spent excessive time on complex Playwright test scripts instead of delivering features.
+| Command | Purpose |
+|---------|---------|
+| `python scripts/run_web_tests.py` | Structure + logic parity (68 tests) |
+| `python -m unittest discover -s countquest/tests` | Python package tests |
+| `CQ_BROWSER_TESTS=1 python scripts/run_browser_tests.py` | Embedded `runTests()` (365 assertions) |
+| `python scripts/split_720_probe.py` | 1280×720 layout / no-scroll regression |
+| `python scripts/browser_smoke.py` | Quick Playwright play-through |
 
-**Guideline**: When the main goal is UI or feature work, explicitly tell Grok Build to **minimize or temporarily ignore** heavy browser-based testing. Only focus on testing infrastructure when that is the primary task.
+Serve from project root so `/css/app.css` and `/js/*.js` resolve.
 
 ---
 
@@ -83,18 +103,18 @@ Grok Build has repeatedly spent excessive time on complex Playwright test script
 
 | Date       | Decision                                      | Rationale                                              | Status      |
 |------------|-----------------------------------------------|--------------------------------------------------------|-------------|
-| 2026-07-07 | Use 7-seat traditional table layout           | Improves visibility and prepares for Dealer Mode       | In Progress |
-| 2026-07-07 | Keep single-file `index.html` structure       | Simplifies development and distribution                | Confirmed   |
-| 2026-07-07 | Make prompts more aggressive about testing    | Grok Build frequently over-invests in flaky test code  | Active      |
-| 2026-07-07 | Add Testing & Verification Strategy section   | Recurring pattern needs to be documented               | Added       |
+| 2026-07-07 | Use 7-seat traditional table layout           | Improves visibility and prepares for Dealer Mode       | Complete    |
+| 2026-07-08 | Split into css/ + js/ modules                 | Maintainability; tests use `load_project_source.py`    | Complete    |
+| 2026-07-08 | Wire index deviations into live play          | Settings toggle + strategy hints + mistake logging     | Complete    |
+| 2026-07-08 | Human seat alignment fix                      | Match AI card row layout; keep gold highlight           | Complete    |
 
 ---
 
 ## 6. Roadmap & Current Priorities
 
-**Now**: Deliver scroll-free 7-seat table layout + apply theming while respecting help levels.
+**Done**: Scroll-free 7-seat table, modular split, live index deviations, CI, tournament invites.
 
-**Next**: Stabilize testing approach, then begin wiring index deviations into live play.
+**Next**: Dealer Mode polish, optional bundle script, backend when needed.
 
 ---
 
@@ -115,6 +135,8 @@ Feature: [Describe]
 Relevant Bible sections: [List sections]
 
 Requirements:
-- Single-file structure
+- Work in css/ and js/ modules (or index.html shell only when needed)
 - Respect all 5 help levels
 - Incremental work with checkpoints
+- Run run_web_tests.py before finishing
+```

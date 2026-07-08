@@ -16,11 +16,12 @@ ROOT = Path(__file__).resolve().parents[1]
 console = Console()
 
 sys.path.insert(0, str(ROOT / "scripts"))
+from load_project_source import load_app_source  # noqa: E402
 from save_version import read_save_version  # noqa: E402
 
 
 def main() -> int:
-    html = (ROOT / "index.html").read_text(encoding="utf-8")
+    html = load_app_source()
     console.print()
     console.print(
         Panel(

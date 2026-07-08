@@ -50,6 +50,7 @@ class CountQuestApp {
     if (!this.save.uiHints) this.save.uiHints = { shoeTermExplained: false, hardHandTips: 0 };
     if (this.save.settings.showCountDisplay === undefined) this.save.settings.showCountDisplay = true;
     if (this.save.settings.showCountPopups === undefined) this.save.settings.showCountPopups = true;
+    if (this.save.settings.useIndexDeviations === undefined) this.save.settings.useIndexDeviations = true;
     this._afterCountQuiz = null;
     Sounds.setEnabled(this.save.settings.soundEnabled);
     if (window.__CQ_TEST_MODE) return;
@@ -189,6 +190,32 @@ class CountQuestApp {
 
   wantsCountPopups() {
     return this.settings.showCountPopups !== false && this.wantsCountDisplay();
+  }
+
+  usesIndexDeviations() {
+    return this.settings.useIndexDeviations !== false && this.activeCountingSystem() === 'hi-lo';
+  }
+
+  buildStratOpts(snap = null) {
+    const countSnap = snap || (this.shoe ? this.counter.getCountSnapshot(this.shoe) : null);
+    return {
+      trueCount: countSnap?.trueCount ?? null,
+      countingSystemId: this.activeCountingSystem(),
+      useIndexDeviations: this.usesIndexDeviations(),
+    };
+  }
+
+  recordLiveStrategyMistake(action, advice, context) {
+    if (!this.save || this.save.sessionDrill) return;
+    const indexPlay = isIndexDeviationRationale(advice.rationale);
+    recordMistakeReviewEntry(this.save, {
+      drillId: 'live',
+      category: indexPlay ? 'deviation' : 'strategy',
+      context,
+      wrong: formatIndexPlayAction(action),
+      correct: formatIndexPlayAction(advice.action),
+      meta: { indexPlay, rationale: advice.rationale },
+    });
   }
 
   resetCountQuizModal() {
@@ -5742,7 +5769,7 @@ class CountQuestApp {
   showInsuranceModal() {
     const dlg = document.getElementById('modal-insurance');
     const snap = this.shoe ? this.counter.getCountSnapshot(this.shoe) : null;
-    const insAdvice = adviseInsurance(snap?.trueCount ?? null, this.activeCountingSystem());
+    const insAdvice = adviseInsurance(snap?.trueCount ?? null, this.activeCountingSystem(), this.usesIndexDeviations());
     const hint = this.help.showStrategyAlways() || this.help.showStrategyOnMistake()
       ? `<p class="text-xs text-cyan-200/90 mb-3 bg-black/25 rounded-lg px-3 py-2">Strategy → ${formatIndexPlayAction(insAdvice.action)}: ${insAdvice.rationale}</p>`
       : '';
@@ -5760,14 +5787,25 @@ class CountQuestApp {
   resolveInsurance(take) {
     document.getElementById('modal-insurance').close();
     const snap = this.shoe ? this.counter.getCountSnapshot(this.shoe) : null;
-    const insAdvice = adviseInsurance(snap?.trueCount ?? null, this.activeCountingSystem());
+    const insAdvice = adviseInsurance(snap?.trueCount ?? null, this.activeCountingSystem(), this.usesIndexDeviations());
     const optimal = insAdvice.action === 'insurance';
+    const indexPlay = this.usesIndexDeviations() && !!insAdvice.useIndex;
     if (this.roundReview) {
-      this.roundReview.decisions.push({ action: take ? 'insurance' : 'no-insurance', advice: insAdvice.action, mistake: (take !== optimal) });
+      this.roundReview.decisions.push({
+        action: take ? 'insurance' : 'no-insurance',
+        advice: insAdvice.action,
+        mistake: (take !== optimal),
+        indexPlay,
+      });
       this.stats.decisionsTotal++;
       if (take !== optimal) {
         this.stats.strategyMistakes++; this.help.shoeMistakes++;
         this.help.recordDecisionMistake({ action: take ? 'insurance' : 'no-insurance', optimal: insAdvice.action });
+        this.recordLiveStrategyMistake(
+          take ? 'insurance' : 'no-insurance',
+          insAdvice,
+          `Insurance vs dealer Ace · TC ${snap?.trueCount?.toFixed?.(1) ?? '—'}`,
+        );
       }
     }
     const main = this.playerHands[0].bet;
@@ -5854,12 +5892,13 @@ class CountQuestApp {
     }
     const up = this.dealer.cards[0].rank;
     const snap = this.shoe ? this.counter.getCountSnapshot(this.shoe) : null;
-    const stratOpts = { trueCount: snap?.trueCount ?? null, countingSystemId: this.activeCountingSystem() };
+    const stratOpts = this.buildStratOpts(snap);
     const advice = advise(st.hand, up, this.canDouble(st), this.canSplit(st), stratOpts);
     const total = st.hand.value();
+    const indexPlay = isIndexDeviationRationale(advice.rationale);
 
     if (this.roundReview) {
-      this.roundReview.decisions.push({ action, advice: advice.action, mistake: action !== advice.action });
+      this.roundReview.decisions.push({ action, advice: advice.action, mistake: action !== advice.action, indexPlay });
       this.stats.decisionsTotal++;
       if (action !== advice.action) {
         this.stats.strategyMistakes++; this.help.shoeMistakes++;
@@ -5868,12 +5907,14 @@ class CountQuestApp {
         if (this.save.sessionDrill === 'combined') {
           recordMistakeReviewEntry(this.save, {
             drillId: 'combined',
-            category: 'strategy',
+            category: indexPlay ? 'deviation' : 'strategy',
             context: `Hand ${this.session?.hands || '?'}: Your ${total} vs dealer ${up}`,
             wrong: formatIndexPlayAction(action),
             correct: formatIndexPlayAction(advice.action),
-            meta: { handTotal: total, dealerUp: up },
+            meta: { handTotal: total, dealerUp: up, indexPlay },
           });
+        } else {
+          this.recordLiveStrategyMistake(action, advice, `Hand ${this.session?.hands || '?'}: ${total} vs dealer ${up}`);
         }
       } else this.stats.decisionsCorrect++;
       if (this.session) {
@@ -6673,14 +6714,18 @@ class CountQuestApp {
     document.getElementById('toggle-sound').checked = Sounds.enabled;
     document.getElementById('toggle-count-display').checked = this.wantsCountDisplay();
     document.getElementById('toggle-count-popups').checked = this.settings.showCountPopups !== false;
+    const indexToggle = document.getElementById('toggle-index-deviations');
+    if (indexToggle) indexToggle.checked = this.usesIndexDeviations();
     const syncDisplay = () => {
       this.save.settings.showCountDisplay = document.getElementById('toggle-count-display').checked;
       this.save.settings.showCountPopups = document.getElementById('toggle-count-popups').checked;
+      if (indexToggle) this.save.settings.useIndexDeviations = indexToggle.checked;
       this.persist();
       this.render();
     };
     document.getElementById('toggle-count-display').onchange = syncDisplay;
     document.getElementById('toggle-count-popups').onchange = syncDisplay;
+    if (indexToggle) indexToggle.onchange = syncDisplay;
     const unlocks = new Set(this.save.countingUnlocks || ['hi-lo']);
     const activeSys = this.activeCountingSystem();
     const sysContainer = document.getElementById('counting-system-cards');
@@ -7882,13 +7927,21 @@ class CountQuestApp {
 
     const st = this.playerHands.length ? this.activeState() : null;
     const up = this.dealer.cards[0]?.rank;
-    const snap = this.shoe ? this.counter.getCountSnapshot(this.shoe) : null;
-    const stratOpts = { trueCount: snap?.trueCount ?? null, countingSystemId: this.activeCountingSystem() };
+    const stratOpts = this.buildStratOpts();
+    const indexContext = st && up
+      ? getLiveIndexContext(st.hand, up, stratOpts.trueCount, stratOpts.countingSystemId, stratOpts.useIndexDeviations)
+      : null;
     let hint = document.getElementById('strategy-hint');
-    if (st && up && this.help.shouldShowHint(advise(st.hand, up, this.canDouble(st), this.canSplit(st), stratOpts), st.hand.value())) {
+    if (st && up) {
       const a = advise(st.hand, up, this.canDouble(st), this.canSplit(st), stratOpts);
-      hint.textContent = `Strategy → ${a.action.toUpperCase()}: ${a.rationale}`;
-      hint.classList.remove('hidden');
+      const showHint = this.help.shouldShowHint(a, st.hand.value(), null, {
+        hasIndexPlay: !!indexContext?.hasIndexPlay,
+        deviationsEnabled: stratOpts.useIndexDeviations,
+      });
+      if (showHint) {
+        hint.textContent = formatStrategyHintText(a);
+        hint.classList.remove('hidden');
+      } else if (!this.help.showStrategyOnMistake()) hint.classList.add('hidden');
     } else if (!this.help.showStrategyOnMistake()) hint.classList.add('hidden');
 
     const ph = document.getElementById('player-hands');
@@ -7985,13 +8038,15 @@ class CountQuestApp {
         rev.textContent = formatHandEndReviewCompact(this.roundReview, this.counter, lastHand);
       } else {
         const mistakes = (this.roundReview.decisions || []).filter(d => d.mistake);
+        const indexMistakes = mistakes.filter(d => d.indexPlay).length;
         const rc = formatHandRunningCountReviewCompact(
           this.roundReview.runningCountAtHandStart,
           this.counter.runningCount,
         );
-        const strat = mistakes.length
+        let strat = mistakes.length
           ? `Strategy: ${mistakes.length} suboptimal`
           : 'Strategy: all correct';
+        if (indexMistakes) strat += ` (${indexMistakes} index)`;
         rev.textContent = `${rc} · Bet $${this.roundReview.bet} (rec $${this.roundReview.suggested}) · ${strat}`;
       }
     } else rev.classList.add('hidden');

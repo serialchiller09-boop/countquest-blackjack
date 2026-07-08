@@ -119,10 +119,14 @@ class HelpSystem {
     if (['hit','double','split'].includes(advice.action)) return total >= 9;
     return false;
   }
-  shouldShowHint(advice, handTotal, afterAction = null) {
+  shouldShowHint(advice, handTotal, afterAction = null, indexContext = null) {
     if (this.blockHints()) return false;
     if (this.showStrategyAlways()) return true;
     if (this.showStrategyOnRequest()) return false;
+    if (!afterAction && indexContext?.hasIndexPlay && indexContext?.deviationsEnabled && this.modeProfile === 'normal') {
+      if (this.level === 0) return true;
+      if (this.level === 1) return true;
+    }
     if (this.level === 1) return afterAction ? this.isMistake(afterAction, advice) : this.isClose(handTotal);
     if (this.level === 2) return afterAction ? this.isMistake(afterAction, advice) : this.isClearRisk(advice, handTotal);
     return false;

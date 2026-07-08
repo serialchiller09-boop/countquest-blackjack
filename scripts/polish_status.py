@@ -13,6 +13,9 @@ from rich.panel import Panel
 from rich.table import Table
 
 ROOT = Path(__file__).resolve().parents[1]
+import sys
+sys.path.insert(0, str(ROOT / "scripts"))
+from load_project_source import load_app_source  # noqa: E402
 console = Console()
 
 POLISH_IMPROVEMENTS = [
@@ -55,7 +58,7 @@ POLISH_MARKERS = [
 
 
 def main() -> int:
-    html = (ROOT / "index.html").read_text(encoding="utf-8")
+    html = load_app_source()
     proc = subprocess.run(
         [sys.executable, str(ROOT / "scripts" / "run_web_tests.py")],
         cwd=ROOT,

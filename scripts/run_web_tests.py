@@ -292,6 +292,13 @@ class TestIndexHtmlStructure(unittest.TestCase):
         html = load_index_html()
         self.assertNotRegex(html, r'<script\s+type="module">')
 
+    def test_live_index_deviations_wired(self) -> None:
+        src = load_app_source()
+        self.assertIn("useIndexDeviations", src)
+        self.assertIn("formatStrategyHintText", src)
+        self.assertIn('id="toggle-index-deviations"', src)
+        self.assertIn("buildStratOpts", src)
+
     def test_modular_file_layout(self) -> None:
         shell = load_index_html()
         self.assertIn('href="css/app.css"', shell)

@@ -1869,7 +1869,8 @@ function formatHandEndReviewCompact(roundReview, counter, lastHand) {
   const decisions = roundReview?.decisions || [];
   if (decisions.length) {
     const ok = decisions.filter(d => !d.mistake).length;
-    parts.push(`Strategy ${ok}/${decisions.length}`);
+    const indexOff = decisions.filter(d => d.mistake && d.indexPlay).length;
+    parts.push(indexOff ? `Strategy ${ok}/${decisions.length} (${indexOff} index)` : `Strategy ${ok}/${decisions.length}`);
   }
   if (roundReview?.bet != null) {
     parts.push(`Bet $${roundReview.bet}${roundReview.suggested != null ? ` (rec $${roundReview.suggested})` : ''}`);
@@ -3714,6 +3715,7 @@ function migrateSave(raw) {
   s.settings = s.settings || {};
   if (s.settings.showCountDisplay === undefined) s.settings.showCountDisplay = true;
   if (s.settings.showCountPopups === undefined) s.settings.showCountPopups = true;
+  if (s.settings.useIndexDeviations === undefined) s.settings.useIndexDeviations = true;
   s.uiHints = { shoeTermExplained: false, hardHandTips: 0, ...(s.uiHints || {}) };
   if (!s.speedDrill) s.speedDrill = defaultSpeedDrillStats();
   if (!s.trueCountDrill) s.trueCountDrill = defaultTrueCountDrillStats();

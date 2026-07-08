@@ -14,6 +14,9 @@ from rich.table import Table
 from rich.text import Text
 
 ROOT = Path(__file__).resolve().parents[1]
+import sys
+sys.path.insert(0, str(ROOT / "scripts"))
+from load_project_source import load_app_source  # noqa: E402
 console = Console()
 
 IMPROVED = [
@@ -46,7 +49,7 @@ def demo_summary_rows() -> list[tuple]:
 
 
 def main() -> int:
-    html = (ROOT / "index.html").read_text(encoding="utf-8")
+    html = load_app_source()
     console.print()
     console.print(
         Panel(

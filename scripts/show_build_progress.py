@@ -46,7 +46,6 @@ def run_tests() -> tuple[bool, int]:
 
 
 def main() -> int:
-    html = (ROOT / "index.html").read_text(encoding="utf-8")
     save_ver = read_save_version() or "?"
     tests_ok, test_count = run_tests()
 

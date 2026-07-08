@@ -143,7 +143,7 @@ function defaultSave() {
     settings: {
       practiceMode: false, numDecks: 6, startingBankroll: 1000, minBet: 10, unitSize: 10,
       soundEnabled: true, theme: 'classic', rules: defaultRules(), countingSystem: 'hi-lo',
-      showCountDisplay: true, showCountPopups: true,
+      showCountDisplay: true, showCountPopups: true, useIndexDeviations: true,
     },
     uiHints: { shoeTermExplained: false, hardHandTips: 0 },
     countingUnlocks: ['hi-lo'],

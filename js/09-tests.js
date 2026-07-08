@@ -353,6 +353,10 @@ function runTests() {
   eq(advise(hand10v10, '10', true, false, { trueCount: 4, countingSystemId: 'hi-lo' }).action, 'double', 'live index 10v10 double tc4');
   eq(adviseInsurance(3, 'hi-lo').action, 'insurance', 'live insurance index tc3');
   eq(adviseInsurance(2.5, 'hi-lo').action, 'no-insurance', 'live insurance below index');
+  eq(advise(hand16v10, '10', false, false, { trueCount: 0, countingSystemId: 'hi-lo', useIndexDeviations: false }).action, 'hit', 'index toggle off uses basic');
+  check(formatStrategyHintText({ action: 'stand', rationale: 'Index +0 — stand 16 vs 10' }).startsWith('INDEX'), 'index hint prefix');
+  check(document.getElementById('toggle-index-deviations'), 'index deviations settings toggle');
+  check(defaultSave().settings.useIndexDeviations === true, 'default index deviations on');
   check(document.getElementById('screen-drill-index'), 'index play drill screen');
   check(TRAINING_DRILLS.find(d => d.id === 'index-plays')?.status === 'live', 'index play drill live');
   check(typeof navApp.openIndexPlayDrill === 'function', 'openIndexPlayDrill handler');

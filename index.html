@@ -2,8 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a1612" />
+  <meta name="description" content="Learn Hi-Lo card counting while playing blackjack — Quest Through the Casinos" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="CountQuest" />
   <title>CountQuest Blackjack</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' stroke='%23d4af37' stroke-width='2' fill='%230a1612'/%3E%3Crect x='9' y='8' width='14' height='16' rx='1.5' fill='%23d4af37' opacity='0.2'/%3E%3Ctext x='16' y='18' text-anchor='middle' font-family='system-ui,sans-serif' font-size='8' font-weight='700' fill='%23d4af37'%3ECQ%3C/text%3E%3C/svg%3E" />
   <script>
     window.__CQ_TEST_MODE = /[?&]test(?:=|&|$)/.test(location.search);
@@ -1136,5 +1145,12 @@
   <script src="js/07-game-engine.js"></script>
   <script src="js/08-tutorial.js"></script>
   <script src="js/09-tests.js"></script>
+  <script>
+    if ('serviceWorker' in navigator && !window.__CQ_TEST_MODE) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(() => {});
+      });
+    }
+  </script>
 </body>
 </html>

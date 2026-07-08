@@ -299,6 +299,25 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertIn('id="toggle-index-deviations"', src)
         self.assertIn("buildStratOpts", src)
 
+    def test_pwa_manifest_and_shell(self) -> None:
+        shell = load_index_html()
+        root = ROOT
+        self.assertTrue((root / "manifest.webmanifest").is_file())
+        self.assertTrue((root / "sw.js").is_file())
+        self.assertTrue((root / "icons" / "icon-192.png").is_file())
+        self.assertIn('rel="manifest"', shell)
+        self.assertIn('manifest.webmanifest', shell)
+        self.assertIn('name="theme-color"', shell)
+        self.assertIn('apple-mobile-web-app-capable', shell)
+        self.assertIn("navigator.serviceWorker.register('sw.js')", shell)
+        self.assertIn("!window.__CQ_TEST_MODE", shell)
+        manifest = (root / "manifest.webmanifest").read_text(encoding="utf-8")
+        self.assertIn('"display": "standalone"', manifest)
+        self.assertIn("icons/icon-192.png", manifest)
+        sw = (root / "sw.js").read_text(encoding="utf-8")
+        self.assertIn("cq-pwa-v1", sw)
+        self.assertIn("./js/07-game-engine.js", sw)
+
     def test_modular_file_layout(self) -> None:
         shell = load_index_html()
         self.assertIn('href="css/app.css"', shell)

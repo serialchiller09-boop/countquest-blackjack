@@ -35,6 +35,7 @@ from web_logic_reference import (
     ko_tag,
     normalize_rank,
 )
+from load_project_source import JS_MODULES, load_app_source, load_index_html
 
 
 def c(rank: Rank, suit: Suit = Suit.SPADES) -> Card:
@@ -53,7 +54,7 @@ class TestWebLogicParity(unittest.TestCase):
         self.assertEqual(c(Rank.KING).hi_lo_value(), -1)
 
     def test_ko_tags_in_html(self) -> None:
-        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        html = load_app_source()
         self.assertIn("getKoTagForCard", html)
         self.assertIn("'ko'", html)
         self.assertIn("countingUnlocks", html)
@@ -103,7 +104,7 @@ class TestWebLogicHard(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        cls.html = (ROOT / "index.html").read_text(encoding="utf-8")
+        cls.html = load_app_source()
 
     def test_ranks_array_uses_10_not_t(self) -> None:
         m = re.search(r"const RANKS = (\[[^\]]+\])", self.html)
@@ -253,7 +254,7 @@ class TestWebLogicHard(unittest.TestCase):
 
 class TestIndexHtmlStructure(unittest.TestCase):
     def test_save_version_eleven(self) -> None:
-        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        html = load_app_source()
         self.assertIn("const SAVE_VERSION = 18", html)
         self.assertIn("countingSystem: 'hi-lo'", html)
         self.assertIn("chips: 2500, gems: 10", html)
@@ -262,7 +263,7 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertIn("vipPass: defaultVipPass()", html)
 
     def test_required_ids_present(self) -> None:
-        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        html = load_app_source()
         required = [
             "screen-menu", "screen-bet", "screen-table", "screen-casino-play", "screen-handend",
             "casino-seat-grid", "casino-seat-human",
@@ -283,16 +284,25 @@ class TestIndexHtmlStructure(unittest.TestCase):
                 self.assertIn(f'id="{elem_id}"', html)
 
     def test_no_shoe_status_remove_bug(self) -> None:
-        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        html = load_app_source()
         self.assertNotIn("shoe-status')?.remove()", html)
         self.assertNotIn('getElementById("shoe-status")?.remove()', html)
 
     def test_script_not_module(self) -> None:
-        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        html = load_index_html()
         self.assertNotRegex(html, r'<script\s+type="module">')
 
+    def test_modular_file_layout(self) -> None:
+        shell = load_index_html()
+        self.assertIn('href="css/app.css"', shell)
+        for name in JS_MODULES:
+            with self.subTest(module=name):
+                self.assertIn(f'src="js/{name}"', shell)
+                self.assertTrue((ROOT / "js" / name).is_file(), f"missing js/{name}")
+        self.assertTrue((ROOT / "css" / "app.css").is_file())
+
     def test_unified_casino_table_layout(self) -> None:
-        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        html = load_app_source()
         self.assertIn("casino-play-shell", html)
         self.assertIn("casino-seat-spot", html)
         self.assertIn("syncCasinoShellMetrics", html)
@@ -311,7 +321,7 @@ class TestIndexHtmlStructure(unittest.TestCase):
 
     def test_casino_layout_css_contract(self) -> None:
         """Structural scroll-free layout contract (no browser)."""
-        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        html = load_app_source()
         self.assertIn("overflow: hidden", html)
         self.assertIn("html.casino-play-active", html)
         self.assertIn("--cq-header-h", html)
@@ -367,7 +377,7 @@ class TestIndexHtmlStructure(unittest.TestCase):
 
     def test_casino_scroll_budget_at_720(self) -> None:
         """Static chrome + content budget at 1280x720 — values parsed from shipped CSS."""
-        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        html = load_app_source()
 
         def rem(css: str, prop: str) -> float:
             m = re.search(rf"{re.escape(prop)}:\s*([\d.]+)rem", css)
@@ -460,7 +470,7 @@ class TestIndexHtmlStructure(unittest.TestCase):
 
     def test_full_width_layout_no_split_panel(self) -> None:
         """Game UI must not reserve a permanent right-hand stats column (todo 1.3)."""
-        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        html = load_app_source()
         layout_ids = ("app-header", "app-main", "action-bar", "stats-sidebar")
         for elem_id in layout_ids:
             m = re.search(rf'id="{elem_id}"[^>]*class="([^"]*)"', html)
@@ -486,7 +496,7 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertIn("body.stats-open", html)
 
     def test_training_mode_present(self) -> None:
-        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        html = load_app_source()
         self.assertIn("const TRAINING_DRILLS = [", html)
         self.assertIn("openTrainingMode", html)
         self.assertIn("launchTrainingDrill", html)
@@ -495,7 +505,7 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertIn("launch: 'decks-left'", html)
 
     def test_true_count_drill_present(self) -> None:
-        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        html = load_app_source()
         self.assertIn("generateTrueCountProblem", html)
         self.assertIn("openTrueCountDrill", html)
         self.assertIn("TC_DRILL_DIFFICULTIES", html)
@@ -503,7 +513,7 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertIn("launch: 'true-count'", html)
 
     def test_speed_drill_present(self) -> None:
-        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        html = load_app_source()
         self.assertIn("count-speed", html)
         self.assertIn("Running Count Speed Drill", html)
         self.assertIn("function summarizeSpeedDrillHistory", html)
@@ -512,7 +522,7 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertIn("SPEED_DRILL_MS", html)
 
     def test_combined_practice_present(self) -> None:
-        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        html = load_app_source()
         self.assertIn("Combined Practice", html)
         self.assertIn("launch: 'combined'", html)
         self.assertIn("drill-combined", html)
@@ -522,7 +532,7 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertIn("formatCombinedHandReview", html)
 
     def test_bet_spread_drill_present(self) -> None:
-        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        html = load_app_source()
         self.assertIn("Bet Spread Practice", html)
         self.assertIn("launch: 'bet-spread'", html)
         self.assertIn("openBetSpreadDrill", html)
@@ -536,7 +546,7 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertIn("bet-spread-custom-range", html)
 
     def test_index_play_drill_present(self) -> None:
-        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        html = load_app_source()
         self.assertIn("INDEX_PLAY_CATALOG", html)
         self.assertIn("openIndexPlayDrill", html)
         self.assertIn("screen-drill-index", html)
@@ -545,7 +555,7 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertIn("Index Play Drill", html)
 
     def test_training_history_present(self) -> None:
-        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        html = load_app_source()
         self.assertIn("screen-training-history", html)
         self.assertIn("function recordTrainingHistorySession", html)
         self.assertIn("function summarizeTrainingHistoryTrend", html)
@@ -554,7 +564,7 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertIn("trainingHistory", html)
 
     def test_mistake_review_present(self) -> None:
-        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        html = load_app_source()
         self.assertIn("screen-training-mistakes", html)
         self.assertIn("function recordMistakeReviewEntry", html)
         self.assertIn("function getMistakeReviewEntries", html)
@@ -565,7 +575,7 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertIn("renderMistakeReview", html)
 
     def test_drill_session_summary_present(self) -> None:
-        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        html = load_app_source()
         self.assertIn("screen-drill-session-summary", html)
         self.assertIn("function buildDrillSessionSummary", html)
         self.assertIn("function renderDrillSessionSummaryHtml", html)
@@ -576,7 +586,7 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertIn("btn-drill-summary-retry", html)
 
     def test_daily_training_goals_present(self) -> None:
-        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        html = load_app_source()
         self.assertIn("DAILY_TRAINING_GOAL_TYPES", html)
         self.assertIn("function dailyTrainingGoalForDate", html)
         self.assertIn("function evaluateDailyTrainingProgress", html)
@@ -589,7 +599,7 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertIn("DAILY_TRAINING_SYNERGY_BONUS", html)
 
     def test_dual_currency_tables_present(self) -> None:
-        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        html = load_app_source()
         self.assertIn("const TABLE_TIERS = [", html)
         self.assertIn("TABLE_WIN_MULTIPLIER", html)
         self.assertIn("function syncWalletSave", html)
@@ -610,7 +620,7 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertIn("entryFeeGems: 1", html)
 
     def test_clubs_present(self) -> None:
-        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        html = load_app_source()
         self.assertIn("CLUBS_REGISTRY_KEY", html)
         self.assertIn("CLUB_MAX_MEMBERS", html)
         self.assertIn("function createClub", html)
@@ -626,7 +636,7 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertIn("data-join-club", html)
 
     def test_club_hierarchy_present(self) -> None:
-        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        html = load_app_source()
         self.assertIn("CLUB_ROLE_LABELS", html)
         self.assertIn("CLUB_PERMISSIONS", html)
         self.assertIn("function normalizeClubRole", html)
@@ -644,7 +654,7 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertIn("role: 'leader'", html)
 
     def test_club_hub_present(self) -> None:
-        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        html = load_app_source()
         self.assertIn("clubs-hub-view", html)
         self.assertIn("club-hub-chat", html)
         self.assertIn("club-hub-leaderboard", html)
@@ -660,7 +670,7 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertIn("data-club-react", html)
 
     def test_daily_rewards_present(self) -> None:
-        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        html = load_app_source()
         self.assertIn("DAILY_LOGIN_REWARD_TABLE", html)
         self.assertIn("function defaultDailyRewards", html)
         self.assertIn("function ensureDailyRewardsCurrent", html)
@@ -675,7 +685,7 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertIn("login-streak-7", html)
 
     def test_card_burst_drill_present(self) -> None:
-        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        html = load_app_source()
         self.assertIn("screen-drill-card-burst", html)
         self.assertIn("openCardBurstDrill", html)
         self.assertIn("startCardBurstRound", html)
@@ -683,14 +693,14 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertIn("status: 'live', launch: 'card-bursts'", html)
 
     def test_decks_left_drill_present(self) -> None:
-        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        html = load_app_source()
         self.assertIn("screen-drill-decks-left", html)
         self.assertIn("openDecksLeftDrill", html)
         self.assertIn("generateDecksLeftProblem", html)
         self.assertIn("launch: 'decks-left'", html)
 
     def test_dealer_night_event_present(self) -> None:
-        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        html = load_app_source()
         self.assertIn("id: 'dealer-night'", html)
         self.assertIn("eventType: 'dealer'", html)
         self.assertIn("joinSpecialEventDealerShift", html)
@@ -698,7 +708,7 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertIn("DEALER_INSURANCE_OPTIONS", html)
 
     def test_dealer_mode_present(self) -> None:
-        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        html = load_app_source()
         self.assertIn("const DEALER_MODE =", html)
         self.assertIn("function createDealerAISeats", html)
         self.assertIn("function validateDealerPayoutGuess", html)
@@ -721,7 +731,7 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertIn("dealer-shift", html)
 
     def test_polish_pass_present(self) -> None:
-        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        html = load_app_source()
         self.assertIn("heroGlow", html)
         self.assertIn("passShimmer", html)
         self.assertIn("function lobbyTapFeedback", html)
@@ -739,7 +749,7 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertIn("PHASE_SCREEN_IDS", html)
 
     def test_special_events_present(self) -> None:
-        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        html = load_app_source()
         self.assertIn("const SPECIAL_EVENTS = [", html)
         self.assertIn("function getCurrentSpecialEvent", html)
         self.assertIn("function getSpecialEventTier", html)
@@ -753,7 +763,7 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertIn("action: 'special-event'", html)
 
     def test_tournament_brackets_present(self) -> None:
-        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        html = load_app_source()
         self.assertIn("TOURNAMENT_BRACKET_SIZE", html)
         self.assertIn("screen-tournament", html)
         self.assertIn("tournament-bracket-tree", html)
@@ -772,7 +782,7 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertIn("defaultTournament", html)
 
     def test_plan21_lobby_present(self) -> None:
-        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        html = load_app_source()
         self.assertIn("LOBBY_NAV_ITEMS", html)
         self.assertIn("LOBBY_PLAY_MODES", html)
         self.assertIn("LOBBY_MINIGAMES", html)
@@ -799,7 +809,7 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertIn("CountQuest Pass", html)
 
     def test_club_economy_present(self) -> None:
-        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        html = load_app_source()
         self.assertIn("CLUB_WEEKLY_TOP3_PAYOUTS", html)
         self.assertIn("function contributeToClubBankroll", html)
         self.assertIn("function distributeClubBankroll", html)
@@ -812,7 +822,7 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertIn("generateClubInviteCode", html)
 
     def test_external_oauth_iap_present(self) -> None:
-        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        html = load_app_source()
         self.assertIn("const ExternalAuth =", html)
         self.assertIn("const ExternalIAP =", html)
         self.assertIn("loadExternalConfig", html)
@@ -824,7 +834,7 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertIn("vip_purchased", html)
 
     def test_vip_pass_present(self) -> None:
-        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        html = load_app_source()
         self.assertIn("function defaultVipPass", html)
         self.assertIn("function isVipActive", html)
         self.assertIn("function purchaseVipPass", html)

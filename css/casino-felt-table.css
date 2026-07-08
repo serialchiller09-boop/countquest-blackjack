@@ -7,9 +7,9 @@
   --cq-felt-paint-black: #1a1208;
   --cq-felt-paint-yellow: #f5d300;
   --cq-felt-paint-white: #f8f6f0;
-  --cq-felt-green-deep: #0d5c38;
-  --cq-felt-green-mid: #127a4a;
-  --cq-felt-green-light: #1a9a5c;
+  --cq-felt-green-deep: #0f3d4d;
+  --cq-felt-green-mid: #1d5f72;
+  --cq-felt-green-light: #2a7f96;
   --cq-felt-line: rgba(255, 255, 255, 0.92);
   --cq-felt-font: 'Bebas Neue', Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
   --cq-clipboard-wood: #3d2817;
@@ -55,7 +55,7 @@
 .cq-authentic-felt.casino-table-surface {
   position: relative;
   overflow: hidden;
-  border: 4px solid #0a3d24;
+  border: 4px solid #0a2a35;
   border-radius: 2.5rem 2.5rem 1.25rem 1.25rem;
   background: radial-gradient(ellipse 95% 75% at 50% 38%, var(--cq-felt-green-light) 0%, var(--cq-felt-green-mid) 42%, var(--cq-felt-green-deep) 100%);
   box-shadow:
@@ -208,7 +208,7 @@
   width: 2.75rem;
   height: 2.75rem;
   border-radius: 50%;
-  border: 2.5px solid #d4af37;
+  border: 2.5px solid rgba(248, 246, 240, 0.92);
   background: transparent;
   box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.15);
   display: flex;

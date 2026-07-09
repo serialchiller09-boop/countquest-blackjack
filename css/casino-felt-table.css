@@ -46,9 +46,12 @@
   color: rgba(220, 235, 225, 0.75) !important;
 }
 
-.cq-dealer-clipboard #bet-advice,
-.cq-dealer-clipboard #strategy-hint {
+.casino-bottom-dock #bet-advice {
   color: #f5e6b8 !important;
+}
+
+.casino-bottom-dock #strategy-hint {
+  color: #67e8f9 !important;
 }
 
 /* ── Authentic felt surface ── */

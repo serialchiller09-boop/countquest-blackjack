@@ -832,9 +832,7 @@
       <div class="casino-table-topbar cq-dealer-clipboard">
         <div id="how-to-count-bet" class="text-xs text-center text-emerald-300/70 max-w-3xl mx-auto"></div>
         <div id="count-hud-bet" class="count-box grid grid-cols-2 sm:grid-cols-4 gap-1.5 max-w-4xl mx-auto transition-all duration-300"></div>
-        <div id="bet-advice" class="text-center text-amber-200/90 text-[10px] px-1 hidden w-full max-w-full min-w-0 mx-auto"></div>
         <div id="count-hud" class="count-box grid grid-cols-2 sm:grid-cols-4 gap-1.5 max-w-4xl mx-auto transition-all duration-300"></div>
-        <div id="strategy-hint" class="hidden strategy-hint-bar text-center max-w-4xl mx-auto"></div>
         <div id="shoe-status" class="text-center text-[10px] text-emerald-400/55 font-mono max-w-4xl mx-auto px-2"></div>
       </div>
       <div class="game-table-wrap casino-table-surface casino-felt felt cq-authentic-felt flex-1 min-h-0">
@@ -889,19 +887,6 @@
           <p class="text-[10px] uppercase tracking-wider text-emerald-300/65 mb-1">Dealer</p>
           <div id="dealer-cards" class="flex justify-center gap-1.5 flex-wrap min-h-[3.5rem]"></div>
           <p id="dealer-total" class="text-center text-xs text-emerald-200/80 mt-1 font-mono"></p>
-        </div>
-        <div id="casino-felt-bet-rail" class="casino-felt-bet-rail hidden" aria-label="Place your bet">
-          <div id="screen-bet" class="casino-felt-bet-panel">
-            <div id="bet-chip-display" class="hidden" aria-hidden="true"><span id="bet-placed-amount-legacy">0</span></div>
-            <div class="felt-bet-chip-row" id="chip-buttons"></div>
-            <div class="felt-bet-controls">
-              <div class="flex items-center gap-1 bg-black/30 rounded-lg px-2 py-1 border border-white/10">
-                <span class="text-emerald-300/70 text-xs">$</span>
-                <input id="bet-input" type="number" min="10" class="w-14 bg-transparent text-white text-center text-sm font-mono outline-none" aria-label="Bet amount" />
-              </div>
-              <button id="btn-deal" type="button" class="px-3 py-1.5 rounded-lg bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-stone-900 font-bold text-xs shadow-lg transition active:scale-95">Deal</button>
-            </div>
-          </div>
         </div>
         <div id="casino-seat-grid" class="casino-seat-grid" data-seat-count="7">
           <div class="casino-seat casino-seat-empty casino-seat-ai-ready" data-seat="1" data-ai-slot="1" id="casino-seat-1"><div class="casino-seat-spot casino-seat-cards-mount" aria-hidden="true"><span class="casino-seat-available"><span class="casino-seat-available-icon"></span><span class="casino-seat-available-text">Open Seat</span></span></div><span class="casino-seat-label"><span class="casino-seat-num">1</span><span class="casino-seat-status">Open Seat</span></span></div>
@@ -999,6 +984,24 @@
   </section>
 
 </main>
+
+<div id="casino-bottom-dock" class="casino-bottom-dock hidden" aria-label="Bet and strategy controls">
+  <div id="bet-advice" class="casino-bottom-advice text-center text-amber-200/90 text-xs px-2 hidden w-full max-w-full min-w-0 mx-auto"></div>
+  <div id="strategy-hint" class="hidden strategy-hint-bar casino-bottom-advice text-center max-w-4xl mx-auto"></div>
+  <div id="casino-felt-bet-rail" class="casino-felt-bet-rail hidden" aria-label="Place your bet">
+    <div id="screen-bet" class="casino-felt-bet-panel">
+      <div id="bet-chip-display" class="hidden" aria-hidden="true"><span id="bet-placed-amount-legacy">0</span></div>
+      <div class="felt-bet-chip-row" id="chip-buttons"></div>
+      <div class="felt-bet-controls">
+        <div class="flex items-center gap-1 bg-black/30 rounded-lg px-2 py-1 border border-white/10">
+          <span class="text-emerald-300/70 text-xs">$</span>
+          <input id="bet-input" type="number" min="10" class="w-14 bg-transparent text-white text-center text-sm font-mono outline-none" aria-label="Bet amount" />
+        </div>
+        <button id="btn-deal" type="button" class="casino-deal-btn px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-stone-900 font-bold text-sm shadow-lg transition active:scale-95">Deal</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <nav id="action-bar" class="hidden fixed bottom-0 inset-x-0 z-30 bg-[#0a1612]/95 backdrop-blur border-t border-emerald-800/40 px-4 sm:px-6 py-4 w-full" aria-label="Hand actions">
   <div class="app-main flex justify-center gap-3 flex-wrap" id="action-buttons"></div>

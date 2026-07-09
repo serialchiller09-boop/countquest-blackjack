@@ -473,6 +473,8 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertIn("renderCasinoSeats", html)
         self.assertIn("casino-play-active", html)
         self.assertIn("casino-felt-bet-rail", html)
+        self.assertIn("casino-bottom-dock", html)
+        self.assertIn("syncBottomDockVisibility", html)
         self.assertIn("casino-felt-bet-panel", html)
         self.assertIn("casino-bet-active", html)
         self.assertIn("help.showCountInPlay()", html)

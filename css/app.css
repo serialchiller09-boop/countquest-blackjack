@@ -12,6 +12,7 @@
       --cq-cyan-insight: #67e8f9;
       --cq-header-h: 5.25rem;
       --cq-action-bar-h: 5.25rem;
+      --cq-bottom-dock-h: 0px;
       --cq-seat-spot-size: 5.5rem;
       --cq-seat-col-h: 6.5rem;
       --cq-topbar-max: 4.5rem;
@@ -255,8 +256,8 @@
     }
     body.casino-play-active #how-to-count-bet { display: none !important; }
     body.casino-bet-active #count-hud,
-    body.casino-bet-active #strategy-hint,
     body.casino-bet-active #shoe-status { display: none !important; }
+    body.casino-bet-active #strategy-hint { display: none !important; }
     body.casino-play-active #count-hud-bet,
     body.casino-play-active #count-hud {
       grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -273,11 +274,73 @@
     body.casino-play-active .count-box > div { padding-top: 0.2rem !important; padding-bottom: 0.2rem !important; }
     body.casino-play-active .count-box .text-lg { font-size: 0.95rem !important; line-height: 1.2; }
     body.casino-play-active .count-box .text-\[10px\] { font-size: 0.55rem !important; }
+    .casino-bottom-dock {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: var(--cq-action-bar-h);
+      z-index: 35;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      padding: 0.45rem 0.75rem 0.5rem;
+      background: rgba(10, 22, 18, 0.96);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(16, 185, 129, 0.28);
+      box-shadow: 0 -6px 28px rgba(0, 0, 0, 0.42);
+      max-width: 100vw;
+      box-sizing: border-box;
+    }
+    body.casino-bet-active .casino-bottom-dock {
+      bottom: 0;
+      padding-bottom: max(0.55rem, env(safe-area-inset-bottom));
+    }
+    .casino-bottom-dock .casino-bottom-advice {
+      flex-shrink: 0;
+      width: 100%;
+      max-width: 48rem;
+      margin: 0 auto;
+    }
+    .casino-bottom-dock #strategy-hint.strategy-hint-bar {
+      max-height: none;
+      white-space: normal;
+      text-overflow: unset;
+      overflow: visible;
+      font-size: 0.8rem;
+      padding: 0.4rem 0.75rem;
+      line-height: 1.3;
+    }
+    .casino-bottom-dock .casino-felt-bet-rail {
+      margin: 0;
+      padding: 0.35rem 0.5rem 0.25rem;
+      background: rgba(0, 0, 0, 0.28);
+      border-radius: 0.75rem;
+      max-width: 48rem;
+      width: 100%;
+      margin-inline: auto;
+    }
+    .casino-bottom-dock .casino-felt-bet-panel {
+      flex-wrap: wrap;
+      max-height: none;
+      gap: 0.4rem 0.5rem;
+      justify-content: center;
+    }
+    .casino-bottom-dock .felt-bet-controls {
+      width: 100%;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    .casino-bottom-dock .casino-deal-btn {
+      min-height: 2.75rem;
+      min-width: 7.5rem;
+      font-size: 0.95rem;
+      letter-spacing: 0.04em;
+    }
     .casino-play-shell {
       position: fixed;
       left: 0; right: 0;
       top: var(--cq-header-h);
-      bottom: var(--cq-action-bar-h);
+      bottom: calc(var(--cq-action-bar-h) + var(--cq-bottom-dock-h));
       overflow: hidden;
       display: flex;
       flex-direction: column;
@@ -303,7 +366,7 @@
       flex-direction: column;
       gap: 0.15rem;
     }
-    body.casino-play-active #bet-advice {
+    body.casino-play-active .casino-bottom-dock #bet-advice {
       line-height: 1.25;
     }
     .casino-table-surface {
@@ -871,25 +934,20 @@
       min-width: 0;
       box-sizing: border-box;
     }
-    body.casino-play-active #bet-advice {
+    body.casino-play-active .casino-bottom-dock #bet-advice {
       overflow: hidden;
       text-overflow: ellipsis;
       display: -webkit-box;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 2;
-      max-height: 2.4rem;
+      max-height: 2.6rem;
       width: 100%;
       max-width: 100%;
       min-width: 0;
     }
-    body.casino-play-active #bet-advice > * {
+    body.casino-play-active .casino-bottom-dock #bet-advice > * {
       max-width: 100%;
       min-width: 0;
-    }
-    body.casino-play-active .casino-felt-bet-panel {
-      overflow: hidden;
-      flex-wrap: wrap;
-      max-height: 3.25rem;
     }
     body.casino-play-active .casino-felt-bet-panel .felt-bet-chip-row {
       flex-wrap: nowrap;
@@ -1116,18 +1174,13 @@
       }
       .casino-table-topbar #how-to-count-bet,
       .casino-table-topbar #count-hud-bet,
-      .casino-table-topbar #bet-advice,
       .casino-table-topbar #count-hud {
         grid-column: 1 / -1;
       }
-      .casino-table-topbar #strategy-hint {
-        grid-column: 1;
-        margin: 0;
-      }
       .casino-table-topbar #shoe-status {
-        grid-column: 2;
+        grid-column: 1 / -1;
         margin: 0;
-        text-align: right;
+        text-align: center;
       }
       body.casino-play-active #count-hud,
       body.casino-play-active #count-hud-bet {
@@ -1136,7 +1189,7 @@
       body.casino-play-active .count-box > div { padding-top: 0.15rem !important; padding-bottom: 0.15rem !important; }
       body.casino-play-active .count-box .text-lg { font-size: 0.88rem !important; }
       body.casino-play-active .count-box .text-\[10px\] { font-size: 0.5rem !important; line-height: 1.1; }
-      body.casino-play-active #bet-advice {
+      body.casino-play-active .casino-bottom-dock #bet-advice {
         line-height: 1.15;
         font-size: 0.62rem;
       }
@@ -1147,13 +1200,9 @@
         overflow: hidden;
         font-size: 0.55rem;
       }
-      body.casino-play-active #strategy-hint {
-        font-size: 0.6rem;
-        padding: 0.15rem 0.4rem;
-        max-height: 1.15rem;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
+      body.casino-play-active .casino-bottom-dock #strategy-hint {
+        font-size: 0.68rem;
+        padding: 0.25rem 0.5rem;
       }
       body.casino-play-active .action-btn { min-height: 2.5rem; min-width: 4rem; font-size: 0.85rem; }
       .casino-dealer-zone .playing-card { width: 2rem; height: 2.75rem; }
@@ -1282,11 +1331,16 @@
         max-height: var(--cq-topbar-max);
         overflow: hidden;
       }
-      body.casino-play-active #bet-advice {
+      body.casino-play-active .casino-bottom-dock #bet-advice {
         font-size: 0.58rem;
         line-height: 1.15;
         -webkit-line-clamp: 1;
         max-height: 1.2rem;
+      }
+      body.casino-play-active .casino-bottom-dock .casino-deal-btn {
+        min-height: 2.5rem;
+        min-width: 6.5rem;
+        font-size: 0.85rem;
       }
       body.casino-play-active #count-hud,
       body.casino-play-active #count-hud-bet {

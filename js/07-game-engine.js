@@ -6181,6 +6181,7 @@ class CountQuestApp {
     const el = document.getElementById('strategy-hint');
     el.textContent = `Strategy → ${advice.action.toUpperCase()}: ${advice.rationale}`;
     el.classList.remove('hidden');
+    this.syncBottomDockVisibility();
   }
 
   toast(msg, type = 'info', duration = 3000) {
@@ -6913,9 +6914,30 @@ class CountQuestApp {
       document.getElementById('btn-chart').classList.toggle('hidden', !this.help.allowChart());
     }
     if (atTable) {
+      this.syncBottomDockVisibility();
       this.syncCasinoShellMetrics();
-      requestAnimationFrame(() => this.syncCasinoShellMetrics());
+      requestAnimationFrame(() => {
+        this.syncBottomDockVisibility();
+        this.syncCasinoShellMetrics();
+      });
+    } else {
+      document.getElementById('casino-bottom-dock')?.classList.add('hidden');
+      document.documentElement.style.setProperty('--cq-bottom-dock-h', '0px');
     }
+  }
+
+  syncBottomDockVisibility() {
+    const dock = document.getElementById('casino-bottom-dock');
+    if (!dock) return;
+    const atTable = ['bet', 'playing', 'countConfirm', 'handEnd'].includes(this.phase);
+    if (!atTable) {
+      dock.classList.add('hidden');
+      return;
+    }
+    const showBet = this.phase === 'bet' || this.phase === 'countConfirm';
+    const hint = document.getElementById('strategy-hint');
+    const showHint = this.phase === 'playing' && hint && !hint.classList.contains('hidden');
+    dock.classList.toggle('hidden', !(showBet || showHint));
   }
 
   renderMenu() {
@@ -7777,12 +7799,16 @@ class CountQuestApp {
   syncCasinoShellMetrics() {
     const header = document.getElementById('app-header');
     const actionBar = document.getElementById('action-bar');
+    const bottomDock = document.getElementById('casino-bottom-dock');
     if (header && !header.classList.contains('hidden')) {
       document.documentElement.style.setProperty('--cq-header-h', `${header.offsetHeight}px`);
     }
     const actionVisible = actionBar && !actionBar.classList.contains('hidden');
     const actionReserve = actionVisible ? actionBar.offsetHeight : 8;
     document.documentElement.style.setProperty('--cq-action-bar-h', `${actionReserve}px`);
+    const dockVisible = bottomDock && !bottomDock.classList.contains('hidden');
+    const dockReserve = dockVisible ? bottomDock.offsetHeight : 0;
+    document.documentElement.style.setProperty('--cq-bottom-dock-h', `${dockReserve}px`);
     this.fitCasinoPlayViewport();
   }
 
@@ -7803,12 +7829,6 @@ class CountQuestApp {
       && handend
       && !handend.classList.contains('hidden')
     ) ? handend.offsetHeight + 8 : 0;
-    const betRail = document.getElementById('casino-felt-bet-rail');
-    const betReserve = (
-      betRail
-      && !betRail.classList.contains('hidden')
-      && (this.phase === 'bet' || this.phase === 'playing')
-    ) ? betRail.offsetHeight + 6 : 0;
     const topbar = viewport.querySelector('.casino-table-topbar');
     const grid = document.getElementById('casino-seat-grid');
     const contentH = Math.max(viewport.scrollHeight, viewport.offsetHeight);
@@ -7818,7 +7838,7 @@ class CountQuestApp {
       topbar?.scrollWidth || 0,
       grid?.scrollWidth || 0,
     );
-    const maxH = Math.max(1, shellH - handendReserve - betReserve);
+    const maxH = Math.max(1, shellH - handendReserve);
     const scaleY = contentH > maxH ? maxH / contentH : 1;
     const scaleX = contentW > shellW ? shellW / contentW : 1;
     const scale = Math.max(0.62, Math.min(1, scaleX, scaleY));
@@ -8014,6 +8034,7 @@ class CountQuestApp {
         `<button class="action-btn px-8 rounded-2xl ${c} font-bold hover:brightness-110 active:scale-95 transition" data-action="${a}">${l}</button>`
       ).join('');
     } else ab.innerHTML = '';
+    this.syncBottomDockVisibility();
   }
 
   renderHandEnd() {

@@ -399,6 +399,11 @@
       margin-bottom: 0.15rem;
     }
     .casino-dealer-zone .playing-card { width: 2.65rem; height: 3.7rem; }
+    body.casino-table-solo #casino-seat-grid,
+    #casino-seat-grid.casino-seat-grid--solo {
+      display: block;
+      min-height: 5.5rem;
+    }
     #casino-seat-grid {
       flex: 1 1 auto;
       min-height: 6.5rem;

@@ -201,7 +201,7 @@ function runTests() {
   check(document.getElementById('stats-backdrop'), 'stats backdrop for overlay dim');
   check(document.querySelector('.game-table-wrap'), 'centered game table wrapper');
   check(document.getElementById('screen-casino-play'), 'unified casino play shell');
-  check(document.getElementById('casino-seat-grid')?.dataset?.seatCount === '7', 'seven seat grid');
+  check(['1', '7'].includes(document.getElementById('casino-seat-grid')?.dataset?.seatCount), 'seat grid count attr');
   check(document.querySelectorAll('#casino-seat-grid .casino-seat').length === 7, 'seven seat nodes');
   check(document.getElementById('casino-seat-human')?.dataset?.seat === '4', 'human seat marker');
   check(document.querySelectorAll('.casino-seat-spot').length >= 7, 'seven seat betting spots');
@@ -387,6 +387,14 @@ function runTests() {
   check(TABLE_TIERS.length === 4, 'four table tiers');
   check(TABLE_TIERS.every(t => t.minHelpLevel === 0), 'table tiers open at any help level');
   check(TABLE_AI_SEAT_NUMS.length === 6, 'six ai table seats');
+  check(typeof isSoloTableLayout === 'function', 'solo table layout helper');
+  check(activeTableAiSeatNums({ tableLayout: 'solo' }).length === 0, 'solo layout has no ai seats');
+  check(activeTableDealOrder({ tableLayout: 'solo' }).join() === '4', 'solo deal order is human only');
+  navApp.setTableLayout('solo');
+  check(navApp.save.settings.tableLayout === 'solo', 'setTableLayout solo');
+  check(document.body.classList.contains('casino-table-solo'), 'solo body class');
+  navApp.setTableLayout('full');
+  check(!document.body.classList.contains('casino-table-solo'), 'full layout clears solo class');
   check(Object.keys(createTableAiSeats()).length === 6, 'create table ai seats');
   check(typeof tableAiStrategyAction === 'function', 'table ai strategy helper');
   check(typeof renderTableAiMiniCard === 'function', 'table ai mini card render');

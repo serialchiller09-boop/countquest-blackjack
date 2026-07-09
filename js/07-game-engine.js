@@ -5342,7 +5342,7 @@ class CountQuestApp {
   }
 
   usesTableAiSeats() {
-    return !this.save.sessionDrill && !!this.session;
+    return !this.save.sessionDrill && !!this.session && !isSoloTableLayout(this.settings);
   }
 
   ensureTableAiSeats() {
@@ -5400,7 +5400,7 @@ class CountQuestApp {
     if (!up) return;
     const snap = this.shoe ? this.counter.getCountSnapshot(this.shoe) : null;
     const systemId = this.activeCountingSystem();
-    for (const seatNum of TABLE_AI_SEAT_NUMS) {
+    for (const seatNum of activeTableAiSeatNums(this.settings)) {
       const seat = this.tableAiSeats[seatNum];
       if (!seat) continue;
       let guard = 0;
@@ -5687,9 +5687,10 @@ class CountQuestApp {
       else if (this.tableAiSeats?.[seatNum]) await this.dealCardAnimated(this.tableAiSeats[seatNum].hands[0].hand, `ai-${seatNum}`);
     };
     if (useTableAi) {
-      for (const seatNum of TABLE_DEAL_ORDER) await dealToSeat(seatNum);
+      const dealOrder = activeTableDealOrder(this.settings);
+      for (const seatNum of dealOrder) await dealToSeat(seatNum);
       await this.dealCardAnimated(this.dealer, 'dealer up');
-      for (const seatNum of TABLE_DEAL_ORDER) await dealToSeat(seatNum);
+      for (const seatNum of dealOrder) await dealToSeat(seatNum);
     } else {
       await this.dealCardAnimated(this.playerHands[0].hand, 'player');
       await this.dealCardAnimated(this.dealer, 'dealer up');
@@ -6773,8 +6774,16 @@ class CountQuestApp {
       this.openSettings();
     });
     const r = this.rules;
+    const layout = normalizeTableLayout(this.settings.tableLayout);
     const rulesEl = document.getElementById('rules-toggles');
     rulesEl.innerHTML = `
+      <div class="p-3 rounded-xl bg-black/25 border border-white/10 space-y-2">
+        <span class="text-sm font-medium text-emerald-100">Table layout</span>
+        <div class="flex gap-2">
+          <button type="button" class="table-layout-btn flex-1 py-2 rounded-lg text-xs font-semibold border transition ${layout === TABLE_LAYOUT_SOLO ? 'bg-amber-500/30 border-amber-400 text-amber-100' : 'bg-black/20 border-white/10 text-emerald-300/80'}" data-table-layout="${TABLE_LAYOUT_SOLO}">Solo (1 seat)</button>
+          <button type="button" class="table-layout-btn flex-1 py-2 rounded-lg text-xs font-semibold border transition ${layout === TABLE_LAYOUT_FULL ? 'bg-amber-500/30 border-amber-400 text-amber-100' : 'bg-black/20 border-white/10 text-emerald-300/80'}" data-table-layout="${TABLE_LAYOUT_FULL}">Full (7 seats)</button>
+        </div>
+      </div>
       <label class="flex items-center justify-between p-3 rounded-xl bg-black/25 border border-white/10 cursor-pointer">
         <span>6:5 Blackjack (pays 1.2×)</span>
         <input type="checkbox" id="rule-65" class="w-5 h-5 accent-amber-500" ${r.blackjackPayout < 1.5 ? 'checked' : ''} />
@@ -6802,6 +6811,12 @@ class CountQuestApp {
     };
     ['rule-65','rule-das','rule-surrender','rule-h17'].forEach(id => {
       document.getElementById(id).onchange = syncRules;
+    });
+    rulesEl.querySelectorAll('[data-table-layout]').forEach(btn => {
+      btn.onclick = () => {
+        this.setTableLayout(btn.dataset.tableLayout);
+        this.openSettings();
+      };
     });
     this.updateSettingsAdvisory();
     this.loadExternalConfigIntoSettings();
@@ -6914,6 +6929,7 @@ class CountQuestApp {
       document.getElementById('btn-chart').classList.toggle('hidden', !this.help.allowChart());
     }
     if (atTable) {
+      this.syncCasinoSeatLayout();
       this.syncBottomDockVisibility();
       this.syncCasinoShellMetrics();
       requestAnimationFrame(() => {
@@ -7776,14 +7792,21 @@ class CountQuestApp {
         else if (wins === losses) { status = 'Push'; statusCls = 'casino-seat-ai-result-push'; }
         else { status = `${wins}W`; statusCls = 'casino-seat-ai-result-win'; }
       } else if (this.phase === 'bet' || this.phase === 'countConfirm') {
-        status = 'Seat 4';
+        status = isSoloTableLayout(this.settings) ? 'Your seat' : 'Seat 4';
       }
       statusEl.textContent = status;
       statusEl.className = statusCls ? `casino-seat-status ${statusCls}` : 'casino-seat-status';
     }
+    const solo = isSoloTableLayout(this.settings);
     for (const seatNum of TABLE_AI_SEAT_NUMS) {
       const el = document.getElementById(`casino-seat-${seatNum}`);
       if (!el) continue;
+      if (solo) {
+        el.className = 'casino-seat casino-seat-empty casino-seat-ai-ready hidden';
+        el.innerHTML = this.renderEmptyCasinoSeatHtml(seatNum);
+        continue;
+      }
+      el.classList.remove('hidden');
       const ai = this.tableAiSeats?.[seatNum];
       if (ai) {
         el.className = 'casino-seat casino-seat-ai';
@@ -7793,6 +7816,34 @@ class CountQuestApp {
         el.innerHTML = this.renderEmptyCasinoSeatHtml(seatNum);
       }
     }
+    this.syncCasinoSeatLayout();
+  }
+
+  syncCasinoSeatLayout() {
+    const solo = isSoloTableLayout(this.settings);
+    document.body.classList.toggle('casino-table-solo', solo);
+    const grid = document.getElementById('casino-seat-grid');
+    const felt = document.querySelector('.cq-authentic-felt');
+    if (grid) {
+      grid.dataset.seatCount = solo ? '1' : '7';
+      grid.classList.toggle('casino-seat-grid--solo', solo);
+    }
+    felt?.classList.toggle('cq-table-solo', solo);
+    const humanLabel = document.querySelector('#casino-seat-human .casino-seat-status');
+    if (humanLabel && (this.phase === 'bet' || this.phase === 'countConfirm')) {
+      humanLabel.textContent = solo ? 'Your seat' : 'Seat 4';
+    }
+  }
+
+  setTableLayout(layout) {
+    const next = normalizeTableLayout(layout);
+    if (this.save.settings.tableLayout === next) return;
+    this.save.settings.tableLayout = next;
+    if (isSoloTableLayout(this.settings)) this.tableAiSeats = null;
+    else this.ensureTableAiSeats();
+    this.persist();
+    this.syncCasinoSeatLayout();
+    if (['bet', 'playing', 'handEnd', 'countConfirm'].includes(this.phase)) this.render();
   }
 
   /** Sync header/action-bar CSS vars and scale table to fit viewport (no scrollbars). */

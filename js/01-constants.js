@@ -3738,6 +3738,8 @@ function migrateSave(raw) {
   if (s.settings.showCountDisplay === undefined) s.settings.showCountDisplay = true;
   if (s.settings.showCountPopups === undefined) s.settings.showCountPopups = true;
   if (s.settings.useIndexDeviations === undefined) s.settings.useIndexDeviations = true;
+  if (!s.settings.tableLayout) s.settings.tableLayout = TABLE_LAYOUT_SOLO;
+  else s.settings.tableLayout = normalizeTableLayout(s.settings.tableLayout);
   s.uiHints = { shoeTermExplained: false, hardHandTips: 0, ...(s.uiHints || {}) };
   if (!s.speedDrill) s.speedDrill = defaultSpeedDrillStats();
   if (!s.trueCountDrill) s.trueCountDrill = defaultTrueCountDrillStats();

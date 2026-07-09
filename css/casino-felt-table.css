@@ -207,6 +207,28 @@
 .cq-authentic-felt #casino-seat-6 { right: 14%; bottom: 22%; left: auto; }
 .cq-authentic-felt #casino-seat-7 { right: 2%; bottom: 8%; left: auto; }
 
+/* Solo table — one centered player seat */
+.cq-table-solo .cq-felt-seat-circle:not(.cq-felt-seat-circle--human) {
+  opacity: 0;
+}
+.cq-table-solo #casino-seat-human,
+.casino-seat-grid--solo #casino-seat-human {
+  left: 50% !important;
+  right: auto !important;
+  bottom: 30% !important;
+  width: 24% !important;
+  max-width: 10rem !important;
+  transform: translateX(-50%);
+}
+.casino-seat-grid--solo .casino-seat:not(#casino-seat-human) {
+  display: none !important;
+}
+.cq-table-solo .casino-seat-human .casino-seat-spot {
+  width: 3.25rem;
+  height: 3.25rem;
+  border-width: 3px;
+}
+
 .cq-authentic-felt .casino-seat-spot {
   width: 2.75rem;
   height: 2.75rem;

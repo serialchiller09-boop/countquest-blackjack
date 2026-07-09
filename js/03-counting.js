@@ -297,6 +297,27 @@ function createDealerAISeats(count = DEALER_MODE.defaultPlayers) {
 /** Seat numbers around the human (seat 4) on the 7-seat casino table. */
 const TABLE_AI_SEAT_NUMS = [1, 2, 3, 5, 6, 7];
 const TABLE_DEAL_ORDER = [1, 2, 3, 4, 5, 6, 7];
+const TABLE_LAYOUT_SOLO = 'solo';
+const TABLE_LAYOUT_FULL = 'full';
+
+function normalizeTableLayout(layout) {
+  return layout === TABLE_LAYOUT_SOLO ? TABLE_LAYOUT_SOLO : TABLE_LAYOUT_FULL;
+}
+
+function isSoloTableLayout(settingsOrLayout) {
+  const layout = typeof settingsOrLayout === 'string'
+    ? settingsOrLayout
+    : settingsOrLayout?.tableLayout;
+  return normalizeTableLayout(layout) === TABLE_LAYOUT_SOLO;
+}
+
+function activeTableAiSeatNums(settings) {
+  return isSoloTableLayout(settings) ? [] : TABLE_AI_SEAT_NUMS;
+}
+
+function activeTableDealOrder(settings) {
+  return isSoloTableLayout(settings) ? [4] : TABLE_DEAL_ORDER;
+}
 const TABLE_AI_MAX_SPLITS = 3;
 
 function createTableAiSeats() {

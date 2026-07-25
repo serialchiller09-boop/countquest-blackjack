@@ -31,3 +31,9 @@ jobs:
         env:
           CQ_BROWSER_TESTS: "1"
         run: python scripts/run_browser_tests.py
+
+      - name: Version alignment
+        run: python scripts/check_version_alignment.py
+
+      - name: Table QA suite
+        run: npm run test:table

@@ -9,6 +9,8 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="CountQuest" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
   <title>CountQuest Blackjack</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
@@ -20,9 +22,9 @@
     window.__runTestsBootstrapped = false;
     if (window.__CQ_TEST_MODE) { try { localStorage.clear(); sessionStorage.clear(); } catch (_) {} }
   </script>
-  <link rel="stylesheet" href="css/tailwind.css" />
-  <link rel="stylesheet" href="css/app.css" />
-  <link rel="stylesheet" href="css/casino-felt-table.css" />
+  <link rel="stylesheet" href="css/tailwind.css?v=43" />
+  <link rel="stylesheet" href="css/app.css?v=43" />
+  <link rel="stylesheet" href="css/casino-felt-table.css?v=43" />
 </head>
 <body class="min-h-screen text-white font-sans antialiased">
 
@@ -57,6 +59,7 @@
           <div id="app-title" class="app-title truncate">CountQuest</div>
           <div class="app-title-sub">Blackjack</div>
           <p id="header-mode" class="header-session-mode truncate"></p>
+          <span id="cq-build-stamp" class="cq-build-stamp" title="App build">v43</span>
         </div>
       </div>
       <div id="header-currency" class="flex flex-wrap items-center gap-2 justify-end">
@@ -86,7 +89,7 @@
   </div>
 </header>
 
-<main id="app-main" class="app-main px-4 sm:px-6 py-6 pb-36">
+<main id="app-main" class="app-main px-4 sm:px-6 py-4 sm:py-5 pb-28">
 
   <!-- LOBBY (Plan 21 — 8 Ball Pool production home) -->
   <section id="screen-menu" class="lobby-8bp w-full mx-auto">
@@ -120,6 +123,7 @@
         </div>
       </div>
       <div id="lobby-nav-icons" class="lobby-nav-icons"></div>
+      <span id="lobby-build-stamp" class="cq-build-stamp lobby-build-stamp" title="Web build">v43</span>
     </header>
 
     <button type="button" id="lobby-pass-banner" class="lobby-pass-banner text-left">
@@ -138,7 +142,7 @@
     <div id="lobby-play-grid" aria-hidden="true"></div>
 
     <div id="menu-beginner-hint" class="hidden mx-3 rounded-xl bg-amber-950/50 border border-amber-600/35 px-4 py-3 text-sm text-amber-100/90 text-center">
-      <span class="text-gold font-semibold">Welcome, counter!</span> Hit the glowing <strong>Play</strong> button for quick tables, or <strong>Training Drills</strong> to sharpen your edge. Everything saves automatically.
+      <span class="text-gold font-semibold">Welcome!</span> Tap <strong>Play</strong> for tables or <strong>Training</strong> for drills.
     </div>
     <div id="menu-continue-row" class="hidden mx-3">
       <button id="btn-continue-session" class="w-full py-3 rounded-xl bg-emerald-700/40 hover:bg-emerald-600/50 border border-emerald-500/30 text-sm font-semibold"></button>
@@ -149,7 +153,7 @@
     <div id="how-to-count-menu" class="max-w-lg mx-auto px-3"></div>
 
     <nav id="lobby-bottom-dock" class="lobby-bottom-dock">
-      <p class="lobby-dock-label">Surprise Box · Spin · Scratch · Lucky Shot</p>
+      <p class="lobby-dock-label">Minigames</p>
       <div id="lobby-minigames-row" class="lobby-minigames-dock"></div>
     </nav>
 
@@ -169,24 +173,22 @@
   </section>
 
   <!-- TRAINING MODE -->
-  <section id="screen-training" class="hidden space-y-4 max-w-lg mx-auto w-full">
-    <div class="text-center py-4">
+  <section id="screen-training" class="hidden cq-screen-panel cq-screen-compact space-y-3 max-w-lg mx-auto w-full">
+    <div class="text-center py-2">
       <h2 class="text-2xl font-bold text-amber-400">Training Mode</h2>
-      <p id="training-mode-subtitle" class="text-emerald-300/80 text-sm mt-1">Focused drills — build speed and accuracy one skill at a time</p>
+      <p id="training-mode-subtitle" class="text-emerald-300/80 text-sm mt-0.5"></p>
     </div>
-    <div id="training-daily-goal" class="felt rounded-xl p-4 border border-cyan-800/25 space-y-2"></div>
-    <div id="training-drill-list" class="grid gap-3"></div>
-    <p id="training-mode-footer" class="text-center text-xs text-emerald-500/50 px-2">All drills are live — pick a card to start a focused training session.</p>
+    <div id="training-daily-goal" class="felt rounded-xl p-3 border border-cyan-800/25 space-y-1"></div>
+    <div id="training-drill-list" class="grid gap-2"></div>
     <button id="btn-training-history" type="button" class="w-full py-3 rounded-xl bg-cyan-950/40 hover:bg-cyan-950/60 border border-cyan-700/30 text-sm text-cyan-200">📈 Training History</button>
     <button id="btn-training-mistakes" type="button" class="w-full py-3 rounded-xl bg-red-950/40 hover:bg-red-950/60 border border-red-700/30 text-sm text-red-200">📋 Review Mistakes</button>
     <button id="btn-training-back" type="button" class="w-full py-3 rounded-xl bg-white/10 hover:bg-white/15 text-sm">← Main Menu</button>
   </section>
 
   <!-- TRAINING HISTORY -->
-  <section id="screen-training-history" class="hidden space-y-4 max-w-2xl mx-auto w-full">
-    <div class="text-center py-4">
+  <section id="screen-training-history" class="hidden cq-screen-panel cq-screen-compact space-y-3 max-w-2xl mx-auto w-full">
+    <div class="text-center py-2">
       <h2 class="text-2xl font-bold text-amber-400">Training History</h2>
-      <p id="training-history-subtitle" class="text-emerald-300/80 text-sm mt-1">Past drill sessions — accuracy and improvement over time</p>
     </div>
     <div id="training-history-trend" class="felt rounded-xl p-4 text-sm text-emerald-200/90 space-y-2"></div>
     <div id="training-history-filters" class="flex gap-2 flex-wrap justify-center"></div>
@@ -196,10 +198,9 @@
   </section>
 
   <!-- MISTAKE REVIEW LOG -->
-  <section id="screen-training-mistakes" class="hidden space-y-4 max-w-2xl mx-auto w-full">
-    <div class="text-center py-4">
+  <section id="screen-training-mistakes" class="hidden cq-screen-panel cq-screen-compact space-y-3 max-w-2xl mx-auto w-full">
+    <div class="text-center py-2">
       <h2 class="text-2xl font-bold text-amber-400">Review Mistakes</h2>
-      <p id="training-mistakes-subtitle" class="text-emerald-300/80 text-sm mt-1">Learn from recent errors — what you chose vs what was correct</p>
     </div>
     <div id="training-mistakes-summary" class="felt rounded-xl p-4 text-sm text-emerald-200/90 space-y-2"></div>
     <div id="training-mistakes-filters" class="flex gap-2 flex-wrap justify-center"></div>
@@ -209,7 +210,7 @@
   </section>
 
   <!-- DRILL SESSION SUMMARY -->
-  <section id="screen-drill-session-summary" class="hidden space-y-4 max-w-xl mx-auto w-full">
+  <section id="screen-drill-session-summary" class="hidden cq-screen-panel cq-screen-compact space-y-3 max-w-xl mx-auto w-full">
     <div class="text-center py-2">
       <p class="text-xs uppercase tracking-wider text-cyan-400/80">Session Complete</p>
       <h2 id="drill-summary-title" class="text-2xl font-bold text-amber-400 mt-1">Training Summary</h2>
@@ -224,22 +225,21 @@
   </section>
 
   <!-- TABLE LOBBY -->
-  <section id="screen-table-lobby" class="hidden space-y-4 max-w-2xl mx-auto w-full">
-    <div class="text-center py-4">
+  <section id="screen-table-lobby" class="hidden cq-screen-panel cq-screen-compact space-y-3 max-w-2xl mx-auto w-full">
+    <div class="text-center py-2">
       <h2 class="text-2xl font-bold text-amber-400">Table Lobby</h2>
-      <p class="text-emerald-300/80 text-sm mt-1">Pick a tier — pay entry in chips, beat the dealer to claim <strong class="text-gold">1.8×</strong> the pot</p>
+      <p class="text-emerald-300/80 text-xs mt-0.5">2× pot · win <strong class="text-gold">1.8×</strong></p>
     </div>
-    <div id="lobby-currency-hint" class="felt rounded-xl px-4 py-3 text-sm text-emerald-200/90 text-center border border-white/10"></div>
-    <div id="table-tier-list" class="grid gap-3"></div>
-    <p class="text-center text-xs text-emerald-500/60 px-2">Entry fee ×2 forms the pot (you + house). Winner takes 1.8× entry — 10% house rake.</p>
+    <div id="lobby-currency-hint" class="felt rounded-xl px-3 py-2 text-sm text-emerald-200/90 text-center border border-white/10"></div>
+    <div id="table-tier-list" class="grid gap-2"></div>
     <button id="btn-table-lobby-back" type="button" class="w-full py-3 rounded-xl bg-white/10 hover:bg-white/15 text-sm">← Main Menu</button>
   </section>
 
   <!-- TOURNAMENT BRACKETS -->
-  <section id="screen-tournament" class="hidden space-y-4 max-w-3xl mx-auto w-full pb-8">
-    <div class="text-center py-4">
+  <section id="screen-tournament" class="hidden cq-screen-panel space-y-3 max-w-3xl mx-auto w-full">
+    <div class="text-center py-2">
       <h2 class="text-2xl font-bold text-amber-400">🏆 Pro Tournament</h2>
-      <p id="tournament-subtitle" class="text-emerald-300/80 text-sm mt-1">8-player single elimination — beat the bracket to claim the prize pool</p>
+      <p id="tournament-subtitle" class="text-emerald-300/80 text-sm mt-0.5">8-player bracket</p>
     </div>
     <div id="tournament-entry-panel" class="felt rounded-xl p-4 border border-amber-700/30 space-y-3"></div>
     <div id="tournament-bracket-panel" class="hidden space-y-3">
@@ -251,10 +251,10 @@
   </section>
 
   <!-- SPECIAL EVENT (rotating weekly tables) -->
-  <section id="screen-special-event" class="hidden space-y-4 max-w-2xl mx-auto w-full pb-8">
-    <div class="text-center py-4">
+  <section id="screen-special-event" class="hidden cq-screen-panel space-y-3 max-w-2xl mx-auto w-full">
+    <div class="text-center py-2">
       <h2 class="text-2xl font-bold text-amber-400">✨ Special Event</h2>
-      <p id="special-event-subtitle" class="text-emerald-300/80 text-sm mt-1">Rotating weekly tables with boosted payouts</p>
+      <p id="special-event-subtitle" class="text-emerald-300/80 text-sm mt-0.5">Weekly boosted tables</p>
     </div>
     <div id="special-event-hero" class="felt rounded-xl p-4 border border-violet-700/30 space-y-3"></div>
     <div id="special-event-daily-panel" class="felt rounded-xl p-4 border border-amber-700/25 space-y-2"></div>
@@ -263,10 +263,10 @@
   </section>
 
   <!-- COUNTING CREWS (CLUBS) -->
-  <section id="screen-clubs" class="hidden space-y-4 max-w-2xl mx-auto w-full">
-    <div class="text-center py-4">
+  <section id="screen-clubs" class="hidden cq-screen-panel cq-screen-compact space-y-3 max-w-2xl mx-auto w-full">
+    <div class="text-center py-2">
       <h2 class="text-2xl font-bold text-amber-400">Counting Crews</h2>
-      <p class="text-emerald-300/80 text-sm mt-1">Team up with counters — create, search, and join clubs (max 50 members)</p>
+      <p class="text-emerald-300/80 text-sm mt-0.5">Clubs · max 50</p>
     </div>
     <div id="clubs-main-view" class="space-y-4">
       <div id="clubs-hub-view" class="hidden space-y-3">
@@ -355,17 +355,16 @@
   </section>
 
   <!-- PRACTICE RANGE -->
-  <section id="screen-practice-range" class="hidden space-y-4 max-w-lg mx-auto">
-    <div class="text-center py-4">
+  <section id="screen-practice-range" class="hidden cq-screen-panel cq-screen-compact space-y-3 max-w-lg mx-auto">
+    <div class="text-center py-2">
       <h2 class="text-2xl font-bold text-amber-400">Practice Range</h2>
-      <p class="text-emerald-300/80 text-sm mt-1">Isolated drills — sharpen one skill at a time</p>
     </div>
     <div id="practice-range-drills" class="grid gap-3"></div>
     <button id="btn-practice-back" class="w-full py-3 rounded-xl bg-white/10 hover:bg-white/15 text-sm">← Main Menu</button>
   </section>
 
   <!-- TUTORIAL -->
-  <section id="screen-tutorial" class="hidden space-y-4 max-w-lg mx-auto" aria-labelledby="tutorial-title">
+  <section id="screen-tutorial" class="hidden cq-screen-panel cq-screen-compact space-y-3 max-w-lg mx-auto" aria-labelledby="tutorial-title">
     <div id="tutorial-panel" class="felt rounded-2xl p-6 tutorial-step">
       <div class="flex items-center justify-between mb-3">
         <span id="tutorial-step-label" class="text-xs uppercase tracking-wider text-amber-400/80"></span>
@@ -386,17 +385,16 @@
   </section>
 
   <!-- CAMPAIGN MAP -->
-  <section id="screen-campaign" class="hidden space-y-4 max-w-lg mx-auto">
-    <div class="text-center py-4">
+  <section id="screen-campaign" class="hidden cq-screen-panel cq-screen-compact space-y-3 max-w-lg mx-auto">
+    <div class="text-center py-2">
       <h2 class="text-2xl font-bold text-amber-400">Campaign</h2>
-      <p class="text-emerald-300/80 text-sm">Beat goals to unlock casino themes & rule sets</p>
     </div>
     <div id="campaign-chapters" class="space-y-3"></div>
     <button id="btn-campaign-back" class="w-full py-3 rounded-xl bg-white/10 hover:bg-white/15 text-sm">← Main Menu</button>
   </section>
 
   <!-- DAILY CHALLENGE -->
-  <section id="screen-daily" class="hidden space-y-4 max-w-lg mx-auto">
+  <section id="screen-daily" class="hidden cq-screen-panel cq-screen-compact space-y-3 max-w-lg mx-auto">
     <div class="felt rounded-2xl p-6 text-center space-y-3">
       <p class="text-xs uppercase tracking-wider text-amber-400/80">Daily Challenge</p>
       <h2 id="daily-title" class="text-xl font-bold text-gold"></h2>
@@ -425,10 +423,9 @@
   </section>
 
   <!-- DAILY LOGIN REWARDS -->
-  <section id="screen-daily-rewards" class="hidden space-y-4 max-w-lg mx-auto w-full">
-    <div class="text-center py-4">
+  <section id="screen-daily-rewards" class="hidden cq-screen-panel cq-screen-compact space-y-3 max-w-lg mx-auto w-full">
+    <div class="text-center py-2">
       <h2 class="text-2xl font-bold text-amber-400">Daily Rewards</h2>
-      <p class="text-emerald-300/80 text-sm mt-1">Login streaks, chip &amp; gem drops, social bonuses</p>
     </div>
     <div id="daily-rewards-streak-card" class="felt rounded-2xl p-6 space-y-4 border border-amber-700/30"></div>
     <div id="daily-rewards-calendar" class="felt rounded-xl p-4 border border-cyan-800/25"></div>
@@ -438,7 +435,7 @@
   </section>
 
   <!-- DRILL: COUNT SHOE -->
-  <section id="screen-drill-count" class="hidden space-y-4 max-w-lg mx-auto">
+  <section id="screen-drill-count" class="hidden cq-screen-panel cq-screen-compact space-y-3 max-w-lg mx-auto">
     <div class="text-center">
       <span class="drill-badge uppercase text-cyan-400/80">Count This Shoe</span>
       <p id="drill-count-status" class="text-emerald-200/80 text-sm mt-2"></p>
@@ -453,7 +450,7 @@
   </section>
 
   <!-- DRILL: RUNNING COUNT SPEED -->
-  <section id="screen-drill-speed" class="hidden space-y-4 max-w-lg mx-auto w-full">
+  <section id="screen-drill-speed" class="hidden cq-screen-panel cq-screen-compact space-y-3 max-w-lg mx-auto w-full">
     <div class="text-center">
       <span class="drill-badge uppercase text-cyan-400/80">Running Count Speed Drill</span>
       <p id="speed-drill-tagline" class="text-emerald-200/80 text-sm mt-2">Keep the Hi-Lo running count as cards fly by</p>
@@ -503,7 +500,7 @@
   </section>
 
   <!-- DRILL: TRUE COUNT CONVERSION -->
-  <section id="screen-drill-true-count" class="hidden space-y-4 max-w-lg mx-auto w-full">
+  <section id="screen-drill-true-count" class="hidden cq-screen-panel cq-screen-compact space-y-3 max-w-lg mx-auto w-full">
     <div class="text-center">
       <span class="drill-badge uppercase text-cyan-400/80">True Count Conversion Drill</span>
       <p id="tc-drill-tagline" class="text-emerald-200/80 text-sm mt-2">Running count ÷ decks left — fast mental math</p>
@@ -556,7 +553,7 @@
   </section>
 
   <!-- DRILL: CARD BURST -->
-  <section id="screen-drill-card-burst" class="hidden space-y-4 max-w-lg mx-auto w-full">
+  <section id="screen-drill-card-burst" class="hidden cq-screen-panel cq-screen-compact space-y-3 max-w-lg mx-auto w-full">
     <div class="text-center">
       <span class="drill-badge uppercase text-cyan-400/80">Card Burst Drill</span>
       <p class="text-emerald-200/80 text-sm mt-2">Count rapid bursts of cards — quiz after each group</p>
@@ -604,7 +601,7 @@
   </section>
 
   <!-- DRILL: DECKS REMAINING -->
-  <section id="screen-drill-decks-left" class="hidden space-y-4 max-w-lg mx-auto w-full">
+  <section id="screen-drill-decks-left" class="hidden cq-screen-panel cq-screen-compact space-y-3 max-w-lg mx-auto w-full">
     <div class="text-center">
       <span class="drill-badge uppercase text-cyan-400/80">Decks Remaining Quiz</span>
       <p class="text-emerald-200/80 text-sm mt-2">Cards dealt + running count → estimate decks left</p>
@@ -662,7 +659,7 @@
   </section>
 
   <!-- DRILL: INDEX PLAYS (STRATEGY DEVIATIONS) -->
-  <section id="screen-drill-index" class="hidden space-y-4 max-w-lg mx-auto w-full">
+  <section id="screen-drill-index" class="hidden cq-screen-panel cq-screen-compact space-y-3 max-w-lg mx-auto w-full">
     <div class="text-center">
       <span class="drill-badge uppercase text-cyan-400/80">Index Play Drill</span>
       <p id="index-drill-tagline" class="text-emerald-200/80 text-sm mt-2">Hi-Lo deviations — correct play at each true count</p>
@@ -716,7 +713,7 @@
   </section>
 
   <!-- DRILL: BET SPREAD PRACTICE -->
-  <section id="screen-drill-bet-spread" class="hidden space-y-4 max-w-lg mx-auto w-full">
+  <section id="screen-drill-bet-spread" class="hidden cq-screen-panel cq-screen-compact space-y-3 max-w-lg mx-auto w-full">
     <div class="text-center">
       <span class="drill-badge uppercase text-cyan-400/80">Bet Spread Practice</span>
       <p id="bet-spread-tagline" class="text-emerald-200/80 text-sm mt-2">Match your wager to the true count — ramp up when the edge is high</p>
@@ -826,6 +823,8 @@
     <button id="btn-bet-spread-quit" type="button" class="w-full py-2 text-sm text-emerald-400/60 hover:text-emerald-300">← Back to drills</button>
   </section>
 
+  <button id="btn-table-options" type="button" class="cq-table-options-btn hidden" aria-label="Table options" title="Options">☰</button>
+
   <!-- UNIFIED CASINO TABLE (bet + playing — scroll-free) -->
   <section id="screen-casino-play" class="hidden casino-play-shell" aria-label="Blackjack table">
     <div id="screen-table" class="game-screen max-w-6xl mx-auto w-full h-full casino-table-viewport">
@@ -837,39 +836,31 @@
       </div>
       <div class="game-table-wrap casino-table-surface casino-felt felt cq-authentic-felt flex-1 min-h-0">
         <div class="cq-felt-svg-wrap" aria-hidden="true">
-          <svg id="cq-felt-markings" viewBox="0 0 1200 680" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+          <svg id="cq-felt-markings" viewBox="0 0 1200 680" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
             <defs>
-              <radialGradient id="cqFeltGrad" cx="50%" cy="36%" r="80%">
-                <stop offset="0%" stop-color="#2a7f96"/>
-                <stop offset="48%" stop-color="#1d5f72"/>
-                <stop offset="100%" stop-color="#0f3d4d"/>
+              <radialGradient id="cqFeltGrad" cx="50%" cy="22%" r="105%">
+                <stop offset="0%" stop-color="#1f7a55"/>
+                <stop offset="42%" stop-color="#145c3f"/>
+                <stop offset="100%" stop-color="#082a1e"/>
               </radialGradient>
-              <filter id="cqFeltTextEmboss" x="-6%" y="-6%" width="112%" height="112%">
-                <feDropShadow dx="0" dy="2" stdDeviation="1.5" flood-color="#000" flood-opacity="0.55"/>
-              </filter>
-              <path id="cqArcBjTitle" d="M 160 235 A 440 440 0 0 1 1040 235" fill="none"/>
-              <path id="cqArcBjSub" d="M 240 275 A 360 360 0 0 1 960 275" fill="none"/>
+              <pattern id="cqFeltWeave" width="14" height="14" patternUnits="userSpaceOnUse">
+                <circle cx="2" cy="2" r="0.65" fill="#ffffff" opacity="0.04"/>
+                <circle cx="9" cy="9" r="0.65" fill="#ffffff" opacity="0.03"/>
+              </pattern>
             </defs>
-            <rect width="1200" height="52" fill="#8a9098"/>
-            <rect y="52" width="1200" height="628" fill="url(#cqFeltGrad)"/>
-            <ellipse cx="600" cy="600" rx="530" ry="265" fill="none" stroke="#d4c878" stroke-width="3.5"/>
-            <ellipse cx="600" cy="592" rx="450" ry="220" fill="none" stroke="#e8d88a" stroke-width="1.5" opacity="0.8"/>
-            <g class="cq-felt-seat-circles" fill="none" stroke="#f5f2e8" stroke-width="2.5">
-              <circle class="cq-felt-seat-circle" cx="175" cy="545" r="36"/><circle class="cq-felt-seat-circle" cx="320" cy="492" r="36"/><circle class="cq-felt-seat-circle" cx="465" cy="462" r="36"/>
-              <circle class="cq-felt-seat-circle cq-felt-seat-circle--human" cx="600" cy="452" r="40"/><circle class="cq-felt-seat-circle" cx="735" cy="462" r="36"/><circle class="cq-felt-seat-circle" cx="880" cy="492" r="36"/>
-              <circle class="cq-felt-seat-circle" cx="1025" cy="545" r="36"/>
+            <rect width="1200" height="680" fill="url(#cqFeltGrad)"/>
+            <rect width="1200" height="680" fill="url(#cqFeltWeave)"/>
+            <path class="cq-felt-rail-outer" d="M 48 548 Q 600 648 1152 548" fill="none" stroke="#d4c878" stroke-width="5" stroke-linecap="round"/>
+            <path class="cq-felt-rail-inner" d="M 128 562 Q 600 638 1072 562" fill="none" stroke="rgba(248,246,240,0.5)" stroke-width="2.5" stroke-linecap="round"/>
+            <g class="cq-felt-seat-circles" fill="rgba(0,0,0,0.14)" stroke="#f5f2e8" stroke-width="3">
+              <circle class="cq-felt-seat-circle" cx="118" cy="556" r="34"/>
+              <circle class="cq-felt-seat-circle" cx="276" cy="590" r="34"/>
+              <circle class="cq-felt-seat-circle" cx="428" cy="620" r="34"/>
+              <circle class="cq-felt-seat-circle cq-felt-seat-circle--human" cx="600" cy="648" r="42"/>
+              <circle class="cq-felt-seat-circle" cx="772" cy="620" r="34"/>
+              <circle class="cq-felt-seat-circle" cx="924" cy="590" r="34"/>
+              <circle class="cq-felt-seat-circle" cx="1082" cy="556" r="34"/>
             </g>
-            <text font-family="Bebas Neue, Impact, sans-serif" font-size="52" font-weight="700" fill="#f5d300" stroke="#1a1208" stroke-width="1" filter="url(#cqFeltTextEmboss)">
-              <textPath href="#cqArcBjTitle" startOffset="50%" text-anchor="middle">BLACKJACK PAYS 3 TO 2</textPath>
-            </text>
-            <text font-family="Bebas Neue, Impact, sans-serif" font-size="24" font-weight="700" fill="#f5f2e8" stroke="#1a1208" stroke-width="0.6" filter="url(#cqFeltTextEmboss)">
-              <textPath href="#cqArcBjSub" startOffset="50%" text-anchor="middle">DOUBLE AFTER SPLIT ALLOWED</textPath>
-            </text>
-            <text x="600" y="318" text-anchor="middle" font-family="Bebas Neue, Impact, sans-serif" font-size="26" font-weight="700" fill="#f5d300" stroke="#1a1208" stroke-width="0.6" letter-spacing="1.5" filter="url(#cqFeltTextEmboss)">DEALER MUST HIT SOFT 17</text>
-            <rect x="280" y="355" width="640" height="72" fill="none" stroke="#d4c878" stroke-width="2"/>
-            <text x="600" y="405" text-anchor="middle" font-family="Bebas Neue, Impact, sans-serif" font-size="56" font-weight="700" fill="#f5d300" stroke="#1a1208" stroke-width="1.2" letter-spacing="3" filter="url(#cqFeltTextEmboss)">INSURANCE PAYS 2 TO 1</text>
-            <text x="72" y="340" text-anchor="middle" font-family="Bebas Neue, Impact, sans-serif" font-size="18" font-weight="700" fill="#f5d300" opacity="0.9" transform="rotate(-90 72 340)">Six Deck</text>
-            <text x="1128" y="340" text-anchor="middle" font-family="Bebas Neue, Impact, sans-serif" font-size="18" font-weight="700" fill="#f5d300" opacity="0.9" transform="rotate(90 1128 340)">Six Deck</text>
           </svg>
         </div>
         <div class="cq-chip-rack" aria-hidden="true">
@@ -884,9 +875,25 @@
         </div>
         <div class="cq-table-play-layer">
         <div class="casino-dealer-zone">
-          <p class="text-[10px] uppercase tracking-wider text-emerald-300/65 mb-1">Dealer</p>
+          <div id="franchise-dealer-hud" class="franchise-dealer-hud hidden" aria-live="polite">
+            <div class="franchise-dealer-portrait" aria-hidden="true">🎴</div>
+            <div class="franchise-dealer-meta">
+              <div id="franchise-dealer-name" class="franchise-dealer-name">Margaret "Mags" Hawthorne</div>
+              <div id="franchise-dealer-venue" class="franchise-dealer-venue">Grosvenor Victoria</div>
+              <span id="franchise-dealer-mood" class="franchise-dealer-mood mood-neutral">Neutral</span>
+            </div>
+            <div id="franchise-dealer-bubble" class="franchise-dealer-bubble">…</div>
+            <div class="franchise-dealer-rel-wrap">
+              <div class="franchise-dealer-rel-bar"><div id="franchise-dealer-rel-fill" class="franchise-dealer-rel-fill"></div></div>
+              <span id="franchise-dealer-tier" class="franchise-dealer-tier">Stranger</span>
+            </div>
+          </div>
+          <p class="sr-only">Dealer</p>
+          <p id="dealer-total" class="cq-hand-total cq-hand-total--dealer text-center font-mono"></p>
           <div id="dealer-cards" class="flex justify-center gap-1.5 flex-wrap min-h-[3.5rem]"></div>
-          <p id="dealer-total" class="text-center text-xs text-emerald-200/80 mt-1 font-mono"></p>
+        </div>
+        <div id="casino-player-rail" class="casino-player-rail" aria-label="Your cards">
+          <div id="player-hands" class="casino-seat-cards-wrap"></div>
         </div>
         <div id="casino-seat-grid" class="casino-seat-grid" data-seat-count="7">
           <div class="casino-seat casino-seat-empty casino-seat-ai-ready" data-seat="1" data-ai-slot="1" id="casino-seat-1"><div class="casino-seat-spot casino-seat-cards-mount" aria-hidden="true"><span class="casino-seat-available"><span class="casino-seat-available-icon"></span><span class="casino-seat-available-text">Open Seat</span></span></div><span class="casino-seat-label"><span class="casino-seat-num">1</span><span class="casino-seat-status">Open Seat</span></span></div>
@@ -899,7 +906,6 @@
                 <span id="bet-placed-amount" class="sr-only">0</span>
               </div>
             </div>
-            <div id="player-hands" class="casino-seat-cards-wrap"></div>
             <span class="casino-seat-label"><span class="casino-seat-num">You</span><span class="casino-seat-status">Seat 4</span></span>
           </div>
           <div class="casino-seat casino-seat-empty casino-seat-ai-ready" data-seat="5" data-ai-slot="5" id="casino-seat-5"><div class="casino-seat-spot casino-seat-cards-mount" aria-hidden="true"><span class="casino-seat-available"><span class="casino-seat-available-icon"></span><span class="casino-seat-available-text">Open Seat</span></span></div><span class="casino-seat-label"><span class="casino-seat-num">5</span><span class="casino-seat-status">Open Seat</span></span></div>
@@ -913,27 +919,21 @@
   </section>
 
   <!-- DEALER MODE (player as dealer) -->
-  <section id="screen-dealer-mode" class="hidden space-y-4 w-full mx-auto pb-8">
-    <div id="dealer-mode-intro" class="space-y-4 max-w-2xl mx-auto">
-      <div class="text-center py-4">
+  <section id="screen-dealer-mode" class="hidden cq-screen-panel space-y-2 w-full mx-auto">
+    <div id="dealer-mode-intro" class="space-y-2 max-w-2xl mx-auto">
+      <div class="text-center py-2">
         <h2 class="text-2xl font-bold text-amber-400">🎰 Dealer Mode</h2>
-        <p class="text-emerald-300/80 text-sm mt-1">Run the table — pay players correctly, read hands fast, and keep the count</p>
+        <p class="text-emerald-300/80 text-sm mt-0.5">Pay players · dealer rules · count checks</p>
       </div>
-      <div class="felt rounded-xl p-4 border border-amber-700/30 space-y-3 text-sm text-emerald-100/90">
-        <p><strong class="text-gold">Your job:</strong> Manage 3–5 AI players through a full shoe. Cards deal automatically — you resolve payouts and dealer rules under the clock.</p>
-        <ul class="text-xs text-emerald-300/80 space-y-1 list-disc list-inside">
-          <li><strong>Payout challenge</strong> — pick Win / Lose / Push / BJ for each player hand (including splits)</li>
-          <li><strong>Dealer rules quiz</strong> — Hit or Stand before the house draws (when not obvious)</li>
-          <li><strong>Insurance & peek</strong> — AI insurance on Ace; peek BJ; resolve 2:1 insurance payouts</li>
-          <li><strong>Count checks</strong> — running count quiz every 3 hands (dealer sees every card)</li>
-        </ul>
-        <p id="dealer-mode-intro-meta" class="text-[11px] text-cyan-300/70 font-mono">House bank · hands · timer</p>
+      <div class="felt rounded-xl p-3 border border-amber-700/30 text-xs text-emerald-300/85">
+        <p>3–5 AI players · you resolve payouts, insurance, and hit/stand under the clock.</p>
+        <p id="dealer-mode-intro-meta" class="text-[10px] text-cyan-300/70 font-mono mt-1">House bank · timer</p>
       </div>
       <button id="btn-dealer-mode-start" type="button" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 text-stone-900 font-bold">Start Dealer Shift</button>
       <div id="dealer-mode-career-stats" class="felt rounded-xl p-4 border border-cyan-800/25 text-xs text-emerald-300/80"></div>
       <button id="btn-dealer-mode-back" type="button" class="w-full py-3 rounded-xl bg-white/10 hover:bg-white/15 text-sm">← Training Mode</button>
     </div>
-    <div id="dealer-mode-active" class="hidden space-y-3">
+    <div id="dealer-mode-active" class="hidden space-y-2">
       <div id="dealer-bank-bar" class="dealer-bank-bar"></div>
       <div id="dealer-count-hud" class="count-box grid grid-cols-2 sm:grid-cols-4 gap-2"></div>
       <div class="dealer-table-felt">
@@ -955,7 +955,7 @@
       <div id="dealer-round-log" class="text-xs text-emerald-500/60 text-center font-mono"></div>
       <button id="btn-dealer-quit" type="button" class="w-full py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-sm">End Shift Early</button>
     </div>
-    <div id="dealer-mode-summary" class="hidden space-y-4 max-w-xl mx-auto">
+    <div id="dealer-mode-summary" class="hidden space-y-2 max-w-xl mx-auto">
       <div class="text-center py-2">
         <p class="text-xs uppercase tracking-wider text-cyan-400/80">Shift Complete</p>
         <h2 class="text-2xl font-bold text-amber-400 mt-1">Dealer Report Card</h2>
@@ -1006,6 +1006,19 @@
 <nav id="action-bar" class="hidden fixed bottom-0 inset-x-0 z-30 bg-[#0a1612]/95 backdrop-blur border-t border-emerald-800/40 px-4 sm:px-6 py-4 w-full" aria-label="Hand actions">
   <div class="app-main flex justify-center gap-3 flex-wrap" id="action-buttons"></div>
 </nav>
+
+<dialog id="modal-table-options" class="rounded-2xl bg-[#0f1f18] text-white p-5 max-w-sm w-[92vw] border border-emerald-700/30">
+  <h3 class="font-bold text-xl text-gold mb-1">Table Options</h3>
+  <p class="text-sm text-emerald-300/70 mb-4">Settings, stats, or leave the table.</p>
+  <div class="space-y-2">
+    <button type="button" id="btn-options-settings" class="w-full py-3 px-4 rounded-xl bg-amber-500/20 border border-amber-500/35 text-amber-100 font-semibold text-left">⚙ Settings &amp; Help Level</button>
+    <button type="button" id="btn-options-chart" class="w-full py-3 px-4 rounded-xl bg-white/10 border border-white/10 text-emerald-100 font-medium text-left">📊 Strategy Chart</button>
+    <button type="button" id="btn-options-stats" class="w-full py-3 px-4 rounded-xl bg-white/10 border border-white/10 text-emerald-100 font-medium text-left">📈 Your Progress</button>
+    <button type="button" id="btn-options-sound" class="w-full py-3 px-4 rounded-xl bg-white/10 border border-white/10 text-emerald-100 font-medium text-left">🔊 Sound: On</button>
+    <button type="button" id="btn-options-quit" class="w-full py-3 px-4 rounded-xl bg-red-900/45 border border-red-700/40 text-red-100 font-semibold text-left">🚪 Leave Table</button>
+  </div>
+  <button type="button" id="btn-options-close" class="mt-4 w-full py-3 rounded-xl bg-emerald-800/50 hover:bg-emerald-700/50 font-semibold">Resume Playing</button>
+</dialog>
 
 <dialog id="modal-settings" class="rounded-2xl bg-[#0f1f18] text-white p-6 max-w-md w-[92vw] border border-emerald-700/30 max-h-[90vh] overflow-y-auto">
   <h3 class="font-bold text-xl text-gold mb-1">Settings</h3>
@@ -1092,6 +1105,17 @@
   </div>
 </dialog>
 
+<dialog id="modal-dealer-read" class="rounded-xl bg-[#0f1f18] text-white p-6 max-w-sm w-[90vw] border border-violet-500/35">
+  <h3 class="font-bold text-lg text-violet-200 mb-1">Read the Dealer</h3>
+  <p class="text-sm text-emerald-200/75 mb-4">What's Mags holding behind that upcard? One guess this hand — watch her tells.</p>
+  <div class="grid grid-cols-1 gap-2 mb-3">
+    <button type="button" data-read-guess="strong" class="franchise-read-guess py-3 rounded-xl bg-emerald-800/50 border border-emerald-600/40 font-semibold text-left px-4">💪 Strong — house is sitting pretty</button>
+    <button type="button" data-read-guess="weak" class="franchise-read-guess py-3 rounded-xl bg-slate-800/50 border border-slate-600/40 font-semibold text-left px-4">📉 Weak — nothing scary under there</button>
+    <button type="button" data-read-guess="bluffing" class="franchise-read-guess py-3 rounded-xl bg-amber-900/40 border border-amber-600/35 font-semibold text-left px-4">🎭 Bluffing — big card, small hand</button>
+  </div>
+  <button type="button" id="btn-dealer-read-cancel" class="w-full py-2.5 rounded-lg bg-white/10 text-sm">Cancel</button>
+</dialog>
+
 <dialog id="modal-count-quiz" class="rounded-xl bg-emerald-900 text-white p-6 max-w-sm w-[90vw] border border-white/10">
   <h3 class="font-bold text-lg mb-2">Running Count Quiz</h3>
   <p class="text-sm text-emerald-200/80 mb-4">What is the <strong>running count</strong> right now? A guess within ±1 of the actual count counts as correct.</p>
@@ -1115,7 +1139,7 @@
 
 <dialog id="modal-shoe" class="rounded-xl bg-emerald-900 text-white p-6 max-w-lg w-[92vw] border border-white/10">
   <h3 class="font-bold text-lg mb-1">Deck Round Complete</h3>
-  <p id="shoe-modal-subtitle" class="text-xs text-emerald-400/70 mb-3">Review of this dealing round (casino “shoe”) — count trend, mistakes, estimated edge</p>
+  <p id="shoe-modal-subtitle" class="text-xs text-emerald-400/70 mb-2">Shoe review — count trend &amp; edge</p>
   <canvas id="shoe-count-canvas" class="w-full rounded-lg bg-black/30 border border-emerald-700/30 mb-3" height="120"></canvas>
   <pre id="shoe-report" class="text-sm whitespace-pre-wrap text-emerald-100/90 max-h-[40vh] overflow-y-auto"></pre>
   <div id="shoe-mistakes" class="mt-3 text-xs text-red-300/90 hidden"></div>
@@ -1193,17 +1217,18 @@
 
 <div id="toast-stack" class="fixed top-20 right-4 z-[60] flex flex-col gap-2 items-end pointer-events-none max-w-[92vw] sm:max-w-xs"></div>
 
-  <script src="js/00-capacitor-bridge.js"></script>
-  <script src="js/01-constants.js"></script>
-  <script src="js/02-core-types.js"></script>
-  <script src="js/03-counting.js"></script>
-  <script src="js/04-strategy.js"></script>
-  <script src="js/05-help-system.js"></script>
-  <script src="js/06-stats-storage.js"></script>
-  <script src="js/06b-validation.js"></script>
-  <script src="js/07-game-engine.js"></script>
-  <script src="js/08-tutorial.js"></script>
-  <script src="js/09-tests.js"></script>
+  <script src="js/00-capacitor-bridge.js?v=43"></script>
+  <script src="js/01-constants.js?v=43"></script>
+  <script src="js/02-core-types.js?v=43"></script>
+  <script src="js/03-counting.js?v=43"></script>
+  <script src="js/04-strategy.js?v=43"></script>
+  <script src="js/05-help-system.js?v=43"></script>
+  <script src="js/06-stats-storage.js?v=43"></script>
+  <script src="js/06b-validation.js?v=43"></script>
+  <script src="js/07-game-engine.js?v=43"></script>
+  <script src="js/08-tutorial.js?v=43"></script>
+  <script src="js/10-dealer-engine.js?v=43"></script>
+  <script src="js/09-tests.js?v=43"></script>
   <script>
     if ('serviceWorker' in navigator && !window.__CQ_TEST_MODE && !window.__CQ_NATIVE) {
       window.addEventListener('load', () => {

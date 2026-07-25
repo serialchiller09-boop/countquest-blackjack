@@ -1,11 +1,12 @@
 /* CountQuest PWA service worker — cache app shell for offline repeat visits. */
-const CACHE_VERSION = 'cq-pwa-v3';
+const CACHE_VERSION = 'cq-pwa-v9';
 const SHELL_ASSETS = [
   './',
   './index.html',
   './manifest.webmanifest',
   './css/tailwind.css',
   './css/app.css',
+  './css/casino-felt-table.css',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/apple-touch-icon.png',
@@ -20,6 +21,7 @@ const SHELL_ASSETS = [
   './js/07-game-engine.js',
   './js/08-tutorial.js',
   './js/09-tests.js',
+  './js/10-dealer-engine.js',
 ];
 
 self.addEventListener('install', (event) => {
@@ -42,15 +44,17 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
+  const isAppShell = /\.(html|js|css)$/.test(url.pathname) || url.pathname.endsWith('/');
   event.respondWith(
-    caches.match(request).then((cached) => {
-      if (cached) return cached;
-      return fetch(request).then((response) => {
-        if (!response || response.status !== 200 || response.type === 'opaque') return response;
-        const copy = response.clone();
-        caches.open(CACHE_VERSION).then((cache) => cache.put(request, copy));
-        return response;
-      }).catch(() => cached);
-    }),
+    (isAppShell ? fetch(request) : caches.match(request))
+      .then((response) => {
+        if (response && response.status === 200) {
+          const copy = response.clone();
+          caches.open(CACHE_VERSION).then((cache) => cache.put(request, copy));
+          return response;
+        }
+        return caches.match(request).then((cached) => cached || response);
+      })
+      .catch(() => caches.match(request).then((cached) => cached || new Response('Offline', { status: 503 }))),
   );
 });

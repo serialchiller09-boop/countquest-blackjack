@@ -186,7 +186,26 @@ function runTests() {
   check(formatHandRunningCountReviewCompact(2, 5).includes('RC +2→+5'), 'compact hand count review');
   check(typeof formatHandEndReviewCompact === 'function', 'compact handend review formatter');
   const hardHand = new Hand([createPlayingCard('10','S'), createPlayingCard('6','H')]);
-  check(hardHand.beginnerDisplaySummary().startsWith('Hard 16'), 'beginner hard hand label');
+  check(hardHand.beginnerDisplaySummary() === '16', 'beginner hard hand label');
+  if (typeof DealerFranchiseEngine !== 'undefined') {
+    const eng = DealerFranchiseEngine.createMargaret({ relationship: 10 });
+    check(eng.tierId() === 'stranger', 'franchise dealer stranger tier');
+    const line = eng.handleEvent('deal.start');
+    check(line.includes('Dealing'), 'franchise dealer deal line');
+    eng.handleEvent('settle.blackjack');
+    check(eng.relationship >= 12, 'franchise dealer BJ relationship');
+    const strongHand = new Hand([createPlayingCard('K', 'S'), createPlayingCard('9', 'H')]);
+    check(eng.computeReadTruth(strongHand) === 'strong', 'franchise read truth strong');
+    const bluffHand = new Hand([createPlayingCard('K', 'S'), createPlayingCard('5', 'H')]);
+    check(eng.computeReadTruth(bluffHand) === 'bluffing', 'franchise read truth bluffing');
+    eng.beginHand(bluffHand);
+    eng.handReadTruth = 'bluffing';
+    const readOk = eng.submitRead('bluffing');
+    check(readOk?.correct === true && readOk.delta === 3, 'franchise read correct rewards');
+    const readBad = eng.submitRead('strong');
+    check(readBad === null, 'franchise read once per hand');
+  }
+  check(document.getElementById('modal-dealer-read'), 'dealer read modal present');
   const softHand = new Hand([createPlayingCard('A','S'), createPlayingCard('6','H')]);
   check(softHand.beginnerDisplaySummary().includes('Soft 17'), 'beginner soft hand label');
   check(navApp.resetCountQuizModal && navApp.dismissCountQuiz, 'count quiz manual dismiss helpers');
@@ -208,7 +227,11 @@ function runTests() {
   check(document.querySelectorAll('#casino-seat-grid .casino-seat .casino-seat-label').length === 7, 'seven seat label slots');
   check(document.querySelectorAll('#casino-seat-grid .casino-seat .casino-seat-spot').length === 7, 'seven seat spot circles');
   check(document.getElementById('casino-seat-human')?.querySelector('.casino-seat-label'), 'human seat label slot');
-  check(document.getElementById('screen-bet')?.closest('.casino-table-surface'), 'bet controls on felt surface');
+  check(document.getElementById('casino-player-rail'), 'player card rail present');
+  check(document.getElementById('player-hands')?.closest('#casino-player-rail'), 'player hands mounted in rail');
+  check(!document.getElementById('casino-seat-human')?.contains(document.getElementById('player-hands')), 'player hands not inside seat column');
+  check(document.getElementById('casino-felt-bet-rail'), 'felt bet rail present');
+  check(document.getElementById('screen-bet')?.closest('#casino-felt-bet-rail'), 'bet controls on felt bet rail');
   check(document.getElementById('casino-felt-bet-rail'), 'felt bet rail present');
   check(typeof navApp.syncCasinoShellMetrics === 'function', 'casino shell metrics sync');
   check(!document.querySelector('[class*="casino-seat-spot-active"]'), 'no spot-active class (parent styles human spot)');
@@ -395,6 +418,7 @@ function runTests() {
   check(document.body.classList.contains('casino-table-solo'), 'solo body class');
   navApp.setTableLayout('full');
   check(!document.body.classList.contains('casino-table-solo'), 'full layout clears solo class');
+  check(document.body.classList.contains('casino-table-full'), 'full layout sets full body class');
   check(Object.keys(createTableAiSeats()).length === 6, 'create table ai seats');
   check(typeof tableAiStrategyAction === 'function', 'table ai strategy helper');
   check(typeof renderTableAiMiniCard === 'function', 'table ai mini card render');

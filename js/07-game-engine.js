@@ -25,7 +25,12 @@ class CountQuestApp {
     this.revealHoleAnim = false;
     this.lastHiLoTagDealt = 0;
     this.dealing = false;
+    this._betSubmitting = false;
+    this._awaitingNextHand = false;
     this.tableAiSeats = null;
+    this.franchiseDealer = null;
+    this._franchiseIdleTimer = null;
+    this._franchiseLastAction = 0;
     this.drillState = null;
     this.dailyChallenge = null;
     this.dailyTracker = null;
@@ -51,6 +56,8 @@ class CountQuestApp {
     if (this.save.settings.showCountDisplay === undefined) this.save.settings.showCountDisplay = true;
     if (this.save.settings.showCountPopups === undefined) this.save.settings.showCountPopups = true;
     if (this.save.settings.useIndexDeviations === undefined) this.save.settings.useIndexDeviations = true;
+    if (isSoloTableLayout(this.settings)) this.tableAiSeats = null;
+    this.syncCasinoSeatLayout();
     this._afterCountQuiz = null;
     Sounds.setEnabled(this.save.settings.soundEnabled);
     if (window.__CQ_TEST_MODE) return;
@@ -263,6 +270,18 @@ class CountQuestApp {
     return '<span class="shoe-term-hint">Shoe = the card dispenser on the table that holds several decks mixed together.</span>';
   }
 
+  handTotalBadgeValue(hand, hideHole = false) {
+    if (!hand.cards.length) return '—';
+    if (hideHole && hand.size >= 2) {
+      const up = hand.cards[0];
+      if (isAceRank(up.rank)) return '11';
+      if (isTenValueRank(up.rank)) return '10';
+      return String(parseInt(up.rank, 10));
+    }
+    if (hand.isBlackjack()) return 'BJ';
+    return String(hand.value());
+  }
+
   handTotalHtml(hand, hideHole = false) {
     const main = hand.beginnerDisplaySummary(hideHole);
     const { aces } = hand.rawValue();
@@ -399,15 +418,23 @@ class CountQuestApp {
   showPostHandModals() {
     const wantsQuiz = this.help.postHandQuiz();
     const optionalQuiz = this.help.postHandQuizOptional();
-    if (wantsQuiz) {
+    if (wantsQuiz && !this.shouldAutoFlowHands()) {
       setTimeout(() => this.openCountQuizModal(), 280);
     } else if (optionalQuiz) {
       this._handendQuizOptional = true;
       this.renderHandEnd();
     }
     if (this.pendingShoeReport) {
-      this.showShoeAnalysis(this.pendingShoeReport);
+      const report = this.pendingShoeReport;
       this.pendingShoeReport = null;
+      if (this.shouldAutoFlowHands()) {
+        const acc = report.guesses
+          ? `${Math.round((report.correct / report.guesses) * 100)}% count`
+          : 'reshuffled';
+        this.toast(`Shoe complete — ${acc}. Stats for full analysis.`, 'info', 3200);
+      } else {
+        this.showShoeAnalysis(report);
+      }
     }
   }
 
@@ -441,7 +468,16 @@ class CountQuestApp {
     const newly = checkAchievements(this.save);
     if (newSystems.length || newly.length) {
       this.persist();
-      if (newly.length) this.grantAchievements(newly);
+      if (newly.length) {
+        if (extra.type === 'handEnd') {
+          for (const a of newly) {
+            this.toast(`${a.icon} ${a.name} — ${a.desc}`, 'level', 4500);
+          }
+          Sounds.play('level');
+        } else {
+          this.grantAchievements(newly);
+        }
+      }
     }
     return newly;
   }
@@ -813,9 +849,7 @@ class CountQuestApp {
   }
 
   renderDealerMiniCard(c, hidden = false) {
-    if (hidden) return '<div class="dealer-mini-card back">?</div>';
-    const red = c.suit === 'H' || c.suit === 'D';
-    return `<div class="dealer-mini-card ${red ? 'red' : ''}">${c.rank}</div>`;
+    return this.renderCard(c, hidden);
   }
 
   renderDealerMode() {
@@ -2670,6 +2704,7 @@ class CountQuestApp {
   startSession(practice, mode = practice ? 'practice-range' : 'campaign', drill = null, chapterId = null) {
     this.closeAllModals();
     this.save.settings.practiceMode = practice;
+    if (isSoloTableLayout(this.settings)) this.tableAiSeats = null;
     this.save.sessionMode = mode;
     this.save.sessionDrill = drill;
     this.save.sessionChapter = chapterId;
@@ -5469,8 +5504,11 @@ class CountQuestApp {
         }).join('')
       : '';
     const totalBet = tableAiSeatTotalBet(seat) || seat.bet || 0;
+    const hideSeatChips = !isSoloTableLayout(this.settings);
     const betChip = totalBet
-      ? `<span class="casino-seat-bet-chip">${formatCasinoChipMarkup(totalBet)}</span>`
+      ? (hideSeatChips
+        ? ''
+        : `<span class="casino-seat-bet-chip">${formatCasinoChipMarkup(totalBet)}</span>`)
       : `<span class="casino-seat-available"><span class="casino-seat-available-icon"></span></span>`;
     let status = totalBet ? `$${totalBet}` : 'Ready';
     let statusCls = '';
@@ -5505,7 +5543,12 @@ class CountQuestApp {
       this.render();
       return;
     }
+    this.clearAutoNextHandTimer();
     this.closeAllModals();
+    this._awaitingNextHand = false;
+    this.dealing = false;
+    this._betSubmitting = false;
+    this.resetDealButton();
     this.refillPractice();
     this.ensureShoe();
     this.ensureTableAiSeats();
@@ -5521,7 +5564,7 @@ class CountQuestApp {
     const countSnapshot = this.counter.getCountSnapshot(this.shoe);
     // Bet spread: Hi-Lo uses true count; KO uses RC vs key (pivot).
     this.betSuggestion = suggestWagerFromCountSnapshot(countSnapshot, this.bankroll, this.settings.unitSize, this.minBet);
-    if (this.help.requireCountConfirm()) {
+    if (this.help.requireCountConfirm() && !this.shouldAutoFlowHands()) {
       this.phase = 'countConfirm';
       document.getElementById('modal-count-confirm').showModal();
       document.getElementById('count-confirm-result').textContent = '';
@@ -5537,6 +5580,12 @@ class CountQuestApp {
       return;
     } else {
       this.phase = 'bet';
+    }
+    this.initFranchiseDealer();
+    if (this.usesFranchiseDealer()) {
+      if ((this.session?.hands ?? 0) === 0) this.franchiseDealerEvent('session.start');
+      this.franchiseDealerEvent('bet.prompt');
+      this.stopFranchiseIdleWatch();
     }
     this.render();
   }
@@ -5571,7 +5620,7 @@ class CountQuestApp {
       this.toast('Not the betting phase', 'error');
       return;
     }
-    if (this.dealing) {
+    if (this.dealing || this._betSubmitting) {
       this.toast('Please wait — cards are being dealt', 'info');
       return;
     }
@@ -5597,9 +5646,18 @@ class CountQuestApp {
       this.toast('Insufficient bankroll for minimum bet', 'error');
       return;
     }
+
+    this._betSubmitting = true;
+    this.dealing = true;
+    this.lockDealButton();
+    document.getElementById('casino-felt-bet-rail')?.classList.add('hidden');
+
     if (!this.betSuggestion) {
       const countSnapshot = this.counter.getCountSnapshot(this.shoe);
       this.betSuggestion = suggestWagerFromCountSnapshot(countSnapshot, this.bankroll, this.settings.unitSize, this.minBet);
+    }
+    if (!this.roundReview) {
+      this.roundReview = { runningCountAtHandStart: this.counter.runningCount, decisions: [], bet: 0, suggested: 0 };
     }
     this.roundReview.bet = amount;
     this.roundReview.suggested = this.betSuggestion.amount;
@@ -5612,7 +5670,7 @@ class CountQuestApp {
       this.session.betStreak = betMatched ? (this.session.betStreak || 0) + 1 : 0;
     }
     this.bankroll -= amount;
-    this.session.wagered += amount;
+    if (this.session) this.session.wagered += amount;
     this.playerHands = [{ hand: new Hand(), bet: amount, finished: false, doubled: false, fromSplit: false, splitAces: false }];
     this.activeIdx = 0;
     this.splitDone = false;
@@ -5620,12 +5678,29 @@ class CountQuestApp {
     this.placeTableAiBets();
 
     Sounds.play('chip');
+    this.franchiseDealerEvent('deal.start');
     this.animateChipFly(amount);
     updateCasinoSeatBetChipVisual(amount);
     const seatBet = document.getElementById('casino-seat-bet-indicator');
     if (seatBet) { seatBet.classList.remove('hidden'); seatBet.setAttribute('aria-hidden', 'false'); }
-    await sleep(450);
-    await this.dealInitial();
+    try {
+      await sleep(450);
+      await this.dealInitial();
+    } catch (err) {
+      console.error('CountQuest: placeBet failed —', err);
+      this.dealing = false;
+      this.phase = 'bet';
+      if (this.playerHands[0]) {
+        this.bankroll += this.playerHands[0].bet;
+        if (this.session) this.session.wagered = Math.max(0, this.session.wagered - this.playerHands[0].bet);
+      }
+      this.unlockDealButton();
+      this.render();
+    } finally {
+      this._betSubmitting = false;
+      if (this.phase === 'bet') this.dealing = false;
+      this.unlockDealButton();
+    }
   }
 
   /**
@@ -5702,18 +5777,23 @@ class CountQuestApp {
     const up = this.dealer.cards[0]?.rank;
     if (!up) throw new Error('Dealer upcard missing');
     if (up === 'A') {
+      this.franchiseDealerEvent('deal.upcard.ace');
       this.placeTableAiInsurance();
       this.dealing = false;
+      this.unlockDealButton();
       this.showInsuranceModal();
       this.render();
       return;
     }
     this.dealing = false;
-    this.afterInsurance();
+    this.unlockDealButton();
+    await this.afterInsurance();
     } catch (err) {
       console.error('CountQuest: dealInitial failed —', err);
       this.toast('Could not complete the deal — try placing your bet again', 'error', 4000);
       this.dealing = false;
+      this._betSubmitting = false;
+      this.unlockDealButton();
       this.phase = 'bet';
       if (this.playerHands[0]) {
         this.bankroll += this.playerHands[0].bet;
@@ -5780,6 +5860,11 @@ class CountQuestApp {
   }
 
   showInsuranceModal() {
+    this.franchiseDealerEvent('insurance.offer');
+    if (this.practice && !this.save.sessionDrill) {
+      this.resolveInsurance(false);
+      return;
+    }
     const dlg = document.getElementById('modal-insurance');
     const snap = this.shoe ? this.counter.getCountSnapshot(this.shoe) : null;
     const insAdvice = adviseInsurance(snap?.trueCount ?? null, this.activeCountingSystem(), this.usesIndexDeviations());
@@ -5797,7 +5882,7 @@ class CountQuestApp {
     dlg.showModal();
   }
 
-  resolveInsurance(take) {
+  async resolveInsurance(take) {
     document.getElementById('modal-insurance').close();
     const snap = this.shoe ? this.counter.getCountSnapshot(this.shoe) : null;
     const insAdvice = adviseInsurance(snap?.trueCount ?? null, this.activeCountingSystem(), this.usesIndexDeviations());
@@ -5829,14 +5914,18 @@ class CountQuestApp {
       this.session.wagered += this.insuranceBet;
       this.session.insTaken++;
     }
-    this.afterInsurance();
+    await this.afterInsurance();
   }
 
-  afterInsurance() {
+  async afterInsurance() {
     const up = this.dealer.cards[0].rank;
     const peek = up === 'A' || isTenValueRank(up);
     const playerBJ = this.playerHands[0].hand.isBlackjack();
     const dealerBJ = peek && this.dealer.isBlackjack();
+
+    if (this.usesFranchiseDealer() && this.franchiseDealer) {
+      this.franchiseDealer.beginHand(this.dealer);
+    }
 
     if (this.insuranceBet > 0) {
       const net = insurancePayout(this.insuranceBet, dealerBJ);
@@ -5846,6 +5935,7 @@ class CountQuestApp {
     }
 
     if (peek && (dealerBJ || playerBJ)) {
+      this.franchiseDealerEvent(dealerBJ ? 'peek.dealer_bj' : 'peek.no_bj');
       this.revealDealerHole();
       this.results = [this.settleHand(this.playerHands[0], 'You')];
       setTimeout(() => this.finishHand(), 400);
@@ -5857,6 +5947,12 @@ class CountQuestApp {
       setTimeout(() => this.finishHand(), 400);
       return;
     }
+    if (peek) {
+      const pauseMs = this.usesFranchiseDealer() && this.franchiseDealer?.shouldPeekPause?.() ? 520 : 0;
+      if (pauseMs) await sleep(pauseMs);
+      this.franchiseDealerEvent('peek.no_bj');
+    }
+    this.startFranchiseIdleWatch();
     this.render();
   }
 
@@ -5875,6 +5971,11 @@ class CountQuestApp {
 
   playerAction(action) {
     if (this.phase !== 'playing') return;
+    this._franchiseLastAction = Date.now();
+    if (document.getElementById('modal-insurance')?.open) {
+      this.toast('Answer insurance first — Yes or No', 'info');
+      return;
+    }
     if (!VALID_PLAYER_ACTIONS.has(action)) {
       this.toast(`Unknown action: ${action}`, 'error');
       return;
@@ -6006,6 +6107,7 @@ class CountQuestApp {
       this.revealDealerHole();
       await sleep(350);
       this.settleAll();
+      this.franchiseDealerAfterSettle();
       this.finishHand();
       return;
     }
@@ -6017,7 +6119,15 @@ class CountQuestApp {
       this.render();
       await sleep(380);
     }
+    const dealerZone = document.querySelector('.casino-dealer-zone');
+    if (this.usesFranchiseDealer() && this.franchiseDealer?.shouldFeltTap?.()) {
+      dealerZone?.classList.add('franchise-tell-felt-tap');
+      await sleep(480);
+      dealerZone?.classList.remove('franchise-tell-felt-tap');
+    }
+    this.franchiseDealerEvent('dealer.stand', { dealerTotal: this.dealer.value() });
     this.settleAll();
+    this.franchiseDealerAfterSettle();
     this.finishHand();
   }
 
@@ -6045,6 +6155,7 @@ class CountQuestApp {
   }
 
   finishHand() {
+    this.stopFranchiseIdleWatch();
     this.help.shoeHands++;
     this.session.hands++;
     this.save.sessionHands = this.session.hands;
@@ -6078,11 +6189,27 @@ class CountQuestApp {
       m.handsPlayed = (m.handsPlayed || 0) + 1;
       m.playerNetPL = this.session?.netPL ?? 0;
     }
+    this.dealing = false;
+    this._betSubmitting = false;
+    this.closeAllModals();
     this.persist();
-    this.phase = 'handEnd';
-    this.render();
 
     const showFollowUps = () => this.showPostHandModals();
+    if (this.shouldAutoFlowHands()) {
+      this._awaitingNextHand = true;
+      this.render();
+      if (promos.levelUp !== null) {
+        this.showHelpLevelUpCelebration(previousHelpLevel, promos.levelUp, showFollowUps);
+      } else {
+        showFollowUps();
+      }
+      this.checkCampaignGoals();
+      return;
+    }
+
+    this._awaitingNextHand = false;
+    this.phase = 'handEnd';
+    this.render();
     if (promos.levelUp !== null) {
       this.showHelpLevelUpCelebration(previousHelpLevel, promos.levelUp, showFollowUps);
     } else {
@@ -6183,6 +6310,7 @@ class CountQuestApp {
     el.textContent = `Strategy → ${advice.action.toUpperCase()}: ${advice.rationale}`;
     el.classList.remove('hidden');
     this.syncBottomDockVisibility();
+    this.syncCasinoShellMetrics();
   }
 
   toast(msg, type = 'info', duration = 3000) {
@@ -6322,7 +6450,23 @@ class CountQuestApp {
     document.getElementById('action-buttons')?.addEventListener('click', (e) => {
       const btn = e.target.closest('[data-action]');
       if (!btn) return;
+      if (btn.dataset.action === 'read') {
+        this.openFranchiseReadModal();
+        return;
+      }
       this.playerAction(btn.dataset.action);
+    });
+    document.getElementById('modal-dealer-read')?.addEventListener('click', (e) => {
+      const guessBtn = e.target.closest('[data-read-guess]');
+      if (guessBtn) {
+        e.preventDefault();
+        this.submitFranchiseRead(guessBtn.dataset.readGuess);
+        return;
+      }
+      if (e.target.closest('#btn-dealer-read-cancel')) {
+        e.preventDefault();
+        document.getElementById('modal-dealer-read')?.close();
+      }
     });
     document.getElementById('chip-buttons')?.addEventListener('click', (e) => {
       const btn = e.target.closest('[data-bet]');
@@ -6338,12 +6482,19 @@ class CountQuestApp {
       this.updateSeatBetIndicator(e.target.value || this.minBet);
     });
 
-    this.bindClick('btn-deal', () => {
+    const onDealPress = () => {
+      if (this.isDealLocked()) return;
       Sounds.init();
-      const raw = document.getElementById('bet-input').value;
+      if (this.phase === 'handEnd' || this._awaitingNextHand) {
+        this.continueToNextHand();
+        return;
+      }
+      const raw = document.getElementById('bet-input')?.value;
       const fallback = this.betSuggestion?.amount ?? this.minBet;
-      this.placeBet(raw.trim() === '' ? fallback : raw);
-    });
+      this.placeBet(String(raw ?? '').trim() === '' ? fallback : raw);
+    };
+    const dealBtn = document.getElementById('btn-deal');
+    if (dealBtn) dealBtn.onclick = (e) => { e.preventDefault(); onDealPress(); };
     this.bindClick('btn-sound', () => {
       Sounds.init();
       Sounds.setEnabled(!Sounds.enabled);
@@ -6402,17 +6553,56 @@ class CountQuestApp {
     });
     this.bindClick('btn-next-hand', () => {
       if (this.phase !== 'handEnd') return;
+      this.clearAutoNextHandTimer();
       if (this.sessionMode === 'tournament') {
         const m = this.save.tournament?.match;
         if (m && m.handsPlayed >= TOURNAMENT_HANDS_PER_MATCH) {
           this.resolveTournamentMatch();
           return;
         }
+        this.beginBetPhase();
+        return;
+      }
+      if (this.shouldAutoFlowHands()) {
+        this.continueToNextHand();
+        return;
       }
       this.beginBetPhase();
     });
     this.bindClick('btn-end-session', () => this.endSession());
     this.bindClick('btn-help-settings', () => this.openSettings());
+    this.bindClick('btn-table-options', () => this.openTableOptions());
+    this.bindClick('btn-options-close', () => document.getElementById('modal-table-options')?.close());
+    this.bindClick('btn-options-settings', () => {
+      document.getElementById('modal-table-options')?.close();
+      this.openSettings();
+    });
+    this.bindClick('btn-options-chart', () => {
+      document.getElementById('modal-table-options')?.close();
+      if (!this.help.allowChart()) { this.toast('Chart disabled at this level'); return; }
+      document.getElementById('chart-content').textContent =
+        buildStrategyChartContent(this.rules, this.activeCountingSystem());
+      document.getElementById('modal-chart').showModal();
+    });
+    this.bindClick('btn-options-stats', () => {
+      document.getElementById('modal-table-options')?.close();
+      this.toggleStatsSidebar(true);
+    });
+    this.bindClick('btn-options-sound', () => {
+      Sounds.init();
+      Sounds.setEnabled(!Sounds.enabled);
+      this.save.settings.soundEnabled = Sounds.enabled;
+      this.persist();
+      this.updateSoundButton();
+      this.updateOptionsSoundLabel();
+      this.toast(Sounds.enabled ? 'Sound on' : 'Sound off', 'info', 1500);
+    });
+    this.bindClick('btn-options-quit', () => {
+      document.getElementById('modal-table-options')?.close();
+      this.save.sessionActive = true;
+      this.persist();
+      this.endSession();
+    });
     this.bindClick('btn-settings-close', () => document.getElementById('modal-settings').close());
     this.bindClick('btn-save-external-config', () => this.saveExternalConfigFromSettings());
     this.bindClick('btn-toggle-stats', () => this.toggleStatsSidebar(true));
@@ -6621,6 +6811,23 @@ class CountQuestApp {
   }
 
   /** HUD tiles: system-aware RC / TC or KO key, decks left, cards counted. */
+  renderCompactCountBoxes(showCountHud, shoe) {
+    if (!this.wantsCountDisplay()) {
+      return `<div class="cq-count-compact cq-count-compact--locked col-span-4">Count hidden</div>`;
+    }
+    const i = this.counter.getCountSnapshot(shoe);
+    const sys = COUNTING_SYSTEMS[i.systemId] || COUNTING_SYSTEMS['hi-lo'];
+    const rs = i.runningCount >= 0 ? `+${i.runningCount}` : `${i.runningCount}`;
+    const pill = (label, val) =>
+      `<div class="cq-count-compact" data-count="${label.toLowerCase().replace(/\s+/g, '-')}"><span class="cq-count-compact-label">${label}</span><span class="cq-count-compact-val">${val}</span></div>`;
+    if (sys.balanced) {
+      const ts = i.trueCount >= 0 ? `+${i.trueCount.toFixed(1)}` : i.trueCount.toFixed(1);
+      return pill('RC', rs) + pill('TC', ts) + pill('DL', i.decksRemaining.toFixed(1)) + pill('#', i.cardsCounted);
+    }
+    const vs = i.abovePivot >= 0 ? `+${i.abovePivot}` : `${i.abovePivot}`;
+    return pill('RC', rs) + pill('Key', `+${i.pivot}`) + pill('±', vs) + pill('#', i.cardsCounted);
+  }
+
   renderCountBoxes(showCountHud, shoe) {
     if (!this.wantsCountDisplay()) return '';
     if (!showCountHud) {
@@ -6722,6 +6929,16 @@ class CountQuestApp {
       const el = document.getElementById('save-status');
       if (el) el.textContent = 'Last saved ' + new Date(this.save.lastSavedAt).toLocaleString();
     }
+  }
+
+  openTableOptions() {
+    this.updateOptionsSoundLabel();
+    document.getElementById('modal-table-options')?.showModal();
+  }
+
+  updateOptionsSoundLabel() {
+    const btn = document.getElementById('btn-options-sound');
+    if (btn) btn.textContent = Sounds.enabled ? '🔊 Sound: On' : '🔇 Sound: Off';
   }
 
   openSettings() {
@@ -6847,12 +7064,14 @@ class CountQuestApp {
 
     const inGame = ['bet','countConfirm','playing','handEnd'].includes(this.phase);
     const atTable = ['bet','playing','countConfirm','handEnd'].includes(this.phase);
+    document.getElementById('btn-table-options')?.classList.toggle('hidden', !atTable);
     header.classList.toggle('hidden', !inGame);
     const allDone = this.playerHands.length > 0 && this.playerHands.every(h => h.finished) && this.activeIdx >= this.playerHands.length;
-    const showBetRail = this.phase === 'bet' || this.phase === 'countConfirm';
-    const showPlayActions = this.phase === 'playing' && !allDone;
+    const showBetRail = (this.phase === 'bet' || this.phase === 'countConfirm') && !this.dealing && !this._betSubmitting;
+    const showPlayActions = this.phase === 'playing' && !allDone && !this._awaitingNextHand;
     document.documentElement.classList.toggle('casino-play-active', atTable);
     document.body.classList.toggle('casino-play-active', atTable);
+
     document.body.classList.toggle('casino-handend-active', this.phase === 'handEnd');
     document.body.classList.toggle('casino-bet-active', showBetRail);
     document.body.classList.toggle('casino-action-bar-visible', showPlayActions);
@@ -6879,9 +7098,14 @@ class CountQuestApp {
     if (this.phase === 'training-mistakes') this.renderMistakeReview();
     if (this.phase === 'drill-session-summary') this.renderDrillSessionSummary();
     if (this.phase === 'practice-range') this.renderPracticeRange();
-    if (this.phase === 'bet' || this.phase === 'countConfirm') { this.renderBet(); this.renderCasinoSeats(); }
-    if (this.phase === 'playing') { this.renderTable(); this.renderCasinoSeats(); }
-    if (this.phase === 'handEnd') { this.renderTable(); this.renderHandEnd(); this.renderCasinoSeats(); }
+    if (this.phase === 'bet' || this.phase === 'countConfirm') { this.renderBet(); this.renderCasinoSeats(); this.renderFranchiseDealerHud(); }
+    if (this.phase === 'playing') {
+      this.renderTable();
+      this.renderCasinoSeats();
+      this.renderFranchiseDealerHud();
+      if (this._awaitingNextHand && this.shouldAutoFlowHands()) this.renderSoloHandEndDealCta();
+    }
+    if (this.phase === 'handEnd') { this.renderTable(); this.renderHandEnd(); this.renderCasinoSeats(); this.renderFranchiseDealerHud(); }
     if (this.phase === 'drill-count') this.renderDrillCount();
     if (this.phase === 'drill-speed') this.renderSpeedDrill();
     if (this.phase === 'drill-card-burst') this.renderCardBurstDrill();
@@ -6951,9 +7175,10 @@ class CountQuestApp {
       return;
     }
     const showBet = this.phase === 'bet' || this.phase === 'countConfirm';
+    const showHandEndDeal = (this.phase === 'handEnd' || this._awaitingNextHand) && this.shouldAutoFlowHands();
     const hint = document.getElementById('strategy-hint');
     const showHint = this.phase === 'playing' && hint && !hint.classList.contains('hidden');
-    dock.classList.toggle('hidden', !(showBet || showHint));
+    dock.classList.toggle('hidden', !(showBet || showHint || showHandEndDeal));
   }
 
   renderMenu() {
@@ -7403,8 +7628,8 @@ class CountQuestApp {
       ? '<span class="text-[10px] uppercase tracking-wider text-green-400/90 bg-green-950/40 border border-green-700/30 px-1.5 py-0.5 rounded">Live</span>'
       : '<span class="text-[10px] uppercase tracking-wider text-amber-400/70 bg-amber-950/30 border border-amber-700/25 px-1.5 py-0.5 rounded">Soon</span>';
     const cardCls = isLive
-      ? 'mode-card w-full text-left p-4 rounded-xl bg-white/10 hover:bg-white/15 border border-white/10'
-      : 'mode-card locked w-full text-left p-4 rounded-xl bg-white/5 border border-white/5 opacity-70';
+      ? 'mode-card w-full text-left p-3 rounded-xl bg-white/10 hover:bg-white/15 border border-white/10'
+      : 'mode-card locked w-full text-left p-3 rounded-xl bg-white/5 border border-white/5 opacity-70';
     const lastSession = getTrainingHistorySessions(this.save, drill.id)[0];
     const progressBadge = lastSession
       ? `<span class="text-[10px] px-1.5 py-0.5 rounded bg-cyan-950/50 border border-cyan-700/30 text-cyan-300/90">Last ${lastSession.accuracy}%</span>`
@@ -7417,7 +7642,6 @@ class CountQuestApp {
             <span class="font-bold text-gold">${drill.name}</span>${badge}${progressBadge}
           </div>
           <div class="text-[10px] uppercase tracking-wider text-cyan-400/50 mt-0.5">${drill.category}</div>
-          <div class="text-xs text-emerald-300/80 mt-1">${drill.desc}</div>
         </div>
       </div>
     </button>`;
@@ -7559,7 +7783,7 @@ class CountQuestApp {
     const summaryEl = document.getElementById('training-mistakes-summary');
     if (summaryEl) {
       if (!summary.count) {
-        summaryEl.innerHTML = '<p class="text-emerald-400/70 text-center">Mistakes from training drills appear here so you can review and improve.</p>';
+        summaryEl.innerHTML = '<p class="text-emerald-400/70 text-center">Drill mistakes show up here.</p>';
       } else {
         const filterLabel = filter === 'all' ? 'All drills' : trainingHistoryDrillLabel(filter);
         let line = `<strong class="text-gold">${filterLabel}</strong> — ${summary.count} mistake${summary.count === 1 ? '' : 's'} logged`;
@@ -7819,9 +8043,69 @@ class CountQuestApp {
     this.syncCasinoSeatLayout();
   }
 
+  usesReadableSoloPlay() {
+    return isSoloTableLayout(this.settings);
+  }
+
+  /** Practice / solo / native — skip hidden hand-end step and deal the next hand automatically. */
+  shouldAutoFlowHands() {
+    if (this.save.sessionDrill || this.sessionMode === 'tournament') return false;
+    if (this.practice || this.usesReadableSoloPlay() || !!window.__CQ_NATIVE) return true;
+    if (this.sessionMode === 'campaign' && this.help.level <= 1) return true;
+    return false;
+  }
+
+  isDealLocked() {
+    return !!(this.dealing || this._betSubmitting);
+  }
+
+  lockDealButton() {
+    const dealBtn = document.getElementById('btn-deal');
+    if (!dealBtn) return;
+    dealBtn.classList.add('cq-deal-locked');
+    dealBtn.setAttribute('aria-disabled', 'true');
+  }
+
+  unlockDealButton() {
+    const dealBtn = document.getElementById('btn-deal');
+    if (!dealBtn) return;
+    dealBtn.classList.remove('cq-deal-locked');
+    dealBtn.removeAttribute('aria-disabled');
+    dealBtn.disabled = false;
+  }
+
+  clearAutoNextHandTimer() {
+    if (this._autoNextHandTimer) {
+      clearTimeout(this._autoNextHandTimer);
+      this._autoNextHandTimer = null;
+    }
+  }
+
+  async dealNextHand(lastBet) {
+    this.clearAutoNextHandTimer();
+    this._awaitingNextHand = false;
+    if (this.isDealLocked()) return;
+    const bet = lastBet ?? this.roundReview?.bet ?? this.betSuggestion?.amount ?? this.minBet;
+    this.beginBetPhase();
+    if (this.phase !== 'bet' || this.isDealLocked()) return;
+    await this.placeBet(bet);
+  }
+
+  async continueToNextHand() {
+    if (this.phase !== 'handEnd' && !this._awaitingNextHand) return;
+    const lastBet = this.roundReview?.bet || this.betSuggestion?.amount || this.minBet;
+    await this.dealNextHand(lastBet);
+  }
+
+  resetDealButton() {
+    this.unlockDealButton();
+  }
+
   syncCasinoSeatLayout() {
     const solo = isSoloTableLayout(this.settings);
     document.body.classList.toggle('casino-table-solo', solo);
+    document.body.classList.toggle('casino-table-full', !solo);
+    document.body.classList.toggle('casino-readable-play', solo);
     const grid = document.getElementById('casino-seat-grid');
     const felt = document.querySelector('.cq-authentic-felt');
     if (grid) {
@@ -7892,7 +8176,9 @@ class CountQuestApp {
     const maxH = Math.max(1, shellH - handendReserve);
     const scaleY = contentH > maxH ? maxH / contentH : 1;
     const scaleX = contentW > shellW ? shellW / contentW : 1;
-    const scale = Math.max(0.62, Math.min(1, scaleX, scaleY));
+    const solo = isSoloTableLayout(this.settings);
+    const minScale = solo ? 0.72 : shellH < 680 ? 0.58 : 0.68;
+    const scale = Math.max(minScale, Math.min(1, scaleX, scaleY));
     viewport.style.transformOrigin = 'top center';
     if (scale < 0.995) {
       viewport.style.width = '100%';
@@ -7909,6 +8195,10 @@ class CountQuestApp {
 
   applyPlayerHandsFitScale(ph, maxCards, splitN) {
     if (!ph) return;
+    if (this.usesReadableSoloPlay() || !isSoloTableLayout(this.settings)) {
+      ph.style.setProperty('--cq-hand-scale', '1');
+      return;
+    }
     let scale = 1;
     if (splitN >= 4) scale = Math.min(scale, 0.78);
     else if (splitN >= 3) scale = Math.min(scale, 0.86);
@@ -7939,9 +8229,13 @@ class CountQuestApp {
 
   renderBet() {
     const isBetDrill = this.save.sessionDrill === 'betting';
+    const readable = this.usesReadableSoloPlay();
     const showCount = this.help.showCountInPlay();
     const hud = document.getElementById('count-hud-bet');
-    hud.innerHTML = this.shoe ? this.renderCountBoxes(showCount, this.shoe) : '';
+    hud.classList.toggle('cq-count-compact-grid', readable);
+    hud.innerHTML = this.shoe
+      ? (readable ? this.renderCompactCountBoxes(showCount, this.shoe) : this.renderCountBoxes(showCount, this.shoe))
+      : '';
     hud.classList.toggle('hidden', !showCount && this.help.level > 1 && !isBetDrill);
     const adv = document.getElementById('bet-advice');
     const rec = this.betSuggestion?.amount;
@@ -7957,7 +8251,10 @@ class CountQuestApp {
       adv.innerHTML = `<div class="w-full min-w-0 max-w-full mx-auto"><div class="min-w-0">${recLine}</div><p class="text-xs text-emerald-400/70 truncate min-w-0">${why}</p></div>`;
     } else { adv.classList.add('hidden'); }
     const dealBtn = document.getElementById('btn-deal');
-    if (dealBtn) dealBtn.textContent = isBetDrill ? 'Submit Bet' : 'Deal Cards';
+    if (dealBtn) {
+      dealBtn.textContent = isBetDrill ? 'Submit Bet' : 'Deal Cards';
+      this.resetDealButton();
+    }
     const baseRec = rec || this.minBet;
     const maxChip = Math.min(this.bankroll, Math.floor(this.bankroll * 0.1));
     const rawChips = [this.minBet, baseRec, Math.min(this.bankroll, baseRec * 2), maxChip];
@@ -7983,6 +8280,7 @@ class CountQuestApp {
       regularChips.map(c => renderChip(c)).join('')
       + (highRollerChips.length ? `<div class="w-full flex justify-center gap-3 mt-2 pt-2 border-t border-white/5">${highRollerChips.map(c => renderChip(c, { highRoller: true })).join('')}</div>` : '');
     const betInput = document.getElementById('bet-input');
+    betInput?.closest('.flex')?.classList.remove('hidden');
     betInput.min = this.minBet;
     betInput.max = this.practice ? 1_000_000 : Math.max(this.minBet, this.bankroll);
     betInput.step = 1;
@@ -8003,12 +8301,16 @@ class CountQuestApp {
 
   renderTable() {
     const showCount = this.help.showCountAtTable();
+    const readable = this.usesReadableSoloPlay();
     const hud = document.getElementById('count-hud');
-    hud.innerHTML = this.shoe ? this.renderCountBoxes(showCount, this.shoe) : '';
+    hud.classList.toggle('cq-count-compact-grid', readable);
+    hud.innerHTML = this.shoe
+      ? (readable ? this.renderCompactCountBoxes(showCount, this.shoe) : this.renderCountBoxes(showCount, this.shoe))
+      : '';
     const shoeEl = document.getElementById('shoe-status');
     if (shoeEl && this.shoe) {
       const shoeHint = this.maybeExplainShoeTerm();
-      shoeEl.innerHTML = `Remaining cards in deck: ${this.shoe.beginnerSummary()}${shoeHint ? `<br>${shoeHint}` : ''}`;
+      shoeEl.innerHTML = `${this.shoe.beginnerSummary()}${shoeHint ? ` · ${shoeHint}` : ''}`;
     } else if (shoeEl) shoeEl.textContent = '';
 
     const animBase = Math.max(0, this.dealAnimIndex - 1);
@@ -8022,7 +8324,12 @@ class CountQuestApp {
       const anim = isLast ? animBase : null;
       return this.renderCard(c, this.hideHole && i === 1, anim);
     }).join('');
-    document.getElementById('dealer-total').innerHTML = this.handTotalHtml(this.dealer, this.hideHole);
+    const dealerTotalEl = document.getElementById('dealer-total');
+    if (readable) {
+      dealerTotalEl.innerHTML = `<span class="cq-hand-total-badge" aria-label="Dealer total">${this.handTotalBadgeValue(this.dealer, this.hideHole)}</span>`;
+    } else {
+      dealerTotalEl.innerHTML = this.handTotalHtml(this.dealer, this.hideHole);
+    }
 
     const st = this.playerHands.length ? this.activeState() : null;
     const up = this.dealer.cards[0]?.rank;
@@ -8061,28 +8368,50 @@ class CountQuestApp {
         : cardN >= 6 ? 'casino-hand-cards-cards-6'
         : cardN >= 5 ? 'casino-hand-cards-cards-5' : '';
       const suffix = h.doubled ? ' ×2' : '';
+      const totalHtml = readable
+        ? `<span class="cq-hand-total cq-hand-total--player"><span class="cq-hand-total-badge" aria-label="Hand total">${this.handTotalBadgeValue(h.hand)}${suffix ? '×2' : ''}</span></span>`
+        : `<span class="casino-seat-ai-total">${this.handTotalHtml(h.hand)}${suffix}</span>`;
       return `<div class="casino-player-hand ${active ? 'ring-1 ring-amber-400/60 rounded-lg p-0.5' : ''}">
         ${this.playerHands.length > 1 ? `<span class="casino-seat-ai-total">H${i + 1}${active ? ' ◀' : ''}</span>` : ''}
         <div class="casino-hand-cards ${cardsCls}">${h.hand.cards.map((c, ci) => {
           const isLast = showDealAnim && ci === h.hand.cards.length - 1;
           return this.renderCard(c, false, isLast ? animBase : null);
         }).join('')}</div>
-        <span class="casino-seat-ai-total">${this.handTotalHtml(h.hand)}${suffix}</span>
+        ${totalHtml}
       </div>`;
     }).join('');
 
     document.getElementById('casino-seat-bet-indicator')?.classList.add('hidden');
     const ab = document.getElementById('action-buttons');
+    const allPlayerDone = this.playerHands.length > 0 && this.playerHands.every(h => h.finished) && this.activeIdx >= this.playerHands.length;
+    const showFranchiseRead = this.usesFranchiseDealer()
+      && this.hideHole
+      && !this.franchiseDealer?.handReadUsed
+      && !allPlayerDone
+      && !this.dealing;
     if (st && !st.finished && !st.splitAces) {
       const cd = this.canDouble(st), cs = this.canSplit(st), sur = this.canSurrender(st);
       const isDecDrill = this.save.sessionDrill === 'decisions';
-      ab.innerHTML = [
-        ['hit','Hit','bg-gradient-to-b from-green-500 to-green-700 shadow-lg'],['stand','Stand','bg-gradient-to-b from-red-600 to-red-900 shadow-lg'],
-        cd && !isDecDrill ? ['double','Double','bg-gradient-to-b from-amber-400 to-amber-600 text-stone-900 shadow-lg'] : null,
-        cs && !isDecDrill ? ['split','Split','bg-gradient-to-b from-blue-500 to-blue-800 shadow-lg'] : null,
-        sur && !isDecDrill ? ['surrender','Surrender','bg-gradient-to-b from-slate-500 to-slate-800 shadow-lg'] : null,
-      ].filter(Boolean).map(([a,l,c]) =>
-        `<button class="action-btn px-8 rounded-2xl ${c} font-bold hover:brightness-110 active:scale-95 transition" data-action="${a}">${l}</button>`
+      const actionDefs = readable
+        ? [
+          showFranchiseRead ? ['read', 'Read', 'cq-action-read'] : null,
+          ['stand', 'Stand', 'cq-action-stand'],
+          cd && !isDecDrill ? ['double', 'Double', 'cq-action-double'] : null,
+          ['hit', 'Hit', 'cq-action-hit'],
+          cs && !isDecDrill ? ['split', 'Split', 'cq-action-split'] : null,
+          sur && !isDecDrill ? ['surrender', 'Fold', 'cq-action-surrender'] : null,
+        ]
+        : [
+          showFranchiseRead ? ['read', 'Read', 'bg-gradient-to-b from-violet-500 to-violet-800 shadow-lg'] : null,
+          ['hit', 'Hit', 'bg-gradient-to-b from-green-500 to-green-700 shadow-lg'],
+          ['stand', 'Stand', 'bg-gradient-to-b from-red-600 to-red-900 shadow-lg'],
+          cd && !isDecDrill ? ['double', 'Double', 'bg-gradient-to-b from-amber-400 to-amber-600 text-stone-900 shadow-lg'] : null,
+          cs && !isDecDrill ? ['split', 'Split', 'bg-gradient-to-b from-blue-500 to-blue-800 shadow-lg'] : null,
+          sur && !isDecDrill ? ['surrender', 'Surrender', 'bg-gradient-to-b from-slate-500 to-slate-800 shadow-lg'] : null,
+        ];
+      ab.classList.toggle('cq-readable-actions', readable);
+      ab.innerHTML = actionDefs.filter(Boolean).map(([a, l, c]) =>
+        `<button class="action-btn ${readable ? 'cq-readable-action-btn' : 'px-8 rounded-2xl'} ${c} font-bold hover:brightness-110 active:scale-95 transition" data-action="${a}">${l}</button>`
       ).join('');
     } else ab.innerHTML = '';
     this.syncBottomDockVisibility();
@@ -8156,8 +8485,133 @@ class CountQuestApp {
       const showOpt = !!this._handendQuizOptional && !this.help.postHandQuiz();
       quizBtn.classList.toggle('hidden', !showOpt);
     }
+    if (this.shouldAutoFlowHands() && (this.phase === 'handEnd' || this._awaitingNextHand)) {
+      this.renderSoloHandEndDealCta();
+    }
     document.getElementById('result-toast').classList.add('hidden');
     requestAnimationFrame(() => this.fitCasinoPlayViewport());
+  }
+
+  renderSoloHandEndDealCta() {
+    const rail = document.getElementById('casino-felt-bet-rail');
+    const dealBtn = document.getElementById('btn-deal');
+    const chips = document.getElementById('chip-buttons');
+    const betInput = document.getElementById('bet-input');
+    if (!rail || !dealBtn) return;
+    rail.classList.remove('hidden');
+    if (chips) chips.innerHTML = '';
+    if (betInput) betInput.closest('.flex')?.classList.add('hidden');
+    dealBtn.textContent = 'Deal Next Hand';
+    this.resetDealButton();
+    this.syncBottomDockVisibility();
+    this.syncCasinoShellMetrics();
+  }
+
+  usesFranchiseDealer() {
+    return !!this.franchiseDealer
+      && !this.save.sessionDrill
+      && this.save.sessionMode !== 'tutorial'
+      && this.save.sessionMode !== 'dealer-mode';
+  }
+
+  initFranchiseDealer() {
+    if (!window.DealerFranchiseEngine) return;
+    if (!this.save.franchiseDealers) this.save.franchiseDealers = {};
+    const slot = this.save.franchiseDealers[FRANCHISE_DEALER_DEFAULT_ID] || {};
+    this.franchiseDealer = DealerFranchiseEngine.createMargaret(slot);
+    this.franchiseDealer.onPersist = (data) => {
+      this.save.franchiseDealers[FRANCHISE_DEALER_DEFAULT_ID] = data;
+      this.persist();
+    };
+  }
+
+  stopFranchiseIdleWatch() {
+    if (this._franchiseIdleTimer) {
+      clearInterval(this._franchiseIdleTimer);
+      this._franchiseIdleTimer = null;
+    }
+  }
+
+  startFranchiseIdleWatch() {
+    this.stopFranchiseIdleWatch();
+    if (!this.usesFranchiseDealer()) return;
+    this._franchiseLastAction = Date.now();
+    this._franchiseIdleTimer = setInterval(() => {
+      if (this.phase !== 'playing' || !this.usesFranchiseDealer()) return;
+      if (Date.now() - this._franchiseLastAction < 12000) return;
+      this._franchiseLastAction = Date.now();
+      this.franchiseDealerEvent('player.idle');
+    }, 2500);
+  }
+
+  franchiseDealerEvent(event, ctx = {}) {
+    if (!this.usesFranchiseDealer()) return;
+    const line = this.franchiseDealer.handleEvent(event, {
+      ...ctx,
+      sessionHands: this.session?.hands ?? 0,
+      playerName: this.save.stats?.playerName || 'Player',
+    });
+    if (line) this.renderFranchiseDealerHud(line);
+  }
+
+  renderFranchiseDealerHud(lineText) {
+    const hud = document.getElementById('franchise-dealer-hud');
+    if (!hud) return;
+    const active = this.usesFranchiseDealer()
+      && ['bet', 'playing', 'handEnd', 'countConfirm'].includes(this.phase);
+    hud.classList.toggle('hidden', !active);
+    if (!active || !this.franchiseDealer) return;
+    const fd = this.franchiseDealer;
+    const bubble = document.getElementById('franchise-dealer-bubble');
+    const mood = document.getElementById('franchise-dealer-mood');
+    const fill = document.getElementById('franchise-dealer-rel-fill');
+    const tier = document.getElementById('franchise-dealer-tier');
+    if (bubble && lineText) bubble.textContent = lineText;
+    else if (bubble && fd.lastLine) bubble.textContent = fd.lastLine;
+    if (mood) {
+      mood.textContent = fd.mood.charAt(0).toUpperCase() + fd.mood.slice(1);
+      mood.className = `franchise-dealer-mood mood-${fd.mood}`;
+    }
+    if (fill) fill.style.width = `${fd.relationship}%`;
+    if (tier) tier.textContent = fd.tierLabel();
+  }
+
+  franchiseDealerAfterSettle() {
+    if (!this.usesFranchiseDealer()) return;
+    const bj = (this.results || []).some(r => r.r === 'blackjack');
+    if (bj) this.franchiseDealerEvent('settle.blackjack');
+    else if (this.handNetPL > 0) this.franchiseDealerEvent('settle.win');
+    else if (this.handNetPL < 0) this.franchiseDealerEvent('settle.loss');
+    else this.franchiseDealerEvent('settle.push');
+    this.franchiseDealerEvent('chapter.beat_01');
+  }
+
+  openFranchiseReadModal() {
+    if (!this.usesFranchiseDealer() || this.franchiseDealer?.handReadUsed) return;
+    if (document.getElementById('modal-insurance')?.open) {
+      this.toast('Answer insurance first', 'info');
+      return;
+    }
+    this._franchiseLastAction = Date.now();
+    const modal = document.getElementById('modal-dealer-read');
+    if (!modal) return;
+    modal.showModal();
+  }
+
+  submitFranchiseRead(guess) {
+    if (!this.usesFranchiseDealer() || !this.franchiseDealer) return;
+    const result = this.franchiseDealer.submitRead(guess);
+    document.getElementById('modal-dealer-read')?.close();
+    if (!result) return;
+    this._franchiseLastAction = Date.now();
+    this.renderFranchiseDealerHud(result.line);
+    const sign = result.delta >= 0 ? '+' : '';
+    this.toast(
+      result.correct ? `Read correct — trust ${sign}${result.delta}` : `Misread — trust ${sign}${result.delta}`,
+      result.correct ? 'success' : 'info',
+      2800,
+    );
+    this.render();
   }
 }
 

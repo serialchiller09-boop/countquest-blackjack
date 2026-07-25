@@ -7,6 +7,8 @@
     if (!native) return;
     const platform = cap.getPlatform?.() || 'native';
     document.documentElement.classList.add('cq-native', `cq-native-${platform}`);
+    const stamp = document.getElementById('cq-build-stamp');
+    if (stamp) stamp.classList.remove('hidden');
     const plugins = cap.Plugins || {};
     plugins.StatusBar?.setStyle?.({ style: 'DARK' }).catch(() => {});
     plugins.StatusBar?.setBackgroundColor?.({ color: '#0a1612' }).catch(() => {});

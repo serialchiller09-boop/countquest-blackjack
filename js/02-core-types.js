@@ -47,15 +47,13 @@ class Hand {
     if (hideHole && this.size >= 2) {
       const up = this.cards[0];
       const uv = isAceRank(up.rank) ? 11 : isTenValueRank(up.rank) ? 10 : parseInt(up.rank, 10);
-      return `Dealer shows ${up.rank} — hole card hidden (at least ${uv} points visible)`;
+      return `Dealer ${up.rank} + hole`;
     }
     const t = this.value();
     if (this.isBlackjack()) return 'Blackjack!';
     if (this.isBust()) return `Bust at ${t} (over 21)`;
-    if (this.isSoft()) return `Soft ${t} (Ace counts as 11)`;
-    const { aces } = this.rawValue();
-    const aceNote = aces > 0 ? ' (Ace counts as 1)' : '';
-    return `Hard ${t}${aceNote}`;
+    if (this.isSoft()) return `Soft ${t}`;
+    return `${t}`;
   }
 }
 
@@ -99,7 +97,7 @@ class Shoe {
   /** Plain-English remaining cards line (qualifies casino “shoe” jargon). */
   beginnerSummary() {
     const decks = this.decksRemaining().toFixed(1);
-    return `${this.cardsRemaining} cards remaining (~${decks} deck${decks === '1.0' ? '' : 's'} left in the shoe)`;
+    return `${this.cardsRemaining} cards · ~${decks} decks left`;
   }
 }
 

@@ -27,6 +27,16 @@
       min-height: 100dvh;
       background: radial-gradient(ellipse 130% 90% at 50% -10%, #123828 0%, #0a1612 42%, #060e0b 100%);
     }
+    /* Secondary screens — smaller type, tighter gaps (scroll still allowed) */
+    .cq-screen-compact { font-size: 0.9rem; }
+    .cq-screen-compact .text-2xl { font-size: 1.2rem; line-height: 1.2; }
+    .cq-screen-compact .text-sm { font-size: 0.75rem; line-height: 1.3; }
+    .cq-screen-compact .text-xs { font-size: 0.68rem; }
+    .cq-screen-compact .py-4 { padding-top: 0.4rem; padding-bottom: 0.4rem; }
+    .cq-screen-compact .py-3 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+    .cq-screen-compact .p-4 { padding: 0.65rem; }
+    .cq-screen-compact .p-5 { padding: 0.75rem; }
+    .cq-screen-compact.space-y-3 > * + * { margin-top: 0.5rem; }
     html.cq-native body {
       padding-top: env(safe-area-inset-top);
       padding-bottom: env(safe-area-inset-bottom);
@@ -369,7 +379,7 @@
     body.casino-play-active .casino-bottom-dock #bet-advice {
       line-height: 1.25;
     }
-    .casino-table-surface {
+    .casino-table-surface:not(.cq-authentic-felt) {
       flex: 1;
       min-height: 0;
       display: flex;
@@ -380,6 +390,13 @@
       overflow: hidden;
       background: radial-gradient(ellipse 125% 90% at 50% 12%, var(--cq-felt-light) 0%, var(--cq-felt-mid) 40%, var(--cq-felt-deep) 100%);
       box-shadow: inset 0 0 70px rgba(0,0,0,.48), 0 10px 36px rgba(0,0,0,.42), 0 0 28px var(--cq-gold-glow);
+    }
+    .cq-authentic-felt.casino-table-surface {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 0;
     }
     .casino-table-surface::before {
       content: '';
@@ -401,8 +418,11 @@
     .casino-dealer-zone .playing-card { width: 2.65rem; height: 3.7rem; }
     body.casino-table-solo #casino-seat-grid,
     #casino-seat-grid.casino-seat-grid--solo {
-      display: block;
-      min-height: 5.5rem;
+      display: flex;
+      flex: 0 0 auto;
+      min-height: 0;
+      align-items: flex-end;
+      justify-content: center;
     }
     #casino-seat-grid {
       flex: 1 1 auto;
@@ -846,7 +866,7 @@
       left: 0;
       right: 0;
       bottom: max(0.25rem, env(safe-area-inset-bottom));
-      z-index: 28;
+      z-index: 45;
       padding: 0 0.4rem;
       max-width: 42rem;
       margin: 0 auto;
@@ -987,6 +1007,16 @@
     dialog.casino-count-quiz-dialog {
       margin: auto auto 6.5rem auto;
       max-width: 22rem;
+    }
+
+    #modal-insurance {
+      margin: auto auto max(5.75rem, calc(var(--cq-bottom-dock-h, 4rem) + 1.25rem)) auto;
+      max-width: 20rem;
+      z-index: 50;
+    }
+
+    body.casino-play-active #modal-insurance::backdrop {
+      background: rgba(0, 0, 0, 0.35);
     }
     dialog.casino-count-quiz-dialog::backdrop {
       background: rgba(0,0,0,.35);
@@ -1269,6 +1299,11 @@
         --cq-seat-spot-size: 3.15rem;
         --cq-seat-col-h: 3.85rem;
       }
+      body.casino-table-solo #casino-seat-grid,
+      #casino-seat-grid.casino-seat-grid--solo {
+        display: flex !important;
+        grid-template-columns: unset !important;
+      }
       #casino-seat-grid {
         grid-template-columns: repeat(7, minmax(0, 1fr));
         grid-template-rows: auto;
@@ -1329,7 +1364,33 @@
       :root {
         --cq-seat-spot-size: 2.85rem;
         --cq-seat-col-h: 3.5rem;
-        --cq-topbar-max: 4.5rem;
+        --cq-topbar-max: 3.75rem;
+      }
+      body.casino-readable-play #app-header .app-main > div:last-child {
+      display: none !important;
+    }
+    body.casino-readable-play #app-header {
+      padding-top: 0.35rem;
+      padding-bottom: 0.35rem;
+    }
+    body.casino-readable-play #app-header .app-title-sub,
+    body.casino-readable-play #header-mode {
+      display: none !important;
+    }
+    body.casino-readable-play.casino-action-bar-visible #action-bar {
+      padding-top: 0.35rem;
+      padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+    }
+    body.casino-readable-play #casino-seat-human,
+    body.casino-readable-play .casino-seat-human,
+    body.casino-readable-play #player-hands.casino-seat-cards-wrap {
+      overflow: visible !important;
+    }
+    html.cq-native body.casino-play-active .casino-table-topbar #shoe-status {
+        display: none !important;
+      }
+      html.cq-native body.casino-play-active .casino-table-topbar {
+        padding: 0.2rem 0.35rem 0.25rem;
       }
       body.casino-play-active .casino-table-topbar {
         gap: 0.08rem;
@@ -1675,8 +1736,9 @@
     /* ── Plan 21 / 8 Ball Pool production lobby ── */
     .lobby-8bp {
       position: relative; max-width: 52rem; margin: 0 auto;
-      min-height: calc(100vh - 8rem);
-      padding: 0 0 5.5rem;
+      min-height: calc(100vh - 7rem);
+      min-height: calc(100dvh - 7rem);
+      padding: 0 0 5rem;
       background:
         radial-gradient(ellipse 120% 80% at 50% 0%, rgba(16,185,129,.12) 0%, transparent 55%),
         radial-gradient(ellipse 90% 60% at 50% 100%, rgba(0,0,0,.35) 0%, transparent 70%),
@@ -1842,7 +1904,7 @@
       position: relative; z-index: 1;
       display: grid; grid-template-columns: 1fr minmax(9rem, 1.35fr) 1fr;
       gap: 0.5rem; align-items: center;
-      padding: 0.75rem 0.65rem 0.5rem; min-height: 14rem;
+      padding: 0.5rem 0.65rem 0.35rem; min-height: 12rem;
     }
     @media (max-width: 520px) {
       #lobby-play-stage.lobby-play-stage { grid-template-columns: 1fr; grid-template-rows: auto auto auto; }
@@ -2003,27 +2065,33 @@
 
     /* ── Dealer Mode (player as dealer) ── */
     #screen-dealer-mode { max-width: 56rem; }
+    #screen-dealer-mode #dealer-count-hud.count-box > div {
+      padding-top: 0.35rem !important;
+      padding-bottom: 0.35rem !important;
+    }
+    #screen-dealer-mode #dealer-count-hud .text-lg { font-size: 0.95rem !important; }
     .dealer-table-felt {
       background: radial-gradient(ellipse 110% 70% at 50% 15%, #1a5c42 0%, #124a35 40%, #0a3328 100%);
       border: 3px solid rgba(180,120,40,.3);
       border-radius: 1.25rem;
       box-shadow: inset 0 0 60px rgba(0,0,0,.4), 0 12px 40px rgba(0,0,0,.45);
-      padding: 1rem;
-      min-height: 18rem;
+      padding: 0.65rem;
+      min-height: 0;
+      flex: 1 1 auto;
     }
     .dealer-seat-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
-      gap: 0.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+      gap: 0.65rem;
       margin-top: 1rem;
     }
     .dealer-seat {
       border-radius: 0.75rem;
-      padding: 0.5rem;
-      background: rgba(0,0,0,.28);
-      border: 2px solid rgba(255,255,255,.08);
+      padding: 0.55rem;
+      background: rgba(0,0,0,.32);
+      border: 2px solid rgba(255,255,255,.1);
       text-align: center;
-      min-height: 6.5rem;
+      min-height: 8rem;
       transition: border-color .2s, box-shadow .2s;
     }
     .dealer-seat.active-payout,
@@ -2039,16 +2107,50 @@
     }
     .dealer-seat-name { font-size: 0.6rem; font-weight: 800; color: #fde68a; }
     .dealer-seat-bet { font-size: 0.55rem; font-family: ui-monospace, monospace; color: rgba(167,243,208,.75); }
-    .dealer-seat-cards { display: flex; justify-content: center; gap: 0.15rem; flex-wrap: wrap; min-height: 3.5rem; margin: 0.25rem 0; }
-    .dealer-mini-card {
-      width: 1.65rem; height: 2.35rem; border-radius: 0.3rem;
-      background: linear-gradient(145deg,#fff,#f3f4f6);
-      font-size: 0.45rem; font-weight: 800; color: #1f2937;
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 2px 6px rgba(0,0,0,.3);
+    .dealer-seat-cards {
+      display: flex; justify-content: center; gap: 0.35rem; flex-wrap: wrap;
+      min-height: 4.75rem; margin: 0.35rem 0;
+      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.45));
     }
-    .dealer-mini-card.red { color: #dc2626; }
-    .dealer-mini-card.back { background: repeating-linear-gradient(45deg,#1e3a8a,#172554 6px); border: 1px solid #60a5fa; }
+    #dealer-mode-dealer-cards {
+      gap: 0.5rem !important;
+      min-height: 5rem;
+      padding: 0.35rem 0.5rem;
+      filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.5));
+    }
+    #dealer-mode-dealer-cards .playing-card,
+    .dealer-seat-cards .playing-card {
+      width: 2.85rem;
+      height: 4rem;
+      flex-shrink: 0;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+    #dealer-mode-dealer-cards .playing-card {
+      width: 3.35rem;
+      height: 4.65rem;
+    }
+    #dealer-mode-dealer-cards .playing-card .corner,
+    .dealer-seat-cards .playing-card .corner {
+      font-size: 0.72rem;
+    }
+    #dealer-mode-dealer-cards .playing-card.rank-10 .corner,
+    .dealer-seat-cards .playing-card.rank-10 .corner {
+      font-size: 0.58rem;
+    }
+    #dealer-mode-dealer-cards .playing-card .center-suit,
+    .dealer-seat-cards .playing-card .center-suit {
+      font-size: 1.45rem;
+    }
+    #dealer-mode-dealer-cards .playing-card .center-suit {
+      font-size: 1.75rem;
+    }
+    @media (max-width: 400px) {
+      #dealer-mode-dealer-cards .playing-card { width: 2.85rem; height: 4rem; }
+      .dealer-seat-cards .playing-card { width: 2.45rem; height: 3.45rem; }
+      #dealer-mode-dealer-cards .playing-card .center-suit { font-size: 1.45rem; }
+      .dealer-seat-cards .playing-card .center-suit { font-size: 1.2rem; }
+    }
     .dealer-bank-bar {
       display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: space-between;
       padding: 0.55rem 0.75rem; border-radius: 0.75rem;
@@ -2065,8 +2167,33 @@
     .dealer-timer-fill.urgent { animation: dealerTimerUrgent .6s ease infinite; }
     @keyframes dealerTimerUrgent { 0%,100% { opacity: 1; } 50% { opacity: .65; } }
     .dealer-action-panel {
-      border-radius: 0.85rem; padding: 0.85rem;
+      border-radius: 0.85rem; padding: 0.6rem;
       background: rgba(0,0,0,.35); border: 2px solid rgba(251,191,36,.35);
+      flex-shrink: 0;
+    }
+    #screen-training #training-drill-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
+      gap: 0.45rem;
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: hidden;
+      align-content: start;
+    }
+
+    #screen-clubs .max-h-52,
+    #screen-clubs .max-h-48,
+    #screen-clubs .max-h-28 {
+      max-height: min(12rem, 28vh);
+      overflow-y: auto;
+      scrollbar-width: thin;
+    }
+    #screen-training-history #training-history-list,
+    #screen-training-mistakes #training-mistakes-list {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      scrollbar-width: thin;
     }
     .dealer-pay-btn {
       padding: 0.65rem 0.5rem; border-radius: 0.65rem; font-size: 0.72rem; font-weight: 800;

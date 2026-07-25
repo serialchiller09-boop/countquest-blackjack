@@ -10,7 +10,9 @@
     "cap:android": "npm run cap:sync && npx cap open android",
     "cap:ios": "npm run cap:sync && npx cap open ios",
     "cap:run:android": "npm run cap:sync && npx cap run android",
-    "build:android:release": "python scripts/android_release_build.py"
+    "build:android:release": "python scripts/android_release_build.py",
+    "test:table": "python scripts/run_table_qa_suite.py",
+    "test:web": "python scripts/run_web_tests.py"
   },
   "dependencies": {
     "@capacitor/android": "^8.4.1",

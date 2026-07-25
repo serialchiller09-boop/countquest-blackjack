@@ -1,7 +1,7 @@
 // §1 CONSTANTS
 // ═══════════════════════════════════════════════════════════════
 const SAVE_KEY = 'countquest-v2';
-const SAVE_VERSION = 18;
+const SAVE_VERSION = 21;
 
 /** 3D casino chip markup for felt table betting spots. */
 function formatCasinoChipMarkup(amount) {
@@ -3738,7 +3738,8 @@ function migrateSave(raw) {
   if (s.settings.showCountDisplay === undefined) s.settings.showCountDisplay = true;
   if (s.settings.showCountPopups === undefined) s.settings.showCountPopups = true;
   if (s.settings.useIndexDeviations === undefined) s.settings.useIndexDeviations = true;
-  if (!s.settings.tableLayout) s.settings.tableLayout = TABLE_LAYOUT_SOLO;
+  if (!s.version || s.version < 21) s.settings.tableLayout = TABLE_LAYOUT_SOLO;
+  else if (!s.settings.tableLayout) s.settings.tableLayout = TABLE_LAYOUT_SOLO;
   else s.settings.tableLayout = normalizeTableLayout(s.settings.tableLayout);
   s.uiHints = { shoeTermExplained: false, hardHandTips: 0, ...(s.uiHints || {}) };
   if (!s.speedDrill) s.speedDrill = defaultSpeedDrillStats();

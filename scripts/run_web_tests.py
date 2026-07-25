@@ -173,7 +173,7 @@ class TestWebLogicHard(unittest.TestCase):
         self.assertIn("calculateCountAccuracyPercent(st) >= 75", self.html)
 
     def test_save_version_and_counting_fields(self) -> None:
-        self.assertIn("const SAVE_VERSION = 18", self.html)
+        self.assertIn("const SAVE_VERSION = 20", self.html)
         self.assertIn("countingUnlocks", self.html)
         self.assertIn("countingSystem", self.html)
         self.assertIn("syncWalletSave", self.html)
@@ -255,7 +255,7 @@ class TestWebLogicHard(unittest.TestCase):
 class TestIndexHtmlStructure(unittest.TestCase):
     def test_save_version_eleven(self) -> None:
         html = load_app_source()
-        self.assertIn("const SAVE_VERSION = 18", html)
+        self.assertIn("const SAVE_VERSION = 20", html)
         self.assertIn("countingSystem: 'hi-lo'", html)
         self.assertIn("chips: 2500, gems: 10", html)
         self.assertIn("club: defaultClubMembership()", html)
@@ -326,7 +326,7 @@ class TestIndexHtmlStructure(unittest.TestCase):
         root = ROOT
         self.assertNotIn("cdn.tailwindcss.com", shell)
         self.assertNotIn("tailwind.config", shell)
-        self.assertIn('href="css/tailwind.css"', shell)
+        self.assertIn('css/tailwind.css', shell)
         self.assertTrue((root / "css" / "tailwind.css").is_file())
         self.assertTrue((root / "css" / "tailwind-src.css").is_file())
         self.assertTrue((root / "tailwind.config.js").is_file())
@@ -411,7 +411,7 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertTrue((root / "capacitor.config.json").is_file())
         self.assertTrue((root / "scripts" / "stage_dist.py").is_file())
         self.assertTrue((root / "js" / "00-capacitor-bridge.js").is_file())
-        self.assertIn('src="js/00-capacitor-bridge.js"', shell)
+        self.assertIn('js/00-capacitor-bridge.js', shell)
         self.assertIn("!window.__CQ_NATIVE", shell)
         cfg = (root / "capacitor.config.json").read_text(encoding="utf-8")
         self.assertIn('"webDir": "dist"', cfg)
@@ -427,11 +427,11 @@ class TestIndexHtmlStructure(unittest.TestCase):
 
     def test_modular_file_layout(self) -> None:
         shell = load_index_html()
-        self.assertIn('href="css/tailwind.css"', shell)
-        self.assertIn('href="css/app.css"', shell)
+        self.assertIn('css/tailwind.css', shell)
+        self.assertIn('css/app.css', shell)
         for name in JS_MODULES:
             with self.subTest(module=name):
-                self.assertIn(f'src="js/{name}"', shell)
+                self.assertIn(f'js/{name}', shell)
                 self.assertTrue((ROOT / "js" / name).is_file(), f"missing js/{name}")
         self.assertTrue((ROOT / "css" / "app.css").is_file())
 
@@ -439,11 +439,12 @@ class TestIndexHtmlStructure(unittest.TestCase):
         shell = load_index_html()
         self.assertIn('id="cq-felt-markings"', shell)
 
-        self.assertIn("BLACKJACK PAYS 3 TO 2", shell)
-        self.assertIn("DOUBLE AFTER SPLIT ALLOWED", shell)
-        self.assertIn("DEALER MUST HIT SOFT 17", shell)
-        self.assertIn("INSURANCE PAYS 2 TO 1", shell)
-        self.assertIn("Six Deck", shell)
+        self.assertIn('class="cq-felt-rail-outer"', shell)
+        self.assertIn('class="cq-felt-rail-inner"', shell)
+        self.assertIn('class="cq-felt-seat-circles"', shell)
+        self.assertIn("Q 600 648 1152 548", shell)
+        self.assertNotIn("BLACKJACK PAYS 3 TO 2", shell)
+        self.assertNotIn("INSURANCE", shell)
         self.assertIn("cq-authentic-felt", shell)
         self.assertIn("cq-dealer-clipboard", shell)
         self.assertIn("casino-felt-table.css", shell)
@@ -783,7 +784,7 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertIn("joinTable", html)
         self.assertIn("settleTableSessionIfNeeded", html)
         self.assertIn("renderCurrencyDisplays", html)
-        self.assertIn("SAVE_VERSION = 18", html)
+        self.assertIn("SAVE_VERSION = 20", html)
         self.assertIn("Play Tables", html)
         self.assertIn("entryFeeChips: 50", html)
         self.assertIn("entryFeeGems: 1", html)

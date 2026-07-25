@@ -2,6 +2,74 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 
+.cq-table-options-btn {
+  position: fixed;
+  top: calc(var(--cq-header-h, 3.25rem) + 0.3rem);
+  right: max(0.45rem, env(safe-area-inset-right));
+  z-index: 55;
+  width: 2.65rem;
+  height: 2.65rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(245, 158, 11, 0.45);
+  background: rgba(10, 22, 18, 0.92);
+  color: #fcd34d;
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(8px);
+}
+.cq-table-options-btn:active {
+  transform: scale(0.96);
+}
+body.casino-play-active .cq-table-options-btn:not(.hidden) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+body.casino-play-active:not(.casino-table-full) #header-currency {
+  padding-right: 3.1rem;
+}
+
+body.casino-table-full.casino-play-active .cq-table-options-btn:not(.hidden) {
+  top: auto;
+  bottom: max(5.5rem, calc(var(--cq-bottom-dock-h, 4rem) + 0.65rem));
+  right: max(0.55rem, env(safe-area-inset-right));
+}
+
+body.casino-readable-play #header-currency {
+  padding-right: 0;
+}
+
+.cq-build-stamp {
+  display: inline-block;
+  margin-top: 0.1rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: 9999px;
+  background: #f59e0b;
+  color: #1a1208;
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  line-height: 1.2;
+}
+
+html.cq-native .cq-build-stamp.hidden {
+  display: inline-block !important;
+}
+
+.lobby-build-stamp {
+  position: absolute;
+  right: 0.5rem;
+  bottom: 0.15rem;
+  font-size: 0.52rem;
+}
+
+html.cq-native .lobby-build-stamp {
+  display: none !important;
+}
+
 :root {
   --cq-felt-paint-red: #c41e1e;
   --cq-felt-paint-black: #1a1208;
@@ -58,15 +126,35 @@
 .cq-authentic-felt.casino-table-surface {
   position: relative;
   overflow: hidden;
-  border: 4px solid #0a2a35;
-  border-radius: 2.5rem 2.5rem 1.25rem 1.25rem;
-  background: radial-gradient(ellipse 95% 75% at 50% 38%, var(--cq-felt-green-light) 0%, var(--cq-felt-green-mid) 42%, var(--cq-felt-green-deep) 100%);
+  border: 3px solid #1a3d30;
+  border-radius: 2.75rem 2.75rem 3.25rem 3.25rem;
+  background: #0a2a1e;
   box-shadow:
-    inset 0 0 120px rgba(0, 0, 0, 0.35),
-    inset 0 -40px 80px rgba(0, 0, 0, 0.2),
-    0 12px 40px rgba(0, 0, 0, 0.5);
+    inset 0 0 80px rgba(0, 0, 0, 0.28),
+    inset 0 -24px 48px rgba(0, 0, 0, 0.18),
+    0 14px 36px rgba(0, 0, 0, 0.48);
   padding: 0;
   min-height: 0;
+}
+
+.cq-authentic-felt.casino-table-surface::before {
+  display: none !important;
+}
+
+.cq-authentic-felt .casino-dealer-zone {
+  border-bottom: none;
+}
+
+.cq-authentic-felt.casino-table-surface::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 55% 35% at 18% 22%, rgba(255, 215, 100, 0.09) 0%, transparent 70%),
+    radial-gradient(ellipse 45% 30% at 82% 18%, rgba(255, 255, 255, 0.06) 0%, transparent 68%),
+    radial-gradient(ellipse 80% 50% at 50% 100%, rgba(0, 0, 0, 0.22) 0%, transparent 55%);
 }
 
 .cq-felt-svg-wrap {
@@ -75,12 +163,18 @@
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
+  border-radius: inherit;
 }
 
 .cq-felt-svg-wrap svg {
   width: 100%;
   height: 100%;
   display: block;
+}
+
+.cq-felt-rail-outer,
+.cq-felt-rail-inner {
+  vector-effect: non-scaling-stroke;
 }
 
 .cq-felt-paint-text {
@@ -144,7 +238,7 @@
   flex-direction: column;
   height: 100%;
   min-height: 0;
-  padding: 2.1rem 0.35rem 0.3rem;
+  padding: 1.4rem 0.35rem 0.45rem;
 }
 
 .cq-authentic-felt .casino-dealer-zone {
@@ -160,7 +254,10 @@
 }
 
 .cq-authentic-felt .casino-dealer-zone #dealer-cards {
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+  filter: none;
+  isolation: isolate;
+  position: relative;
+  z-index: 2;
 }
 
 .cq-authentic-felt .casino-dealer-zone #dealer-total {
@@ -199,26 +296,50 @@
   transform-origin: center bottom;
 }
 
-.cq-authentic-felt #casino-seat-1 { left: 2%; bottom: 8%; }
-.cq-authentic-felt #casino-seat-2 { left: 14%; bottom: 22%; }
-.cq-authentic-felt #casino-seat-3 { left: 27%; bottom: 32%; }
-.cq-authentic-felt #casino-seat-human { left: 50%; bottom: 38%; transform: translateX(-50%); width: 18%; max-width: 7rem; z-index: 4; }
-.cq-authentic-felt #casino-seat-5 { right: 27%; bottom: 32%; left: auto; }
-.cq-authentic-felt #casino-seat-6 { right: 14%; bottom: 22%; left: auto; }
-.cq-authentic-felt #casino-seat-7 { right: 2%; bottom: 8%; left: auto; }
+.cq-authentic-felt #casino-seat-1 { left: 3%; bottom: 2%; }
+.cq-authentic-felt #casino-seat-2 { left: 14%; bottom: 5%; }
+.cq-authentic-felt #casino-seat-3 { left: 27%; bottom: 7%; }
+.cq-authentic-felt #casino-seat-human { left: 50%; bottom: 8%; transform: translateX(-50%); width: 18%; max-width: 7rem; z-index: 4; }
+.cq-authentic-felt #casino-seat-5 { right: 27%; bottom: 7%; left: auto; }
+.cq-authentic-felt #casino-seat-6 { right: 14%; bottom: 5%; left: auto; }
+.cq-authentic-felt #casino-seat-7 { right: 3%; bottom: 2%; left: auto; }
 
 /* Solo table — one centered player seat */
 .cq-table-solo .cq-felt-seat-circle:not(.cq-felt-seat-circle--human) {
   opacity: 0;
 }
+
+.cq-table-solo .cq-felt-seat-circle--human,
+body.casino-readable-play .cq-felt-seat-circle--human {
+  stroke-width: 4;
+  fill: rgba(0, 0, 0, 0.18);
+}
+.cq-table-solo .cq-table-play-layer {
+  justify-content: flex-start;
+  gap: 0.2rem;
+  padding-top: 1.35rem;
+}
+.cq-table-solo #casino-seat-grid,
+body.casino-table-solo .cq-authentic-felt #casino-seat-grid {
+  display: flex !important;
+  flex: 0 0 auto;
+  min-height: 0;
+  max-height: none;
+  margin-top: auto;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0 0.5rem 0.15rem;
+  overflow: visible;
+}
 .cq-table-solo #casino-seat-human,
 .casino-seat-grid--solo #casino-seat-human {
-  left: 50% !important;
+  position: relative !important;
+  left: auto !important;
   right: auto !important;
-  bottom: 30% !important;
-  width: 24% !important;
-  max-width: 10rem !important;
-  transform: translateX(-50%);
+  bottom: auto !important;
+  width: auto !important;
+  max-width: 14rem !important;
+  transform: none !important;
 }
 .casino-seat-grid--solo .casino-seat:not(#casino-seat-human) {
   display: none !important;
@@ -259,13 +380,33 @@
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
 }
 
+/* Player cards live in #casino-player-rail (between dealer and seat arc) */
+.casino-player-rail {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 0;
+  padding: 0.15rem 0.5rem 0.25rem;
+  overflow: visible;
+  z-index: 5;
+}
+
+.casino-player-rail #player-hands.casino-seat-cards-wrap {
+  position: static !important;
+  bottom: auto !important;
+  left: auto !important;
+  transform: none !important;
+  width: max-content !important;
+  max-width: min(22rem, 96vw);
+  margin: 0 !important;
+  overflow: visible !important;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.45));
+}
+
 .cq-authentic-felt .casino-seat-human .casino-seat-cards-wrap {
-  position: absolute;
-  bottom: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  margin-bottom: 0.35rem;
-  filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.45));
+  display: none;
 }
 
 .cq-authentic-felt .casino-seat-ai-cards {
@@ -275,6 +416,101 @@
   transform: translateX(-50%);
   margin-bottom: 0.2rem;
   filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4));
+}
+
+/* Hide decorative chip rack — full table + solo readable play */
+body.casino-table-solo .cq-chip-rack,
+body.casino-table-full .cq-chip-rack,
+body.casino-table-full .casino-seat-bet-chip,
+body.casino-table-full .cq-casino-chip,
+body.casino-table-full .casino-seat-spot .cq-casino-chip {
+  display: none !important;
+}
+
+body.casino-table-full .casino-seat-spot:empty,
+body.casino-table-full .casino-seat-human .casino-seat-spot:not(:has(.casino-seat-bet-indicator:not(.hidden))) {
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+}
+
+body.casino-table-full .casino-player-rail {
+  position: relative;
+  z-index: 30;
+  min-height: 6.25rem;
+  padding: 0.45rem 0.65rem 0.5rem;
+  margin: 0.15rem 0.4rem 0.25rem;
+  background: rgba(0, 0, 0, 0.38);
+  border-radius: 0.65rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+}
+
+body.casino-table-full .casino-player-rail #player-hands .playing-card {
+  width: 4.65rem !important;
+  height: 6.45rem !important;
+  flex-shrink: 0 !important;
+}
+
+body.casino-table-full .casino-player-rail .casino-hand-cards .playing-card + .playing-card {
+  margin-left: -1.35rem !important;
+}
+
+body.casino-table-full .casino-player-rail .playing-card .center-suit {
+  font-size: 1.85rem !important;
+}
+
+body.casino-table-full .casino-player-rail .playing-card .corner {
+  font-size: 0.9rem !important;
+}
+
+body.casino-table-full .casino-player-rail .hand-type-hint {
+  display: none !important;
+}
+
+body.casino-table-full .cq-authentic-felt .casino-seat,
+body.casino-table-full .cq-authentic-felt #casino-seat-human {
+  overflow: visible !important;
+}
+
+body.casino-table-full .cq-authentic-felt #casino-seat-human {
+  z-index: 4;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+body.casino-table-full .cq-authentic-felt .casino-seat-ai-cards {
+  overflow: visible !important;
+  z-index: 6;
+}
+
+body.casino-table-full .cq-authentic-felt .cq-table-play-layer,
+body.casino-table-full .cq-authentic-felt.casino-table-surface {
+  overflow: visible;
+}
+
+body.casino-table-full .cq-authentic-felt #casino-seat-grid {
+  overflow: visible !important;
+  min-height: 8rem;
+  z-index: 2;
+}
+
+body.casino-table-full .cq-authentic-felt .casino-seat-ai-cards {
+  display: none !important;
+}
+
+@media (max-width: 480px) {
+  body.casino-table-full .casino-player-rail #player-hands .playing-card {
+    width: 3.65rem !important;
+    height: 5rem !important;
+  }
+
+  body.casino-table-full .cq-authentic-felt #casino-seat-grid {
+    min-height: 7.25rem;
+  }
+
+  body.casino-table-full .cq-authentic-felt #casino-seat-1 { left: 2%; bottom: 1%; }
+  body.casino-table-full .cq-authentic-felt #casino-seat-7 { right: 2%; bottom: 1%; }
 }
 
 /* ── 3D casino chips ── */
@@ -368,6 +604,31 @@
   border-radius: 0.4rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), 0 6px 16px rgba(0, 0, 0, 0.35);
   border: 1px solid rgba(0, 0, 0, 0.12);
+  opacity: 1;
+  isolation: isolate;
+}
+
+.cq-authentic-felt .playing-card:not(.back) {
+  background: linear-gradient(160deg, #ffffff 0%, #eef1f5 100%);
+  color: #1f2937;
+}
+
+.cq-authentic-felt .casino-dealer-zone .playing-card {
+  background-color: #ffffff;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.28), 0 8px 20px rgba(0, 0, 0, 0.38);
+}
+
+.cq-authentic-felt .casino-dealer-zone .playing-card.back,
+.cq-authentic-felt .casino-dealer-zone .playing-card.hole-hidden {
+  background: #b91c1c !important;
+  opacity: 1 !important;
+  transform: none;
+  border: 2px solid #fff;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.35), 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.cq-authentic-felt .casino-dealer-zone .playing-card.hole-hidden .card-inner::after {
+  color: rgba(255, 255, 255, 0.92);
 }
 
 .cq-authentic-felt .playing-card.back {
@@ -418,14 +679,508 @@
   letter-spacing: 0.06em;
 }
 
+button#btn-deal.cq-deal-locked {
+  opacity: 0.55;
+  filter: grayscale(0.15);
+}
+
 /* Mobile: simplify arc text visibility, keep markings */
 @media (max-width: 640px) {
   .cq-chip-rack { transform: translateX(-50%) scale(0.85); top: 0.2rem; }
   .cq-authentic-felt .casino-seat-spot { width: 2.2rem; height: 2.2rem; }
   .cq-felt-svg-wrap .cq-felt-title-sub { display: none; }
+  .cq-table-solo .cq-table-play-layer { padding-top: 0.85rem; }
+  .cq-table-solo .casino-dealer-zone .playing-card { width: 2.35rem; height: 3.25rem; }
+  .cq-table-solo .casino-seat-human .casino-seat-cards-wrap .playing-card {
+    width: 2.35rem;
+    height: 3.25rem;
+  }
 }
 
 @media (max-width: 400px) {
   .cq-authentic-felt #casino-seat-grid .casino-seat { width: 12%; }
   .cq-authentic-felt .casino-seat-spot { width: 1.9rem; height: 1.9rem; }
+}
+
+/* ── Readable solo play (mobile reference layout) ── */
+.cq-hand-total-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.1rem;
+  height: 2.1rem;
+  padding: 0 0.45rem;
+  border-radius: 9999px;
+  font-family: 'Bebas Neue', Impact, sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+.cq-hand-total--dealer .cq-hand-total-badge {
+  background: rgba(8, 12, 18, 0.82);
+  color: #f8fafc;
+  border: 2px solid rgba(255, 255, 255, 0.28);
+}
+
+.cq-hand-total--player .cq-hand-total-badge {
+  background: linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
+  color: #052e16;
+  border: 2px solid #bbf7d0;
+  min-width: 2.45rem;
+  height: 2.45rem;
+  font-size: 1.2rem;
+}
+
+.cq-count-compact-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 0.28rem !important;
+  max-height: 2.35rem;
+}
+
+.cq-count-compact {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  padding: 0.12rem 0.2rem;
+  border-radius: 0.45rem;
+  background: rgba(0, 0, 0, 0.42);
+  border: 1px solid rgba(125, 255, 184, 0.22);
+}
+
+.cq-count-compact-label {
+  font-size: 0.48rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(125, 255, 184, 0.72);
+  line-height: 1;
+}
+
+.cq-count-compact-val {
+  font-family: 'Courier New', Consolas, monospace;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #d9ffe8;
+  line-height: 1.1;
+}
+
+.cq-count-compact--locked {
+  grid-column: 1 / -1;
+  font-size: 0.68rem;
+  color: rgba(167, 243, 208, 0.75);
+  text-align: center;
+}
+
+body.casino-readable-play .casino-table-topbar.cq-dealer-clipboard {
+  padding: 0.22rem 0.4rem 0.28rem;
+  margin-bottom: 0.12rem;
+  max-height: 2.6rem;
+  overflow: hidden;
+}
+
+body.casino-readable-play #shoe-status,
+body.casino-readable-play .cq-chip-rack {
+  display: none !important;
+}
+
+body.casino-readable-play .cq-felt-svg-wrap {
+  opacity: 1;
+  z-index: 0;
+}
+
+body.casino-readable-play .cq-felt-svg-wrap .cq-felt-seat-circles {
+  opacity: 1;
+}
+
+body.casino-readable-play .cq-felt-seat-circle:not(.cq-felt-seat-circle--human) {
+  opacity: 0;
+}
+
+body.casino-readable-play .cq-table-play-layer {
+  z-index: 4;
+}
+
+body.casino-readable-play .casino-dealer-zone {
+  z-index: 5;
+  position: relative;
+}
+
+body.casino-readable-play .cq-table-play-layer {
+  justify-content: space-between;
+  gap: 0.35rem;
+  padding: 0.55rem 0.5rem 0.35rem;
+}
+
+body.casino-readable-play .casino-dealer-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  padding-top: 0.15rem;
+}
+
+body.casino-readable-play .casino-dealer-zone #dealer-cards {
+  min-height: 0;
+}
+
+body.casino-readable-play .casino-dealer-zone .playing-card {
+  width: 4.85rem !important;
+  height: 6.7rem !important;
+}
+
+body.casino-readable-play .casino-dealer-zone #dealer-cards .playing-card + .playing-card {
+  margin-left: -1.35rem !important;
+}
+
+body.casino-readable-play .casino-dealer-zone .playing-card .center-suit {
+  font-size: 2.15rem !important;
+}
+
+body.casino-readable-play .casino-dealer-zone .playing-card .corner {
+  font-size: 0.95rem !important;
+}
+
+body.casino-readable-play #casino-seat-human,
+body.casino-readable-play .casino-seat-human {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center;
+  gap: 0.45rem;
+  width: 100%;
+  max-width: 22rem;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: visible !important;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  grid-template-rows: unset !important;
+  grid-template-areas: unset !important;
+}
+
+body.casino-readable-play .casino-seat-human .casino-seat-spot {
+  order: 2;
+  width: auto;
+  height: auto;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  margin: 0;
+}
+
+body.casino-readable-play .casino-seat-human .casino-seat-label {
+  display: none;
+}
+
+body.casino-readable-play .casino-player-rail {
+  flex: 1 1 auto;
+  min-height: 5.5rem;
+  align-items: center;
+  justify-content: center;
+}
+
+body.casino-readable-play .casino-player-rail #player-hands.casino-seat-cards-wrap {
+  width: 100%;
+  max-width: 22rem;
+  justify-content: center;
+  overflow: visible !important;
+}
+
+body.casino-readable-play .casino-player-rail .casino-hand-cards {
+  overflow: visible !important;
+}
+
+body.casino-readable-play .casino-player-rail .playing-card {
+  width: 5.5rem !important;
+  height: 7.6rem !important;
+}
+
+body.casino-readable-play .casino-player-rail .casino-hand-cards .playing-card + .playing-card {
+  margin-left: -1.5rem !important;
+}
+
+body.casino-readable-play .casino-player-rail .playing-card .center-suit {
+  font-size: 2.85rem !important;
+}
+
+body.casino-readable-play .casino-player-rail .playing-card .corner {
+  font-size: 1.2rem !important;
+}
+
+body.casino-readable-play .casino-seat-human .casino-player-hand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+body.casino-readable-play .casino-seat-bet-indicator {
+  margin-top: 0.1rem;
+}
+
+body.casino-readable-play .casino-seat-bet-chip {
+  width: 2.65rem;
+  height: 2.65rem;
+  font-size: 0.82rem;
+}
+
+body.casino-readable-play .casino-bottom-dock #strategy-hint {
+  font-size: 0.72rem;
+  padding: 0.3rem 0.55rem;
+  border-radius: 0.55rem;
+  max-height: 2.2rem;
+  line-height: 1.2;
+}
+
+#action-buttons.cq-readable-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.45rem;
+  width: 100%;
+  max-width: 24rem;
+  margin: 0 auto;
+}
+
+#action-buttons.cq-readable-actions:has(.cq-action-split),
+#action-buttons.cq-readable-actions:has(.cq-action-surrender) {
+  grid-template-columns: repeat(auto-fit, minmax(4.5rem, 1fr));
+}
+
+.cq-readable-action-btn {
+  min-height: 3.1rem;
+  border-radius: 0.85rem;
+  font-size: 0.95rem;
+  letter-spacing: 0.03em;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.38);
+}
+
+.cq-action-stand {
+  background: linear-gradient(180deg, #ef4444 0%, #b91c1c 100%);
+  color: #fff;
+}
+
+.cq-action-double {
+  background: linear-gradient(180deg, #4ade80 0%, #15803d 100%);
+  color: #052e16;
+}
+
+.cq-action-hit {
+  background: linear-gradient(180deg, #38bdf8 0%, #1d4ed8 100%);
+  color: #fff;
+}
+
+.cq-action-split {
+  background: linear-gradient(180deg, #a78bfa 0%, #6d28d9 100%);
+  color: #fff;
+}
+
+.cq-action-surrender {
+  background: linear-gradient(180deg, #94a3b8 0%, #475569 100%);
+  color: #fff;
+}
+
+body.casino-readable-play .cq-table-play-layer {
+  overflow: visible;
+}
+
+body.casino-readable-play .casino-table-surface {
+  overflow: visible;
+}
+
+body.casino-readable-play #casino-seat-grid {
+  overflow: visible !important;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Franchise dealer HUD (Margaret) ── */
+.cq-authentic-felt .casino-dealer-zone {
+  position: relative;
+}
+
+.franchise-dealer-hud {
+  display: grid;
+  grid-template-columns: 3rem 1fr;
+  gap: 0.35rem 0.55rem;
+  align-items: start;
+  margin: 0 0.35rem 0.45rem;
+  padding: 0.45rem 0.55rem;
+  background: rgba(0, 0, 0, 0.42);
+  border: 1px solid rgba(212, 175, 55, 0.28);
+  border-radius: 0.65rem;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+
+.franchise-dealer-hud.hidden {
+  display: none !important;
+}
+
+.franchise-dealer-portrait {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  border: 2px solid #d4af37;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+  background: linear-gradient(145deg, #1a5f4a, #0d3d32);
+}
+
+.franchise-dealer-name {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #f5e6c8;
+  line-height: 1.2;
+}
+
+.franchise-dealer-venue {
+  font-size: 0.58rem;
+  color: rgba(125, 211, 176, 0.65);
+}
+
+.franchise-dealer-mood {
+  display: inline-block;
+  margin-top: 0.15rem;
+  padding: 0.08rem 0.4rem;
+  border-radius: 999px;
+  font-size: 0.52rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.franchise-dealer-mood.mood-neutral { background: #334155; color: #e2e8f0; }
+.franchise-dealer-mood.mood-warm { background: #b45309; color: #fff7ed; }
+.franchise-dealer-mood.mood-stiff { background: #475569; color: #f1f5f9; }
+.franchise-dealer-mood.mood-irritated { background: #991b1b; color: #fee2e2; }
+.franchise-dealer-mood.mood-impressed { background: #5b21b6; color: #ede9fe; }
+
+.franchise-dealer-bubble {
+  grid-column: 1 / -1;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  color: #d1fae5;
+  min-height: 2.2rem;
+  padding: 0.35rem 0.45rem;
+  background: rgba(0, 0, 0, 0.28);
+  border-radius: 0.45rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.franchise-dealer-rel-wrap {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.franchise-dealer-rel-bar {
+  flex: 1;
+  height: 6px;
+  background: rgba(0, 0, 0, 0.45);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.franchise-dealer-rel-fill {
+  height: 100%;
+  width: 18%;
+  background: linear-gradient(90deg, #059669, #d4af37);
+  transition: width 0.35s ease;
+}
+
+.franchise-dealer-tier {
+  font-size: 0.55rem;
+  color: #d4af37;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .franchise-dealer-hud {
+    position: absolute;
+    top: 0;
+    left: 0.25rem;
+    right: 0.25rem;
+    z-index: 25;
+    margin: 0;
+    padding: 0.28rem 0.38rem;
+    grid-template-columns: 2.1rem 1fr;
+    gap: 0.2rem 0.4rem;
+    pointer-events: none;
+    background: rgba(0, 0, 0, 0.55);
+  }
+
+  .franchise-dealer-portrait {
+    width: 2.1rem;
+    height: 2.1rem;
+    font-size: 1rem;
+  }
+
+  .franchise-dealer-name { font-size: 0.62rem; }
+  .franchise-dealer-venue { display: none; }
+  .franchise-dealer-bubble {
+    font-size: 0.65rem;
+    min-height: 1.5rem;
+    padding: 0.2rem 0.35rem;
+  }
+
+  .franchise-dealer-rel-wrap {
+    grid-column: 2;
+    margin-top: -0.1rem;
+  }
+
+  .franchise-dealer-rel-bar { height: 4px; }
+
+  body.casino-readable-play .casino-dealer-zone .playing-card {
+    width: 4.25rem !important;
+    height: 5.85rem !important;
+  }
+
+  body.casino-readable-play .casino-player-rail .playing-card {
+    width: 5rem !important;
+    height: 6.9rem !important;
+  }
+}
+
+body.casino-bet-active .casino-player-rail:not(:has(.playing-card)) {
+  min-height: 0;
+  padding: 0;
+}
+
+/* ── Franchise tells + Read action ── */
+.cq-action-read,
+.action-btn.cq-action-read {
+  background: linear-gradient(180deg, #7c3aed, #5b21b6) !important;
+  border: 1px solid rgba(196, 181, 253, 0.45);
+  color: #f5f3ff !important;
+}
+
+.franchise-read-guess:hover,
+.franchise-read-guess:focus-visible {
+  filter: brightness(1.12);
+}
+
+@keyframes franchise-felt-tap-pulse {
+  0%, 100% { opacity: 0.15; transform: scale(1); }
+  40% { opacity: 0.85; transform: scale(1.02); }
+  60% { opacity: 0.35; transform: scale(0.99); }
+}
+
+.casino-dealer-zone.franchise-tell-felt-tap::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border: 2px solid rgba(212, 175, 55, 0.75);
+  border-radius: 0.55rem;
+  pointer-events: none;
+  animation: franchise-felt-tap-pulse 0.42s ease 2;
+  z-index: 20;
 }

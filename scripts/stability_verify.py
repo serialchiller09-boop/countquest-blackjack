@@ -13,12 +13,11 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 
-FELT_RULE_STRINGS = [
-    "BLACKJACK PAYS 3 TO 2",
-    "DOUBLE AFTER SPLIT ALLOWED",
-    "DEALER MUST HIT SOFT 17",
-    "INSURANCE PAYS 2 TO 1",
-    "Six Deck",
+FELT_MARKERS = [
+    "cq-felt-rail-outer",
+    "cq-felt-rail-inner",
+    "cq-felt-seat-circles",
+    "Q 600 648 1152 548",
 ]
 
 SETUP_BET_PHASE = """
@@ -93,7 +92,7 @@ def main() -> int:
         page.evaluate(DISMISS_BLOCKING_MODALS)
 
         felt_html = page.evaluate("() => document.getElementById('cq-felt-markings')?.innerHTML || ''")
-        felt_missing = [s for s in FELT_RULE_STRINGS if s not in felt_html]
+        felt_missing = [s for s in FELT_MARKERS if s not in felt_html]
         results["felt"] = {"missing": felt_missing, "ok": not felt_missing}
         if felt_missing:
             results["pass"] = False

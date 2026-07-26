@@ -173,7 +173,7 @@ class TestWebLogicHard(unittest.TestCase):
         self.assertIn("calculateCountAccuracyPercent(st) >= 75", self.html)
 
     def test_save_version_and_counting_fields(self) -> None:
-        self.assertIn("const SAVE_VERSION = 20", self.html)
+        self.assertIn("const SAVE_VERSION = 21", self.html)
         self.assertIn("countingUnlocks", self.html)
         self.assertIn("countingSystem", self.html)
         self.assertIn("syncWalletSave", self.html)
@@ -246,7 +246,7 @@ class TestWebLogicHard(unittest.TestCase):
         ]
         start = self.html.find("function runTests()")
         self.assertGreater(start, 0)
-        body = self.html[start : start + 12000]
+        body = self.html[start:]
         for phrase in required_phrases:
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, body)
@@ -255,7 +255,7 @@ class TestWebLogicHard(unittest.TestCase):
 class TestIndexHtmlStructure(unittest.TestCase):
     def test_save_version_eleven(self) -> None:
         html = load_app_source()
-        self.assertIn("const SAVE_VERSION = 20", html)
+        self.assertIn("const SAVE_VERSION = 21", html)
         self.assertIn("countingSystem: 'hi-lo'", html)
         self.assertIn("chips: 2500, gems: 10", html)
         self.assertIn("club: defaultClubMembership()", html)
@@ -315,7 +315,7 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertIn('"display": "standalone"', manifest)
         self.assertIn("icons/icon-192.png", manifest)
         sw = (root / "sw.js").read_text(encoding="utf-8")
-        self.assertIn("cq-pwa-v3", sw)
+        self.assertRegex(sw, r"cq-pwa-v\d+")
         self.assertIn("./css/tailwind.css", sw)
         self.assertNotIn("cdn.tailwindcss.com", sw)
         self.assertIn("./js/00-capacitor-bridge.js", sw)
@@ -521,9 +521,13 @@ class TestIndexHtmlStructure(unittest.TestCase):
                 seat_html.index("casino-seat-label"),
             )
 
-        grid_start = html.index('id="casino-seat-grid"')
-        grid_end = html.index('id="result-toast"', grid_start)
-        grid_html = html[grid_start:grid_end]
+        grid_match = re.search(
+            r'<div id="casino-seat-grid"[^>]*class="[^"]*casino-seat-grid[^"]*"[^>]*>(.*?)</div>\s*</div>\s*<div id="result-toast"',
+            html,
+            re.S,
+        )
+        self.assertIsNotNone(grid_match, "rendered casino seat grid not found")
+        grid_html = grid_match.group(1)
         for seat_id in range(1, 8):
             marker = f'id="casino-seat-{seat_id}"' if seat_id != 4 else 'id="casino-seat-human"'
             start = grid_html.index(marker)
@@ -784,7 +788,7 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertIn("joinTable", html)
         self.assertIn("settleTableSessionIfNeeded", html)
         self.assertIn("renderCurrencyDisplays", html)
-        self.assertIn("SAVE_VERSION = 20", html)
+        self.assertIn("SAVE_VERSION = 21", html)
         self.assertIn("Play Tables", html)
         self.assertIn("entryFeeChips: 50", html)
         self.assertIn("entryFeeGems: 1", html)

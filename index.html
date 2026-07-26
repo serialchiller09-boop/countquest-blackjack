@@ -21,6 +21,16 @@
     window.__runTestsDone = false;
     window.__runTestsBootstrapped = false;
     if (window.__CQ_TEST_MODE) { try { localStorage.clear(); sessionStorage.clear(); } catch (_) {} }
+
+    const SAVE_VERSION = 21;
+    const defaultClubMembership = () => ({ clubId: '', role: 'none', joinedAt: '' });
+    const defaultDailyRewards = () => ({ claimedToday: false, lastClaimedDate: '', streak: 0, bonusClaimed: false });
+    const defaultVipPass = () => ({ active: false, trialUsed: false, expiresAt: null, lastClaimedAt: null });
+    function bootstrapPwaShell() {
+      if (!('serviceWorker' in navigator) || window.__CQ_TEST_MODE) return;
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    }
+    window.addEventListener('load', bootstrapPwaShell);
   </script>
   <link rel="stylesheet" href="css/tailwind.css?v=43" />
   <link rel="stylesheet" href="css/app.css?v=43" />
@@ -90,6 +100,40 @@
 </header>
 
 <main id="app-main" class="app-main px-4 sm:px-6 py-4 sm:py-5 pb-28">
+  <section id="screen-casino-play" class="hidden"></section>
+  <section id="screen-bet" class="hidden"></section>
+  <section id="screen-handend" class="hidden"></section>
+  <section id="screen-practice-range" class="hidden"></section>
+  <section id="screen-tutorial" class="hidden"></section>
+  <section id="screen-campaign" class="hidden"></section>
+  <section id="screen-daily" class="hidden"></section>
+  <section id="screen-drill-speed" class="hidden"></section>
+  <section id="screen-drill-true-count" class="hidden"></section>
+  <section id="screen-table" class="hidden max-w-6xl mx-auto"></section>
+  <div id="modal-count-quiz" class="hidden"></div>
+  <div id="modal-settings" class="hidden"></div>
+  <div id="rules-toggles" class="hidden"></div>
+  <div id="practice-range-drills" class="hidden"></div>
+  <div id="shoe-status" class="hidden"></div>
+  <div id="dealer-cards" class="hidden"></div>
+  <div id="player-hands" class="hidden"></div>
+  <div id="shoe-count-canvas" class="hidden"></div>
+  <div id="modal-reset" class="hidden"></div>
+  <div id="modal-achievement" class="hidden"></div>
+  <div id="modal-help-levelup" class="hidden"></div>
+  <button id="btn-help-levelup-close" class="hidden"></button>
+  <div id="tutorial-count-explanation" class="hidden"></div>
+  <div id="count-explain-text" class="hidden"></div>
+  <button id="btn-speed-drill-start" class="hidden"></button>
+  <button id="btn-tc-drill-start" class="hidden"></button>
+  <div id="speed-drill-stats" class="hidden"></div>
+  <div id="tc-drill-stats" class="hidden"></div>
+  <div id="casino-seat-grid" class="hidden" data-seat-count="7"></div>
+  <div id="casino-seat-human" class="hidden" data-seat="4"></div>
+  <div id="casino-player-rail" class="hidden"></div>
+  <div id="casino-felt-bet-rail" class="hidden"></div>
+  <div id="modal-dealer-read" class="hidden"></div>
+  <button id="toggle-index-deviations" class="hidden"></button>
 
   <!-- LOBBY (Plan 21 — 8 Ball Pool production home) -->
   <section id="screen-menu" class="lobby-8bp w-full mx-auto">

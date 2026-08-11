@@ -13,8 +13,8 @@ android {
         applicationId "com.countquest.blackjack"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 43
-        versionName "1.0.27"
+        versionCode 44
+        versionName "1.0.28"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         androidResources {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'

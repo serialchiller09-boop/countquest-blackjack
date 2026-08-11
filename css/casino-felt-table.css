@@ -1,6 +1,8 @@
 /* Authentic casino felt table — CountQuest training overlay */
-
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+/* NOTE: no external font @import here — the app is offline-first (PWA +
+   Capacitor). We rely on the condensed fallback stack below, which keeps
+   the casino look on desktop (Impact/Arial Narrow) and mobile
+   (Roboto Condensed on Android). */
 
 .cq-table-options-btn {
   position: fixed;
@@ -79,7 +81,7 @@ html.cq-native .lobby-build-stamp {
   --cq-felt-green-mid: #1d5f72;
   --cq-felt-green-light: #2a7f96;
   --cq-felt-line: rgba(255, 255, 255, 0.92);
-  --cq-felt-font: 'Bebas Neue', Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  --cq-felt-font: 'Bebas Neue', 'Roboto Condensed', Oswald, 'Arial Narrow', Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
   --cq-clipboard-wood: #3d2817;
   --cq-clipboard-wood-light: #5c3d24;
 }
@@ -711,7 +713,7 @@ button#btn-deal.cq-deal-locked {
   height: 2.1rem;
   padding: 0 0.45rem;
   border-radius: 9999px;
-  font-family: 'Bebas Neue', Impact, sans-serif;
+  font-family: var(--cq-felt-font);
   font-size: 1.05rem;
   font-weight: 700;
   line-height: 1;

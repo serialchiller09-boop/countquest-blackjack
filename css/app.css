@@ -27,6 +27,62 @@
       min-height: 100dvh;
       background: radial-gradient(ellipse 130% 90% at 50% -10%, #123828 0%, #0a1612 42%, #060e0b 100%);
     }
+    /* ── Base interface polish (dark casino theme) ── */
+    ::selection { background: rgba(52, 211, 153, 0.32); color: #f0fff7; }
+    summary { cursor: pointer; }
+    /* Tap-friendly, no double-tap zoom on fast taps */
+    button, a, [role="button"], summary, label { touch-action: manipulation; }
+    /* Clean number inputs — hide spinners */
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
+    /* Chrome autofill — keep the dark theme (no white/yellow flash) */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus {
+      -webkit-text-fill-color: #e7fff2;
+      -webkit-box-shadow: 0 0 0 1000px #0d2b20 inset;
+      caret-color: #e7fff2;
+      transition: background-color 999999s ease-out 0s;
+    }
+    /* Themed scrollbars (Chromium/WebKit + Firefox fallback) */
+    *::-webkit-scrollbar { width: 10px; height: 10px; }
+    *::-webkit-scrollbar-track { background: transparent; }
+    *::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.14);
+      border-radius: 8px;
+      border: 2px solid transparent;
+      background-clip: padding-box;
+    }
+    *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.26); background-clip: padding-box; }
+    *::-webkit-scrollbar-corner { background: transparent; }
+    * { scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.18) transparent; }
+    /* Visible keyboard focus for inputs (buttons already covered) */
+    input:focus-visible, select:focus-visible, textarea:focus-visible {
+      outline: 2px solid rgba(52, 211, 153, 0.65);
+      outline-offset: 1px;
+    }
+    /* Consistent disclosure UI — custom chevron for every collapsible */
+    summary::-webkit-details-marker { display: none; }
+    details summary { list-style: none; display: flex; align-items: center; }
+    details summary::after {
+      content: '▾';
+      margin-left: auto;
+      padding-left: 0.6rem;
+      font-size: 0.7em;
+      opacity: 0.55;
+      flex-shrink: 0;
+      transition: transform 0.2s ease;
+    }
+    details[open] > summary::after { transform: rotate(180deg); }
+    details.hilo-guide summary::after { display: none; } /* has its own chevron span */
+    details.hilo-guide summary { justify-content: space-between; }
+    /* iOS Safari zooms into any input smaller than 16px on focus — enforce a floor */
+    @media (max-width: 640px) {
+      input[type="text"], input[type="number"], input[type="url"], select, textarea {
+        font-size: max(16px, 1em);
+      }
+    }
     /* Secondary screens — smaller type, tighter gaps (scroll still allowed) */
     .cq-screen-compact { font-size: 0.9rem; }
     .cq-screen-compact .text-2xl { font-size: 1.2rem; line-height: 1.2; }
@@ -1665,6 +1721,9 @@
       backdrop-filter: blur(6px);
       animation: backdropFadeIn .32s ease;
     }
+    /* Consistent entrance for every dialog (premium class keeps its own timing) */
+    dialog[open] { animation: dialogIn .3s cubic-bezier(.22,1,.36,1) both; }
+    dialog[open]::backdrop { animation: backdropFadeIn .28s ease; }
     @keyframes dialogIn {
       from { opacity: 0; transform: scale(.94) translateY(14px); }
       to { opacity: 1; transform: none; }
@@ -1840,12 +1899,17 @@
     .lobby-currency-chips { background: linear-gradient(90deg, rgba(6,78,59,.85), rgba(4,120,87,.7)); border: 1px solid rgba(52,211,153,.4); color: #6ee7b7; }
     .lobby-currency-gems { background: linear-gradient(90deg, rgba(76,29,149,.75), rgba(91,33,182,.65)); border: 1px solid rgba(167,139,250,.4); color: #ddd6fe; }
     .lobby-currency-buy {
+      position: relative;
       margin-left: auto; width: 1.35rem; height: 1.35rem; border-radius: 50%;
       background: linear-gradient(145deg, #22c55e, #16a34a);
       border: 1px solid rgba(255,255,255,.35);
       color: #fff; font-weight: 800; font-size: 0.85rem; line-height: 1;
       box-shadow: 0 2px 0 #14532d, inset 0 1px 0 rgba(255,255,255,.3);
       transition: transform .1s;
+    }
+    /* Enlarge the touch target without changing the visual size */
+    .lobby-currency-buy::before {
+      content: ''; position: absolute; inset: -0.55rem; border-radius: 50%;
     }
     .lobby-currency-buy:hover { filter: brightness(1.1); }
     .lobby-currency-buy:active { transform: translateY(1px); box-shadow: 0 1px 0 #14532d; }
@@ -1855,7 +1919,7 @@
       padding: 0.3rem 0.4rem; border-radius: 0.55rem;
       background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.08);
       font-size: 0.45rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em;
-      color: rgba(255,255,255,.85); transition: background .15s, transform .15s; min-width: 2.6rem;
+      color: rgba(255,255,255,.85); transition: background .15s, transform .15s; min-width: 2.75rem;
     }
     .lobby-nav-icon-btn:hover { background: rgba(255,255,255,.14); transform: translateY(-1px); }
     .lobby-nav-icon-btn .lobby-nav-icon { font-size: 1.15rem; line-height: 1; }
@@ -2059,7 +2123,7 @@
     @media (prefers-reduced-motion: reduce) {
       .lobby-hero-play, .lobby-pass-banner::after, .lobby-nav-badge,
       .lobby-minigame-tile.ready, .lobby-continue-btn, .screen-enter,
-      dialog.dialog-premium, .currency-bump { animation: none !important; }
+      dialog.dialog-premium, dialog[open], dialog[open]::backdrop, .currency-bump { animation: none !important; }
       .playing-card.deal-anim, .toast-item { animation-duration: 0.01ms !important; }
     }
 

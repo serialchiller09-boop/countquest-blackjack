@@ -12,7 +12,9 @@
     "cap:run:android": "npm run cap:sync && npx cap run android",
     "build:android:release": "python scripts/android_release_build.py",
     "test:table": "python scripts/run_table_qa_suite.py",
-    "test:web": "python scripts/run_web_tests.py"
+    "test:web": "python scripts/run_web_tests.py",
+    "test:browser": "node scripts/browser_tests.js",
+    "audit:ui": "node scripts/ui_audit.js"
   },
   "dependencies": {
     "@capacitor/android": "^8.4.1",
@@ -23,9 +25,15 @@
   },
   "devDependencies": {
     "@capacitor/cli": "^8.4.1",
+    "@sparticuz/chromium": "^149.0.0",
+    "jsdom": "^30.0.1",
+    "puppeteer-core": "^25.5.0",
     "tailwindcss": "^3.4.17"
   },
   "capacitor": {
-    "platforms": ["android", "ios"]
+    "platforms": [
+      "android",
+      "ios"
+    ]
   }
 }

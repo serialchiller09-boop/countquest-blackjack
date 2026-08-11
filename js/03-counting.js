@@ -294,80 +294,16 @@ function createDealerAISeats(count = DEALER_MODE.defaultPlayers) {
   }));
 }
 
-/** Seat numbers around the human (seat 4) on the 7-seat casino table. */
-const TABLE_AI_SEAT_NUMS = [1, 2, 3, 5, 6, 7];
-const TABLE_DEAL_ORDER = [1, 2, 3, 4, 5, 6, 7];
+/** Single-seat table layout — human player only (7-seat format removed). */
 const TABLE_LAYOUT_SOLO = 'solo';
-const TABLE_LAYOUT_FULL = 'full';
 
 function normalizeTableLayout(layout) {
-  return layout === TABLE_LAYOUT_SOLO ? TABLE_LAYOUT_SOLO : TABLE_LAYOUT_FULL;
+  return TABLE_LAYOUT_SOLO;
 }
 
 function isSoloTableLayout(settingsOrLayout) {
-  const layout = typeof settingsOrLayout === 'string'
-    ? settingsOrLayout
-    : settingsOrLayout?.tableLayout;
-  return normalizeTableLayout(layout) === TABLE_LAYOUT_SOLO;
+  return true;
 }
-
-function activeTableAiSeatNums(settings) {
-  return isSoloTableLayout(settings) ? [] : TABLE_AI_SEAT_NUMS;
-}
-
-function activeTableDealOrder(settings) {
-  return isSoloTableLayout(settings) ? [4] : TABLE_DEAL_ORDER;
-}
-const TABLE_AI_MAX_SPLITS = 3;
-
-function createTableAiSeats() {
-  const picks = shuffleArray([...DEALER_AI_ROSTER]).slice(0, TABLE_AI_SEAT_NUMS.length);
-  const seats = {};
-  TABLE_AI_SEAT_NUMS.forEach((seatNum, i) => {
-    const p = picks[i];
-    seats[seatNum] = {
-      seatNum,
-      name: p.name,
-      avatar: p.avatar,
-      bet: 0,
-      insurance: 0,
-      hands: [],
-      results: [],
-    };
-  });
-  return seats;
-}
-
-function tableAiSplitCount(seat) {
-  return Math.max(0, (seat.hands?.length || 1) - 1);
-}
-
-function tableAiSeatTotalBet(seat) {
-  return (seat.hands || []).reduce((sum, hs) => sum + (hs.bet || 0), 0);
-}
-
-function renderTableAiMiniCard(card, hidden = false) {
-  if (hidden) return '<div class="casino-ai-mini-card back">?</div>';
-  const red = card.suit === 'H' || card.suit === 'D';
-  return `<div class="casino-ai-mini-card ${red ? 'red' : ''}">${card.rank}</div>`;
-}
-
-function tableAiStrategyAction(handState, dealerUpRank, rules, splitCount, snap, systemId = 'hi-lo') {
-  const canDouble = handState.hand.size === 2 && !handState.doubled;
-  const canSplit = handState.hand.size === 2
-    && handState.hand.cards[0].rank === handState.hand.cards[1].rank
-    && !handState.fromSplit && !handState.splitAces
-    && splitCount < TABLE_AI_MAX_SPLITS;
-  const stratOpts = { trueCount: snap?.trueCount ?? null, countingSystemId: systemId };
-  let advice = advise(handState.hand, dealerUpRank, canDouble, canSplit, stratOpts);
-  let action = advice.action;
-  if (action === 'surrender') action = 'stand';
-  if (action === 'split' && canSplit) return 'split';
-  if (action === 'double' && canDouble) return 'double';
-  if (action === 'double') return 'hit';
-  return action;
-}
-
 function dealerAIBetForSeat(snapshot, minBet, maxBet) {
   const units = betSpreadUnitsFromCountSnapshot(snapshot);
   return Math.min(maxBet, Math.max(minBet, minBet * units));

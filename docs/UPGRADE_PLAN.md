@@ -16,7 +16,7 @@ Track every open upgrade. Mark `[x]` when done; link PR/commit in Notes.
 
 | # | Task | Status | Owner / notes |
 |---|------|--------|---------------|
-| P0-1 | Device proof: badge v41+, cards in rail, full table | [ ] | User phone; uninstall old APK first; emulator v41 |
+| P0-1 | Device proof: badge v44+, cards in rail, single-seat table | [ ] | User phone; uninstall old APK first; emulator v44 |
 | P0-2 | Capacitor deploy: `stage_dist` → `cap sync` → AAB every release | [ ] | `scripts/stage_dist.py`, `capacitor.config.json` |
 | P0-3 | PWA SW caches `casino-felt-table.css` | [x] | v41: `sw.js` cq-pwa-v8 |
 | P0-4 | Play Console: app draft, IARC, Data safety | [ ] | `docs/PLAY_CONSOLE_*.md` |
@@ -32,7 +32,7 @@ Track every open upgrade. Mark `[x]` when done; link PR/commit in Notes.
 
 | # | Task | Status | Notes |
 |---|------|--------|-------|
-| P1-1 | 7-seat layout polish (spacing, arc, AI cards) | [x] | v41 narrow-seat CSS |
+| P1-1 | ~~7-seat layout polish~~ — 7-seat format removed | [x] | v45: single-seat table only |
 | P1-2 | Small-phone layout (360×640) without heavy scale | [~] | `full_practice_short` QA; tuning ongoing |
 | P1-3 | Menu overlap — device confirmation | [~] | QA passes; real safe-area TBD |
 | P1-4 | Chip clutter — hide decorative rack (full + solo) | [x] | v41 CSS |

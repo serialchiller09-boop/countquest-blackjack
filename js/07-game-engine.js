@@ -27,7 +27,6 @@ class CountQuestApp {
     this.dealing = false;
     this._betSubmitting = false;
     this._awaitingNextHand = false;
-    this.tableAiSeats = null;
     this.franchiseDealer = null;
     this._franchiseIdleTimer = null;
     this._franchiseLastAction = 0;
@@ -56,7 +55,6 @@ class CountQuestApp {
     if (this.save.settings.showCountDisplay === undefined) this.save.settings.showCountDisplay = true;
     if (this.save.settings.showCountPopups === undefined) this.save.settings.showCountPopups = true;
     if (this.save.settings.useIndexDeviations === undefined) this.save.settings.useIndexDeviations = true;
-    if (isSoloTableLayout(this.settings)) this.tableAiSeats = null;
     this.syncCasinoSeatLayout();
     this._afterCountQuiz = null;
     Sounds.setEnabled(this.save.settings.soundEnabled);
@@ -2014,7 +2012,6 @@ class CountQuestApp {
     this.save.settings.minBet = tier.minBet;
     this.save.settings.unitSize = tier.unitSize;
     this.applyTheme(tier.theme);
-    this.tableAiSeats = null;
     this.save.sessionActive = true;
     this.save.sessionHands = 0;
     this.save.sessionNetPL = 0;
@@ -2704,7 +2701,6 @@ class CountQuestApp {
   startSession(practice, mode = practice ? 'practice-range' : 'campaign', drill = null, chapterId = null) {
     this.closeAllModals();
     this.save.settings.practiceMode = practice;
-    if (isSoloTableLayout(this.settings)) this.tableAiSeats = null;
     this.save.sessionMode = mode;
     this.save.sessionDrill = drill;
     this.save.sessionChapter = chapterId;
@@ -2722,7 +2718,6 @@ class CountQuestApp {
     this.save.sessionNetPL = 0;
     this.session = { start: this.bankroll, wagered: 0, netPL: 0, hands: 0, insTaken: 0, insWon: 0,
       decisions: 0, decisionsCorrect: 0, countQuizCorrect: 0, countQuizTotal: 0, betStreak: 0 };
-    this.tableAiSeats = null;
     this.shoe = new Shoe(this.settings.numDecks);
     this.counter = this.createCounter();
     const profile = drill === 'count-shoe' ? 'drill-count' : drill === 'decisions' ? 'drill-decisions'
@@ -2861,7 +2856,6 @@ class CountQuestApp {
     this.save.sessionMode = null;
     this.save.sessionDrill = null;
     this.save.sessionTableTier = null;
-    this.tableAiSeats = null;
     this.persist();
     this.phase = 'menu';
     this._resetDailyRewardModalGate();
@@ -5376,167 +5370,6 @@ class CountQuestApp {
     document.getElementById('modal-shoe').showModal();
   }
 
-  usesTableAiSeats() {
-    return !this.save.sessionDrill && !!this.session && !isSoloTableLayout(this.settings);
-  }
-
-  ensureTableAiSeats() {
-    if (!this.usesTableAiSeats()) {
-      this.tableAiSeats = null;
-      return;
-    }
-    if (!this.tableAiSeats) this.tableAiSeats = createTableAiSeats();
-  }
-
-  placeTableAiBets() {
-    if (!this.tableAiSeats || !this.shoe) return;
-    const snap = this.counter.getCountSnapshot(this.shoe);
-    const maxBet = this.session?.tableMaxBet || Math.max(this.minBet * 6, Math.floor(this.bankroll * 0.08));
-    for (const seat of Object.values(this.tableAiSeats)) {
-      const bet = dealerAIBetForSeat(snap, this.minBet, maxBet);
-      seat.bet = bet;
-      seat.insurance = 0;
-      seat.results = [];
-      seat.hands = [{
-        hand: new Hand(), bet, finished: false,
-        doubled: false, fromSplit: false, splitAces: false,
-      }];
-    }
-  }
-
-  placeTableAiInsurance() {
-    if (!this.tableAiSeats || !this.shoe) return;
-    const snap = this.counter.getCountSnapshot(this.shoe);
-    for (const seat of Object.values(this.tableAiSeats)) {
-      seat.insurance = 0;
-      const mainBet = seat.hands[0]?.bet || this.minBet;
-      if (dealerAITakesInsurance(snap)) seat.insurance = Math.max(1, Math.floor(mainBet / 2));
-    }
-  }
-
-  async tableAiSplitHand(seat, handIdx) {
-    const hs = seat.hands[handIdx];
-    const [a, b] = hs.hand.cards;
-    const isAces = a.rank === 'A';
-    const h1 = new Hand([a]);
-    const h2 = new Hand([b]);
-    this.dealCardAndUpdateRunningCount(h1, `ai-${seat.seatNum}-split`);
-    this.dealCardAndUpdateRunningCount(h2, `ai-${seat.seatNum}-split`);
-    seat.hands.splice(handIdx, 1,
-      { hand: h1, bet: hs.bet, finished: isAces, doubled: false, fromSplit: true, splitAces: isAces },
-      { hand: h2, bet: hs.bet, finished: isAces, doubled: false, fromSplit: true, splitAces: isAces },
-    );
-    seat.bet = tableAiSeatTotalBet(seat);
-  }
-
-  async playTableAiSeats() {
-    if (!this.tableAiSeats) return;
-    const up = this.dealer.cards[0]?.rank;
-    if (!up) return;
-    const snap = this.shoe ? this.counter.getCountSnapshot(this.shoe) : null;
-    const systemId = this.activeCountingSystem();
-    for (const seatNum of activeTableAiSeatNums(this.settings)) {
-      const seat = this.tableAiSeats[seatNum];
-      if (!seat) continue;
-      let guard = 0;
-      while (seat.hands.some(h => !h.finished) && guard++ < 48) {
-        const hi = seat.hands.findIndex(h => !h.finished);
-        if (hi < 0) break;
-        const hs = seat.hands[hi];
-        if (hs.hand.isBlackjack()) { hs.finished = true; continue; }
-        const action = tableAiStrategyAction(hs, up, this.rules, tableAiSplitCount(seat), snap, systemId);
-        if (action === 'split') {
-          await this.tableAiSplitHand(seat, hi);
-          this.render();
-          await sleep(140);
-          continue;
-        }
-        if (action === 'double') {
-          hs.doubled = true;
-          hs.bet *= 2;
-          seat.bet = tableAiSeatTotalBet(seat);
-          this.dealCardAndUpdateRunningCount(hs.hand, `ai-${seatNum}-double`);
-          hs.finished = true;
-        } else if (action === 'hit') {
-          this.dealCardAndUpdateRunningCount(hs.hand, `ai-${seatNum}-hit`);
-          if (hs.hand.isBust() || hs.hand.is21()) hs.finished = true;
-        } else {
-          hs.finished = true;
-        }
-        this.render();
-        await sleep(110);
-      }
-      seat.bet = tableAiSeatTotalBet(seat);
-    }
-  }
-
-  async playTableAiThenDealer() {
-    await this.playTableAiSeats();
-    await this.dealerPlay();
-  }
-
-  settleTableAiSeats() {
-    if (!this.tableAiSeats) return;
-    for (const seat of Object.values(this.tableAiSeats)) {
-      seat.results = (seat.hands || []).map(hs => ({
-        r: dealerExpectedPlayerResult(hs.hand, this.dealer, hs.fromSplit),
-        label: seat.name,
-      }));
-    }
-  }
-
-  renderTableAiSeatHtml(seat) {
-    const showCards = ['playing', 'handEnd'].includes(this.phase);
-    const hands = seat.hands || [];
-    const handHtml = showCards && hands.length
-      ? hands.map((hs, hi) => {
-          const cards = hs.hand?.cards || [];
-          if (!cards.length) return '';
-          const total = hs.hand.size ? hs.hand.value() : '';
-          const suffix = hs.doubled ? ' ×2' : '';
-          const aiCardN = cards.length;
-          const aiRowCls = aiCardN >= 6 ? 'ai-mini-cards-6' : aiCardN >= 5 ? 'ai-mini-cards-5' : '';
-          return `<div class="casino-seat-ai-hand">
-            ${hands.length > 1 ? `<span class="casino-seat-ai-total">H${hi + 1}</span>` : ''}
-            <div class="casino-seat-ai-hand-row ${aiRowCls}">${cards.map(c => renderTableAiMiniCard(c)).join('')}</div>
-            <span class="casino-seat-ai-total">${total}${suffix}</span>
-          </div>`;
-        }).join('')
-      : '';
-    const totalBet = tableAiSeatTotalBet(seat) || seat.bet || 0;
-    const hideSeatChips = !isSoloTableLayout(this.settings);
-    const betChip = totalBet
-      ? (hideSeatChips
-        ? ''
-        : `<span class="casino-seat-bet-chip">${formatCasinoChipMarkup(totalBet)}</span>`)
-      : `<span class="casino-seat-available"><span class="casino-seat-available-icon"></span></span>`;
-    let status = totalBet ? `$${totalBet}` : 'Ready';
-    let statusCls = '';
-    if (this.phase === 'handEnd' && seat.results?.length) {
-      const wins = seat.results.filter(r => r.r === 'win' || r.r === 'blackjack').length;
-      const losses = seat.results.filter(r => r.r === 'loss' || r.r === 'surrender').length;
-      if (wins && !losses) { status = 'Won'; statusCls = 'casino-seat-ai-result-win'; }
-      else if (losses && !wins) { status = 'Lost'; statusCls = 'casino-seat-ai-result-loss'; }
-      else if (wins === losses) { status = 'Push'; statusCls = 'casino-seat-ai-result-push'; }
-      else { status = `${wins}W`; statusCls = 'casino-seat-ai-result-win'; }
-    } else if (seat.insurance > 0) {
-      status = `Ins $${seat.insurance}`;
-    }
-    return `<div class="casino-seat-spot casino-seat-cards-mount">${betChip}</div>
-      <div class="casino-seat-ai-cards">${handHtml || ''}</div>
-      <span class="casino-seat-label">
-        <span class="casino-seat-num">${seat.avatar} ${seat.name}</span>
-        <span class="casino-seat-status ${statusCls}">${status}</span>
-      </span>`;
-  }
-
-  renderEmptyCasinoSeatHtml(seatNum) {
-    return `<div class="casino-seat-spot casino-seat-cards-mount" aria-hidden="true">
-        <span class="casino-seat-available"><span class="casino-seat-available-icon"></span><span class="casino-seat-available-text">Open Seat</span></span>
-      </div>
-      <span class="casino-seat-label"><span class="casino-seat-num">${seatNum}</span><span class="casino-seat-status">Open Seat</span></span>`;
-  }
-
   beginBetPhase() {
     if (!this.ensureActiveSession()) {
       this.phase = 'menu';
@@ -5551,7 +5384,6 @@ class CountQuestApp {
     this.resetDealButton();
     this.refillPractice();
     this.ensureShoe();
-    this.ensureTableAiSeats();
     this.dealer.clear();
     this.handNetPL = 0;
     this.dealAnimIndex = 0;
@@ -5675,7 +5507,6 @@ class CountQuestApp {
     this.activeIdx = 0;
     this.splitDone = false;
     this.insuranceBet = 0;
-    this.placeTableAiBets();
 
     Sounds.play('chip');
     this.franchiseDealerEvent('deal.start');
@@ -5756,21 +5587,9 @@ class CountQuestApp {
     this.hideHole = false;
     this.dealer.clear();
     this.playerHands[0].hand.clear();
-    const useTableAi = !!this.tableAiSeats;
-    const dealToSeat = async (seatNum) => {
-      if (seatNum === 4) await this.dealCardAnimated(this.playerHands[0].hand, 'player');
-      else if (this.tableAiSeats?.[seatNum]) await this.dealCardAnimated(this.tableAiSeats[seatNum].hands[0].hand, `ai-${seatNum}`);
-    };
-    if (useTableAi) {
-      const dealOrder = activeTableDealOrder(this.settings);
-      for (const seatNum of dealOrder) await dealToSeat(seatNum);
-      await this.dealCardAnimated(this.dealer, 'dealer up');
-      for (const seatNum of dealOrder) await dealToSeat(seatNum);
-    } else {
-      await this.dealCardAnimated(this.playerHands[0].hand, 'player');
-      await this.dealCardAnimated(this.dealer, 'dealer up');
-      await this.dealCardAnimated(this.playerHands[0].hand, 'player');
-    }
+    await this.dealCardAnimated(this.playerHands[0].hand, 'player');
+    await this.dealCardAnimated(this.dealer, 'dealer up');
+    await this.dealCardAnimated(this.playerHands[0].hand, 'player');
     this.hideHole = true;
     await this.dealCardAnimated(this.dealer, 'dealer hole', true);
 
@@ -5778,7 +5597,6 @@ class CountQuestApp {
     if (!up) throw new Error('Dealer upcard missing');
     if (up === 'A') {
       this.franchiseDealerEvent('deal.upcard.ace');
-      this.placeTableAiInsurance();
       this.dealing = false;
       this.unlockDealButton();
       this.showInsuranceModal();
@@ -6098,8 +5916,7 @@ class CountQuestApp {
       if (!st.finished) { this.render(); return; }
       this.activeIdx++;
     }
-    if (this.tableAiSeats) this.playTableAiThenDealer();
-    else this.dealerPlay();
+    this.dealerPlay();
   }
 
   async dealerPlay() {
@@ -6151,7 +5968,6 @@ class CountQuestApp {
       const label = this.playerHands.length > 1 ? `Hand ${i+1}` : 'You';
       return { ...this.settleHand(st, label), label };
     });
-    this.settleTableAiSeats();
   }
 
   finishHand() {
@@ -6991,16 +6807,8 @@ class CountQuestApp {
       this.openSettings();
     });
     const r = this.rules;
-    const layout = normalizeTableLayout(this.settings.tableLayout);
     const rulesEl = document.getElementById('rules-toggles');
     rulesEl.innerHTML = `
-      <div class="p-3 rounded-xl bg-black/25 border border-white/10 space-y-2">
-        <span class="text-sm font-medium text-emerald-100">Table layout</span>
-        <div class="flex gap-2">
-          <button type="button" class="table-layout-btn flex-1 py-2 rounded-lg text-xs font-semibold border transition ${layout === TABLE_LAYOUT_SOLO ? 'bg-amber-500/30 border-amber-400 text-amber-100' : 'bg-black/20 border-white/10 text-emerald-300/80'}" data-table-layout="${TABLE_LAYOUT_SOLO}">Solo (1 seat)</button>
-          <button type="button" class="table-layout-btn flex-1 py-2 rounded-lg text-xs font-semibold border transition ${layout === TABLE_LAYOUT_FULL ? 'bg-amber-500/30 border-amber-400 text-amber-100' : 'bg-black/20 border-white/10 text-emerald-300/80'}" data-table-layout="${TABLE_LAYOUT_FULL}">Full (7 seats)</button>
-        </div>
-      </div>
       <label class="flex items-center justify-between p-3 rounded-xl bg-black/25 border border-white/10 cursor-pointer">
         <span>6:5 Blackjack (pays 1.2×)</span>
         <input type="checkbox" id="rule-65" class="w-5 h-5 accent-amber-500" ${r.blackjackPayout < 1.5 ? 'checked' : ''} />
@@ -7028,12 +6836,6 @@ class CountQuestApp {
     };
     ['rule-65','rule-das','rule-surrender','rule-h17'].forEach(id => {
       document.getElementById(id).onchange = syncRules;
-    });
-    rulesEl.querySelectorAll('[data-table-layout]').forEach(btn => {
-      btn.onclick = () => {
-        this.setTableLayout(btn.dataset.tableLayout);
-        this.openSettings();
-      };
     });
     this.updateSettingsAdvisory();
     this.loadExternalConfigIntoSettings();
@@ -8016,29 +7818,10 @@ class CountQuestApp {
         else if (wins === losses) { status = 'Push'; statusCls = 'casino-seat-ai-result-push'; }
         else { status = `${wins}W`; statusCls = 'casino-seat-ai-result-win'; }
       } else if (this.phase === 'bet' || this.phase === 'countConfirm') {
-        status = isSoloTableLayout(this.settings) ? 'Your seat' : 'Seat 4';
+        status = 'Your seat';
       }
       statusEl.textContent = status;
       statusEl.className = statusCls ? `casino-seat-status ${statusCls}` : 'casino-seat-status';
-    }
-    const solo = isSoloTableLayout(this.settings);
-    for (const seatNum of TABLE_AI_SEAT_NUMS) {
-      const el = document.getElementById(`casino-seat-${seatNum}`);
-      if (!el) continue;
-      if (solo) {
-        el.className = 'casino-seat casino-seat-empty casino-seat-ai-ready hidden';
-        el.innerHTML = this.renderEmptyCasinoSeatHtml(seatNum);
-        continue;
-      }
-      el.classList.remove('hidden');
-      const ai = this.tableAiSeats?.[seatNum];
-      if (ai) {
-        el.className = 'casino-seat casino-seat-ai';
-        el.innerHTML = this.renderTableAiSeatHtml(ai);
-      } else {
-        el.className = 'casino-seat casino-seat-empty casino-seat-ai-ready';
-        el.innerHTML = this.renderEmptyCasinoSeatHtml(seatNum);
-      }
     }
     this.syncCasinoSeatLayout();
   }
@@ -8102,32 +7885,21 @@ class CountQuestApp {
   }
 
   syncCasinoSeatLayout() {
-    const solo = isSoloTableLayout(this.settings);
-    document.body.classList.toggle('casino-table-solo', solo);
-    document.body.classList.toggle('casino-table-full', !solo);
-    document.body.classList.toggle('casino-readable-play', solo);
+    // Single-seat format only — the 7-seat arc was removed.
+    document.body.classList.add('casino-table-solo');
+    document.body.classList.remove('casino-table-full');
+    document.body.classList.add('casino-readable-play');
     const grid = document.getElementById('casino-seat-grid');
     const felt = document.querySelector('.cq-authentic-felt');
     if (grid) {
-      grid.dataset.seatCount = solo ? '1' : '7';
-      grid.classList.toggle('casino-seat-grid--solo', solo);
+      grid.dataset.seatCount = '1';
+      grid.classList.add('casino-seat-grid--solo');
     }
-    felt?.classList.toggle('cq-table-solo', solo);
+    felt?.classList.add('cq-table-solo');
     const humanLabel = document.querySelector('#casino-seat-human .casino-seat-status');
     if (humanLabel && (this.phase === 'bet' || this.phase === 'countConfirm')) {
-      humanLabel.textContent = solo ? 'Your seat' : 'Seat 4';
+      humanLabel.textContent = 'Your seat';
     }
-  }
-
-  setTableLayout(layout) {
-    const next = normalizeTableLayout(layout);
-    if (this.save.settings.tableLayout === next) return;
-    this.save.settings.tableLayout = next;
-    if (isSoloTableLayout(this.settings)) this.tableAiSeats = null;
-    else this.ensureTableAiSeats();
-    this.persist();
-    this.syncCasinoSeatLayout();
-    if (['bet', 'playing', 'handEnd', 'countConfirm'].includes(this.phase)) this.render();
   }
 
   /** Sync header/action-bar CSS vars and scale table to fit viewport (no scrollbars). */
@@ -8176,8 +7948,7 @@ class CountQuestApp {
     const maxH = Math.max(1, shellH - handendReserve);
     const scaleY = contentH > maxH ? maxH / contentH : 1;
     const scaleX = contentW > shellW ? shellW / contentW : 1;
-    const solo = isSoloTableLayout(this.settings);
-    const minScale = solo ? 0.72 : shellH < 680 ? 0.58 : 0.68;
+    const minScale = 0.72;
     const scale = Math.max(minScale, Math.min(1, scaleX, scaleY));
     viewport.style.transformOrigin = 'top center';
     if (scale < 0.995) {
@@ -8195,10 +7966,6 @@ class CountQuestApp {
 
   applyPlayerHandsFitScale(ph, maxCards, splitN) {
     if (!ph) return;
-    if (this.usesReadableSoloPlay() || !isSoloTableLayout(this.settings)) {
-      ph.style.setProperty('--cq-hand-scale', '1');
-      return;
-    }
     let scale = 1;
     if (splitN >= 4) scale = Math.min(scale, 0.78);
     else if (splitN >= 3) scale = Math.min(scale, 0.86);

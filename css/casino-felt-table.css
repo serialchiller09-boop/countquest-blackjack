@@ -1,6 +1,8 @@
 /* Authentic casino felt table — CountQuest training overlay */
-
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+/* NOTE: no external font @import here — the app is offline-first (PWA +
+   Capacitor). We rely on the condensed fallback stack below, which keeps
+   the casino look on desktop (Impact/Arial Narrow) and mobile
+   (Roboto Condensed on Android). */
 
 .cq-table-options-btn {
   position: fixed;
@@ -28,14 +30,8 @@ body.casino-play-active .cq-table-options-btn:not(.hidden) {
   justify-content: center;
 }
 
-body.casino-play-active:not(.casino-table-full) #header-currency {
+body.casino-play-active #header-currency {
   padding-right: 3.1rem;
-}
-
-body.casino-table-full.casino-play-active .cq-table-options-btn:not(.hidden) {
-  top: auto;
-  bottom: max(5.5rem, calc(var(--cq-bottom-dock-h, 4rem) + 0.65rem));
-  right: max(0.55rem, env(safe-area-inset-right));
 }
 
 body.casino-readable-play #header-currency {
@@ -79,7 +75,7 @@ html.cq-native .lobby-build-stamp {
   --cq-felt-green-mid: #1d5f72;
   --cq-felt-green-light: #2a7f96;
   --cq-felt-line: rgba(255, 255, 255, 0.92);
-  --cq-felt-font: 'Bebas Neue', Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  --cq-felt-font: 'Bebas Neue', 'Roboto Condensed', Oswald, 'Arial Narrow', Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
   --cq-clipboard-wood: #3d2817;
   --cq-clipboard-wood-light: #5c3d24;
 }
@@ -296,21 +292,14 @@ html.cq-native .lobby-build-stamp {
   transform-origin: center bottom;
 }
 
-.cq-authentic-felt #casino-seat-1 { left: 3%; bottom: 2%; }
-.cq-authentic-felt #casino-seat-2 { left: 14%; bottom: 5%; }
-.cq-authentic-felt #casino-seat-3 { left: 27%; bottom: 7%; }
 .cq-authentic-felt #casino-seat-human { left: 50%; bottom: 8%; transform: translateX(-50%); width: 18%; max-width: 7rem; z-index: 4; }
-.cq-authentic-felt #casino-seat-5 { right: 27%; bottom: 7%; left: auto; }
-.cq-authentic-felt #casino-seat-6 { right: 14%; bottom: 5%; left: auto; }
-.cq-authentic-felt #casino-seat-7 { right: 3%; bottom: 2%; left: auto; }
 
-/* Solo table — one centered player seat */
-.cq-table-solo .cq-felt-seat-circle:not(.cq-felt-seat-circle--human) {
+/* Single-seat table — only the human seat circle remains visible */
+.cq-felt-seat-circle:not(.cq-felt-seat-circle--human) {
   opacity: 0;
 }
 
-.cq-table-solo .cq-felt-seat-circle--human,
-body.casino-readable-play .cq-felt-seat-circle--human {
+.cq-felt-seat-circle--human {
   stroke-width: 4;
   fill: rgba(0, 0, 0, 0.18);
 }
@@ -409,108 +398,18 @@ body.casino-table-solo .cq-authentic-felt #casino-seat-grid {
   display: none;
 }
 
-.cq-authentic-felt .casino-seat-ai-cards {
-  position: absolute;
-  bottom: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  margin-bottom: 0.2rem;
-  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4));
-}
-
-/* Hide decorative chip rack — full table + solo readable play */
+/* Hide decorative chip rack (single-seat table) */
 body.casino-table-solo .cq-chip-rack,
-body.casino-table-full .cq-chip-rack,
-body.casino-table-full .casino-seat-bet-chip,
-body.casino-table-full .cq-casino-chip,
-body.casino-table-full .casino-seat-spot .cq-casino-chip {
+body.casino-table-solo .casino-seat-bet-chip,
+body.casino-table-solo .cq-casino-chip,
+body.casino-table-solo .casino-seat-spot .cq-casino-chip {
   display: none !important;
 }
 
-body.casino-table-full .casino-seat-spot:empty,
-body.casino-table-full .casino-seat-human .casino-seat-spot:not(:has(.casino-seat-bet-indicator:not(.hidden))) {
+body.casino-table-solo .casino-seat-spot:empty,
+body.casino-table-solo .casino-seat-human .casino-seat-spot:not(:has(.casino-seat-bet-indicator:not(.hidden))) {
   min-width: 2.75rem;
   min-height: 2.75rem;
-}
-
-body.casino-table-full .casino-player-rail {
-  position: relative;
-  z-index: 30;
-  min-height: 6.25rem;
-  padding: 0.45rem 0.65rem 0.5rem;
-  margin: 0.15rem 0.4rem 0.25rem;
-  background: rgba(0, 0, 0, 0.38);
-  border-radius: 0.65rem;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
-}
-
-body.casino-table-full .casino-player-rail #player-hands .playing-card {
-  width: 4.65rem !important;
-  height: 6.45rem !important;
-  flex-shrink: 0 !important;
-}
-
-body.casino-table-full .casino-player-rail .casino-hand-cards .playing-card + .playing-card {
-  margin-left: -1.35rem !important;
-}
-
-body.casino-table-full .casino-player-rail .playing-card .center-suit {
-  font-size: 1.85rem !important;
-}
-
-body.casino-table-full .casino-player-rail .playing-card .corner {
-  font-size: 0.9rem !important;
-}
-
-body.casino-table-full .casino-player-rail .hand-type-hint {
-  display: none !important;
-}
-
-body.casino-table-full .cq-authentic-felt .casino-seat,
-body.casino-table-full .cq-authentic-felt #casino-seat-human {
-  overflow: visible !important;
-}
-
-body.casino-table-full .cq-authentic-felt #casino-seat-human {
-  z-index: 4;
-  border: none !important;
-  background: transparent !important;
-  box-shadow: none !important;
-}
-
-body.casino-table-full .cq-authentic-felt .casino-seat-ai-cards {
-  overflow: visible !important;
-  z-index: 6;
-}
-
-body.casino-table-full .cq-authentic-felt .cq-table-play-layer,
-body.casino-table-full .cq-authentic-felt.casino-table-surface {
-  overflow: visible;
-}
-
-body.casino-table-full .cq-authentic-felt #casino-seat-grid {
-  overflow: visible !important;
-  min-height: 8rem;
-  z-index: 2;
-}
-
-body.casino-table-full .cq-authentic-felt .casino-seat-ai-cards {
-  display: none !important;
-}
-
-@media (max-width: 480px) {
-  body.casino-table-full .casino-player-rail #player-hands .playing-card {
-    width: 3.65rem !important;
-    height: 5rem !important;
-  }
-
-  body.casino-table-full .cq-authentic-felt #casino-seat-grid {
-    min-height: 7.25rem;
-  }
-
-  body.casino-table-full .cq-authentic-felt #casino-seat-1 { left: 2%; bottom: 1%; }
-  body.casino-table-full .cq-authentic-felt #casino-seat-7 { right: 2%; bottom: 1%; }
 }
 
 /* ── 3D casino chips ── */
@@ -711,7 +610,7 @@ button#btn-deal.cq-deal-locked {
   height: 2.1rem;
   padding: 0 0.45rem;
   border-radius: 9999px;
-  font-family: 'Bebas Neue', Impact, sans-serif;
+  font-family: var(--cq-felt-font);
   font-size: 1.05rem;
   font-weight: 700;
   line-height: 1;

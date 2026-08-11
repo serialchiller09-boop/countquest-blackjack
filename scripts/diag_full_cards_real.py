@@ -111,27 +111,10 @@ def main():
             app.beginBetPhase();
           }
         """,
-        "settings_full_then_practice": """
+        "practice_campaign": """
           () => {
-            app.setTableLayout('full');
-            app.startSession(true, 'practice-range');
-            app.beginBetPhase();
-          }
-        """,
-        "settings_full_campaign": """
-          () => {
-            app.setTableLayout('full');
             app.startSession(false, 'campaign');
             app.beginBetPhase();
-          }
-        """,
-        "fresh_load_full_persisted": """
-          () => {
-            localStorage.setItem('countquest-blackjack', JSON.stringify({
-              ...JSON.parse(localStorage.getItem('countquest-blackjack') || '{}'),
-              settings: { ...(JSON.parse(localStorage.getItem('countquest-blackjack') || '{}').settings || {}), tableLayout: 'full' }
-            }));
-            location.reload();
           }
         """,
     }
@@ -143,14 +126,13 @@ def main():
 
         for fname, setup in [
             ("practice_default", flows["practice_default"]),
-            ("settings_full_then_practice", flows["settings_full_then_practice"]),
-            ("settings_full_campaign", flows["settings_full_campaign"]),
+            ("practice_campaign", flows["practice_campaign"]),
         ]:
             results.append(run_flow(page, fname, setup, {"width": 390, "height": 844}))
 
         # Short Android viewport — common clipping case
         results.append(
-            run_flow(page, "full_campaign_short", flows["settings_full_campaign"], {"width": 360, "height": 640})
+            run_flow(page, "practice_campaign_short", flows["practice_campaign"], {"width": 360, "height": 640})
         )
 
         browser.close()

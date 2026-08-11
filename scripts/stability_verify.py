@@ -113,7 +113,7 @@ def main() -> int:
         results["dom"] = dom
         if (
             dom.get("betRailHidden")
-            or dom.get("seatCount", 0) < 7
+            or dom.get("seatCount", 0) < 1
             or not dom.get("hasSync")
             or not dom.get("dealerCards")
             or not dom.get("playerHands")

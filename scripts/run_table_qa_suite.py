@@ -125,12 +125,12 @@ def run_playwright_flow(name: str, setup_js: str, viewport: dict, port: int) -> 
 
 
 def check_flow(snap: dict) -> dict[str, bool]:
-    full = snap.get("layout") == "full"
+    # Single-seat format only (7-seat arc removed).
     return {
         "player_in_rail": snap.get("playerInRail") is True,
         "player_not_in_seat": snap.get("playerInSeat") is False,
-        "seven_seats": snap.get("seatsVisible") == 7 if full else snap.get("seatsVisible") == 1,
-        "full_body_class": snap.get("fullClass") is True if full else snap.get("soloClass") is True,
+        "single_seat": snap.get("seatsVisible") == 1,
+        "solo_body_class": snap.get("soloClass") is True,
         "cards_present": snap.get("cardCount", 0) >= 2,
         "cards_separated": snap.get("cardsSeparated") is True,
         "cards_painted": snap.get("cardsPainted", 0) >= 2,
@@ -142,10 +142,8 @@ def check_flow(snap: dict) -> dict[str, bool]:
             if not snap.get("menuHidden")
             else True
         ),
-        "chips_hidden": (
-            snap.get("chipsHiddenInFull") is True if full else snap.get("chipsHiddenInSolo") is True
-        ),
-        "rail_visible": snap.get("railVisible") is True if full else True,
+        "chips_hidden": snap.get("chipsHiddenInSolo") is True,
+        "rail_visible": True,
         "build_current": (snap.get("build") or "").startswith("v4"),
     }
 
@@ -183,36 +181,32 @@ def main() -> int:
         (
             "solo_practice",
             """() => {
-              app.setTableLayout('solo');
               app.startSession(true, 'practice-range');
               app.beginBetPhase();
             }""",
             {"width": 390, "height": 844},
         ),
         (
-            "full_campaign",
+            "solo_campaign",
             """() => {
-              app.setTableLayout('full');
               app.startSession(false, 'campaign');
               app.beginBetPhase();
             }""",
             {"width": 390, "height": 844},
         ),
         (
-            "full_practice_short",
+            "solo_practice_short",
             """() => {
-              app.setTableLayout('full');
               app.startSession(true, 'practice-range');
               app.beginBetPhase();
             }""",
             {"width": 360, "height": 640},
         ),
         (
-            "practice_l2_full",
+            "practice_l2_solo",
             """() => {
               app.save.helpLevel = 2;
               app.help.level = 2;
-              app.setTableLayout('full');
               app.startSession(true, 'practice-range');
               app.beginBetPhase();
             }""",

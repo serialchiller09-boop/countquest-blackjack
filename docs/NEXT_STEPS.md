@@ -46,7 +46,7 @@ These are the **current** game goals — still valid after modular split + Capac
 
 | # | Task | Source |
 |---|------|--------|
-| 1 | **7-seat table layout** — spacing, mobile scroll, card positioning, empty seats | Bible §3, §6 |
+| 1 | ~~7-seat table layout~~ — **removed**: single-seat table only (solo layout) | v45 |
 | 2 | **Post-hand flow** — fewer disruptive screen transitions | Bible §6 |
 | 3 | **Help level polish** — visibility and feedback per level 0–4 | Bible §2.5, §6 |
 | 4 | **Mobile casino viewport** — verify `fitCasinoPlayViewport` on more devices | Recent fix; extend probing |

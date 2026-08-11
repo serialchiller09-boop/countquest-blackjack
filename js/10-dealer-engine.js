@@ -50,7 +50,7 @@ const MARGARET_LINES = {
   'mood.to_warm': ["Alright. You're alright."],
   'mood.to_stiff': ["Let's keep it professional."],
   'mood.to_irritated': ["We're not here to admire the ceiling."],
-  'mood.to_impressed': ['…Sharp. Didn't expect that.'],
+  'mood.to_impressed': ['…Sharp. Didn\'t expect that.'],
   'chapter.beat_01': [
     "First time at Victoria? Graveyard shift's the honest shift. Fewer suits, more stories.",
   ],

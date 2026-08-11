@@ -27,6 +27,62 @@
       min-height: 100dvh;
       background: radial-gradient(ellipse 130% 90% at 50% -10%, #123828 0%, #0a1612 42%, #060e0b 100%);
     }
+    /* ── Base interface polish (dark casino theme) ── */
+    ::selection { background: rgba(52, 211, 153, 0.32); color: #f0fff7; }
+    summary { cursor: pointer; }
+    /* Tap-friendly, no double-tap zoom on fast taps */
+    button, a, [role="button"], summary, label { touch-action: manipulation; }
+    /* Clean number inputs — hide spinners */
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
+    /* Chrome autofill — keep the dark theme (no white/yellow flash) */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus {
+      -webkit-text-fill-color: #e7fff2;
+      -webkit-box-shadow: 0 0 0 1000px #0d2b20 inset;
+      caret-color: #e7fff2;
+      transition: background-color 999999s ease-out 0s;
+    }
+    /* Themed scrollbars (Chromium/WebKit + Firefox fallback) */
+    *::-webkit-scrollbar { width: 10px; height: 10px; }
+    *::-webkit-scrollbar-track { background: transparent; }
+    *::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.14);
+      border-radius: 8px;
+      border: 2px solid transparent;
+      background-clip: padding-box;
+    }
+    *::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.26); background-clip: padding-box; }
+    *::-webkit-scrollbar-corner { background: transparent; }
+    * { scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.18) transparent; }
+    /* Visible keyboard focus for inputs (buttons already covered) */
+    input:focus-visible, select:focus-visible, textarea:focus-visible {
+      outline: 2px solid rgba(52, 211, 153, 0.65);
+      outline-offset: 1px;
+    }
+    /* Consistent disclosure UI — custom chevron for every collapsible */
+    summary::-webkit-details-marker { display: none; }
+    details summary { list-style: none; display: flex; align-items: center; }
+    details summary::after {
+      content: '▾';
+      margin-left: auto;
+      padding-left: 0.6rem;
+      font-size: 0.7em;
+      opacity: 0.55;
+      flex-shrink: 0;
+      transition: transform 0.2s ease;
+    }
+    details[open] > summary::after { transform: rotate(180deg); }
+    details.hilo-guide summary::after { display: none; } /* has its own chevron span */
+    details.hilo-guide summary { justify-content: space-between; }
+    /* iOS Safari zooms into any input smaller than 16px on focus — enforce a floor */
+    @media (max-width: 640px) {
+      input[type="text"], input[type="number"], input[type="url"], select, textarea {
+        font-size: max(16px, 1em);
+      }
+    }
     /* Secondary screens — smaller type, tighter gaps (scroll still allowed) */
     .cq-screen-compact { font-size: 0.9rem; }
     .cq-screen-compact .text-2xl { font-size: 1.2rem; line-height: 1.2; }
@@ -110,6 +166,15 @@
       font-size: 0.55rem; letter-spacing: 0.04em; text-transform: uppercase;
       color: rgba(255,255,255,.45); white-space: nowrap; pointer-events: none;
     }
+    /* Header controls — comfortable tap targets (40px) */
+    .app-header button {
+      min-height: 2.5rem;
+      min-width: 2.5rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #btn-menu-stats { min-height: 2.75rem; }
     .action-btn { min-height: 3.25rem; min-width: 5rem; font-size: 1rem; }
     .count-box { backdrop-filter: blur(8px); }
     .count-box .count-cell,
@@ -193,11 +258,17 @@
     .count-change-popup.plus { color: #4ade80; }
     .count-change-popup.minus { color: #f87171; }
     .info-tip {
+      position: relative;
       display: inline-flex; align-items: center; justify-content: center;
-      width: 1.25rem; height: 1.25rem; border-radius: 9999px; flex-shrink: 0;
-      font-size: 0.7rem; font-weight: 800; font-style: italic; font-family: Georgia, serif;
+      width: 1.75rem; height: 1.75rem; border-radius: 9999px; flex-shrink: 0;
+      font-size: 0.8rem; font-weight: 800; font-style: italic; font-family: Georgia, serif;
       background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.25);
       color: #a7f3d0; cursor: help; pointer-events: auto;
+    }
+    /* Invisible hit-area extension: the visual dot stays 28px but the touch
+       target reaches the 40px minimum without disturbing surrounding layout. */
+    .info-tip::after {
+      content: ''; position: absolute; inset: -6px; border-radius: 9999px;
     }
     .info-tip:hover, .info-tip:focus { background: rgba(52,211,153,.25); outline: none; }
     .info-tip-panel {
@@ -592,95 +663,11 @@
       color: rgba(52,211,153,.42);
       font-weight: 600;
     }
-    .casino-seat-ai {
-      grid-template-rows: var(--cq-seat-spot-size) minmax(1.35rem, auto) minmax(0, 0.85rem);
-      grid-template-areas: "spot" "cards" "label";
-      height: auto;
-      max-height: none;
-      overflow: hidden;
-      border-color: rgba(167,243,208,.22);
-      background: linear-gradient(180deg, rgba(52,211,153,.06) 0%, rgba(0,0,0,.28) 100%);
-    }
-    .casino-seat-ai .casino-seat-spot {
-      border-style: solid;
-      border-color: rgba(167,243,208,.35);
-      padding: 0.12rem;
-    }
-    .casino-seat-ai-cards {
-      grid-area: cards;
-      width: 100%;
-      min-height: 1.35rem;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      align-items: flex-start;
-      gap: 0.1rem;
-      padding: 0.06rem 0.1rem;
-      overflow: hidden;
-    }
-    .casino-seat-ai-hand {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.04rem;
-      flex: 0 0 auto;
-    }
-    .casino-seat-ai-hand-row {
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-      gap: 0;
-      flex-wrap: nowrap;
-      overflow: hidden;
-      max-width: 100%;
-    }
-    .casino-seat-ai-hand-row .casino-ai-mini-card + .casino-ai-mini-card {
-      margin-left: -0.32rem;
-    }
-    .casino-seat-ai-hand-row.ai-mini-cards-5 .casino-ai-mini-card + .casino-ai-mini-card { margin-left: -0.4rem; }
-    .casino-seat-ai-hand-row.ai-mini-cards-6 .casino-ai-mini-card,
-    .casino-seat-ai-hand-row.ai-mini-cards-7 .casino-ai-mini-card {
-      width: 1rem;
-      height: 1.35rem;
-      font-size: 0.4rem;
-    }
-    .casino-seat-ai-hand-row.ai-mini-cards-6 .casino-ai-mini-card + .casino-ai-mini-card,
-    .casino-seat-ai-hand-row.ai-mini-cards-7 .casino-ai-mini-card + .casino-ai-mini-card { margin-left: -0.48rem; }
-    .casino-ai-mini-card {
-      width: 1.15rem;
-      height: 1.55rem;
-      border-radius: 0.2rem;
-      background: #fff;
-      color: #1c1917;
-      font-size: 0.48rem;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 1px 3px rgba(0,0,0,.35);
-      line-height: 1;
-    }
-    .casino-ai-mini-card.red { color: #dc2626; }
-    .casino-ai-mini-card.back {
-      background: linear-gradient(145deg, #1e3a5f, #0f172a);
-      color: rgba(147,197,253,.75);
-      font-size: 0.55rem;
-    }
     .casino-seat-ai-total {
       font-size: 0.42rem;
       font-family: ui-monospace, monospace;
       color: rgba(167,243,208,.65);
       line-height: 1;
-    }
-    .casino-seat-ai .casino-seat-label .casino-seat-num {
-      font-size: 0.46rem;
-      color: rgba(167,243,208,.75);
-      text-transform: none;
-      letter-spacing: 0.04em;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 100%;
     }
     .casino-seat-ai-result-win { color: rgba(52,211,153,.85); }
     .casino-seat-ai-result-loss { color: rgba(248,113,113,.85); }
@@ -1188,6 +1175,40 @@
         font-size: 0.65rem;
       }
     }
+    /* Ultra-compact in-play header on small phones — keep 40px tap targets
+       while freeing vertical space for the felt (cards must stay >= 48px). */
+    @media (max-width: 400px) {
+      body.casino-play-active #app-header { padding-top: 0.15rem; padding-bottom: 0.15rem; }
+      body.casino-play-active #app-header .app-main > div + div { margin-top: 0.2rem; }
+      body.casino-play-active #logo { width: 1.35rem; height: 1.35rem; }
+      body.casino-play-active .app-title { font-size: 0.8rem; line-height: 1.05; }
+      body.casino-play-active .brand-text { gap: 0; }
+      body.casino-play-active #header-currency .currency-chip,
+      body.casino-play-active #header-currency .currency-gem {
+        padding: 0.12rem 0.32rem;
+        font-size: 0.62rem;
+      }
+      body.casino-play-active #app-header .cq-build-stamp { display: none; }
+      body.casino-play-active #btn-help-settings { min-height: 2.25rem; }
+      /* Single-row action bar on tiny screens — 5 compact buttons across.
+         Keeps 40px tap targets and frees a full row of felt height. */
+      body.casino-play-active:not(.casino-readable-play) #action-bar .app-main {
+        gap: 0.3rem;
+        justify-content: center;
+      }
+      body.casino-play-active:not(.casino-readable-play) .action-btn {
+        min-width: 0;
+        flex: 1 1 auto;
+        padding-left: 0.3rem;
+        padding-right: 0.3rem;
+        font-size: 0.78rem;
+        white-space: nowrap;
+      }
+      body.casino-play-active:not(.casino-readable-play) #action-bar {
+        padding-top: 0.35rem;
+        padding-bottom: max(0.45rem, env(safe-area-inset-bottom));
+      }
+    }
     @media (min-width: 1280px) and (max-height: 799px) {
       :root {
         --cq-header-h: 4rem;
@@ -1665,6 +1686,9 @@
       backdrop-filter: blur(6px);
       animation: backdropFadeIn .32s ease;
     }
+    /* Consistent entrance for every dialog (premium class keeps its own timing) */
+    dialog[open] { animation: dialogIn .3s cubic-bezier(.22,1,.36,1) both; }
+    dialog[open]::backdrop { animation: backdropFadeIn .28s ease; }
     @keyframes dialogIn {
       from { opacity: 0; transform: scale(.94) translateY(14px); }
       to { opacity: 1; transform: none; }
@@ -1840,12 +1864,17 @@
     .lobby-currency-chips { background: linear-gradient(90deg, rgba(6,78,59,.85), rgba(4,120,87,.7)); border: 1px solid rgba(52,211,153,.4); color: #6ee7b7; }
     .lobby-currency-gems { background: linear-gradient(90deg, rgba(76,29,149,.75), rgba(91,33,182,.65)); border: 1px solid rgba(167,139,250,.4); color: #ddd6fe; }
     .lobby-currency-buy {
+      position: relative;
       margin-left: auto; width: 1.35rem; height: 1.35rem; border-radius: 50%;
       background: linear-gradient(145deg, #22c55e, #16a34a);
       border: 1px solid rgba(255,255,255,.35);
       color: #fff; font-weight: 800; font-size: 0.85rem; line-height: 1;
       box-shadow: 0 2px 0 #14532d, inset 0 1px 0 rgba(255,255,255,.3);
       transition: transform .1s;
+    }
+    /* Enlarge the touch target without changing the visual size */
+    .lobby-currency-buy::before {
+      content: ''; position: absolute; inset: -0.7rem; border-radius: 50%;
     }
     .lobby-currency-buy:hover { filter: brightness(1.1); }
     .lobby-currency-buy:active { transform: translateY(1px); box-shadow: 0 1px 0 #14532d; }
@@ -1855,7 +1884,7 @@
       padding: 0.3rem 0.4rem; border-radius: 0.55rem;
       background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.08);
       font-size: 0.45rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em;
-      color: rgba(255,255,255,.85); transition: background .15s, transform .15s; min-width: 2.6rem;
+      color: rgba(255,255,255,.85); transition: background .15s, transform .15s; min-width: 2.75rem;
     }
     .lobby-nav-icon-btn:hover { background: rgba(255,255,255,.14); transform: translateY(-1px); }
     .lobby-nav-icon-btn .lobby-nav-icon { font-size: 1.15rem; line-height: 1; }
@@ -2059,7 +2088,7 @@
     @media (prefers-reduced-motion: reduce) {
       .lobby-hero-play, .lobby-pass-banner::after, .lobby-nav-badge,
       .lobby-minigame-tile.ready, .lobby-continue-btn, .screen-enter,
-      dialog.dialog-premium, .currency-bump { animation: none !important; }
+      dialog.dialog-premium, dialog[open], dialog[open]::backdrop, .currency-bump { animation: none !important; }
       .playing-card.deal-anim, .toast-item { animation-duration: 0.01ms !important; }
     }
 

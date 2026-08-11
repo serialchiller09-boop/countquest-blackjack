@@ -22,19 +22,15 @@
     window.__runTestsBootstrapped = false;
     if (window.__CQ_TEST_MODE) { try { localStorage.clear(); sessionStorage.clear(); } catch (_) {} }
 
-    const SAVE_VERSION = 21;
-    const defaultClubMembership = () => ({ clubId: '', role: 'none', joinedAt: '' });
-    const defaultDailyRewards = () => ({ claimedToday: false, lastClaimedDate: '', streak: 0, bonusClaimed: false });
-    const defaultVipPass = () => ({ active: false, trialUsed: false, expiresAt: null, lastClaimedAt: null });
     function bootstrapPwaShell() {
       if (!('serviceWorker' in navigator) || window.__CQ_TEST_MODE) return;
       navigator.serviceWorker.register('sw.js').catch(() => {});
     }
     window.addEventListener('load', bootstrapPwaShell);
   </script>
-  <link rel="stylesheet" href="css/tailwind.css?v=43" />
-  <link rel="stylesheet" href="css/app.css?v=43" />
-  <link rel="stylesheet" href="css/casino-felt-table.css?v=43" />
+  <link rel="stylesheet" href="css/tailwind.css?v=45" />
+  <link rel="stylesheet" href="css/app.css?v=45" />
+  <link rel="stylesheet" href="css/casino-felt-table.css?v=45" />
 </head>
 <body class="min-h-screen text-white font-sans antialiased">
 
@@ -69,7 +65,7 @@
           <div id="app-title" class="app-title truncate">CountQuest</div>
           <div class="app-title-sub">Blackjack</div>
           <p id="header-mode" class="header-session-mode truncate"></p>
-          <span id="cq-build-stamp" class="cq-build-stamp" title="App build">v43</span>
+          <span id="cq-build-stamp" class="cq-build-stamp" title="App build">v45</span>
         </div>
       </div>
       <div id="header-currency" class="flex flex-wrap items-center gap-2 justify-end">
@@ -100,41 +96,6 @@
 </header>
 
 <main id="app-main" class="app-main px-4 sm:px-6 py-4 sm:py-5 pb-28">
-  <section id="screen-casino-play" class="hidden"></section>
-  <section id="screen-bet" class="hidden"></section>
-  <section id="screen-handend" class="hidden"></section>
-  <section id="screen-practice-range" class="hidden"></section>
-  <section id="screen-tutorial" class="hidden"></section>
-  <section id="screen-campaign" class="hidden"></section>
-  <section id="screen-daily" class="hidden"></section>
-  <section id="screen-drill-speed" class="hidden"></section>
-  <section id="screen-drill-true-count" class="hidden"></section>
-  <section id="screen-table" class="hidden max-w-6xl mx-auto"></section>
-  <div id="modal-count-quiz" class="hidden"></div>
-  <div id="modal-settings" class="hidden"></div>
-  <div id="rules-toggles" class="hidden"></div>
-  <div id="practice-range-drills" class="hidden"></div>
-  <div id="shoe-status" class="hidden"></div>
-  <div id="dealer-cards" class="hidden"></div>
-  <div id="player-hands" class="hidden"></div>
-  <div id="shoe-count-canvas" class="hidden"></div>
-  <div id="modal-reset" class="hidden"></div>
-  <div id="modal-achievement" class="hidden"></div>
-  <div id="modal-help-levelup" class="hidden"></div>
-  <button id="btn-help-levelup-close" class="hidden"></button>
-  <div id="tutorial-count-explanation" class="hidden"></div>
-  <div id="count-explain-text" class="hidden"></div>
-  <button id="btn-speed-drill-start" class="hidden"></button>
-  <button id="btn-tc-drill-start" class="hidden"></button>
-  <div id="speed-drill-stats" class="hidden"></div>
-  <div id="tc-drill-stats" class="hidden"></div>
-  <div id="casino-seat-grid" class="hidden" data-seat-count="7"></div>
-  <div id="casino-seat-human" class="hidden" data-seat="4"></div>
-  <div id="casino-player-rail" class="hidden"></div>
-  <div id="casino-felt-bet-rail" class="hidden"></div>
-  <div id="modal-dealer-read" class="hidden"></div>
-  <button id="toggle-index-deviations" class="hidden"></button>
-
   <!-- LOBBY (Plan 21 — 8 Ball Pool production home) -->
   <section id="screen-menu" class="lobby-8bp w-full mx-auto">
     <header id="lobby-top-nav" class="lobby-8bp-topbar">
@@ -167,7 +128,7 @@
         </div>
       </div>
       <div id="lobby-nav-icons" class="lobby-nav-icons"></div>
-      <span id="lobby-build-stamp" class="cq-build-stamp lobby-build-stamp" title="Web build">v43</span>
+      <span id="lobby-build-stamp" class="cq-build-stamp lobby-build-stamp" title="Web build">v45</span>
     </header>
 
     <button type="button" id="lobby-pass-banner" class="lobby-pass-banner text-left">
@@ -939,22 +900,16 @@
         <div id="casino-player-rail" class="casino-player-rail" aria-label="Your cards">
           <div id="player-hands" class="casino-seat-cards-wrap"></div>
         </div>
-        <div id="casino-seat-grid" class="casino-seat-grid" data-seat-count="7">
-          <div class="casino-seat casino-seat-empty casino-seat-ai-ready" data-seat="1" data-ai-slot="1" id="casino-seat-1"><div class="casino-seat-spot casino-seat-cards-mount" aria-hidden="true"><span class="casino-seat-available"><span class="casino-seat-available-icon"></span><span class="casino-seat-available-text">Open Seat</span></span></div><span class="casino-seat-label"><span class="casino-seat-num">1</span><span class="casino-seat-status">Open Seat</span></span></div>
-          <div class="casino-seat casino-seat-empty casino-seat-ai-ready" data-seat="2" data-ai-slot="2" id="casino-seat-2"><div class="casino-seat-spot casino-seat-cards-mount" aria-hidden="true"><span class="casino-seat-available"><span class="casino-seat-available-icon"></span><span class="casino-seat-available-text">Open Seat</span></span></div><span class="casino-seat-label"><span class="casino-seat-num">2</span><span class="casino-seat-status">Open Seat</span></span></div>
-          <div class="casino-seat casino-seat-empty casino-seat-ai-ready" data-seat="3" data-ai-slot="3" id="casino-seat-3"><div class="casino-seat-spot casino-seat-cards-mount" aria-hidden="true"><span class="casino-seat-available"><span class="casino-seat-available-icon"></span><span class="casino-seat-available-text">Open Seat</span></span></div><span class="casino-seat-label"><span class="casino-seat-num">3</span><span class="casino-seat-status">Open Seat</span></span></div>
-          <div class="casino-seat casino-seat-human" data-seat="4" id="casino-seat-human">
+        <div id="casino-seat-grid" class="casino-seat-grid" data-seat-count="1">
+          <div class="casino-seat casino-seat-human" data-seat="1" id="casino-seat-human">
             <div class="casino-seat-spot casino-seat-cards-mount">
               <div id="casino-seat-bet-indicator" class="casino-seat-bet-indicator hidden" aria-hidden="true">
                 <span id="casino-seat-bet-chip-visual" class="casino-seat-bet-chip"></span>
                 <span id="bet-placed-amount" class="sr-only">0</span>
               </div>
             </div>
-            <span class="casino-seat-label"><span class="casino-seat-num">You</span><span class="casino-seat-status">Seat 4</span></span>
+            <span class="casino-seat-label"><span class="casino-seat-num">You</span><span class="casino-seat-status">Your seat</span></span>
           </div>
-          <div class="casino-seat casino-seat-empty casino-seat-ai-ready" data-seat="5" data-ai-slot="5" id="casino-seat-5"><div class="casino-seat-spot casino-seat-cards-mount" aria-hidden="true"><span class="casino-seat-available"><span class="casino-seat-available-icon"></span><span class="casino-seat-available-text">Open Seat</span></span></div><span class="casino-seat-label"><span class="casino-seat-num">5</span><span class="casino-seat-status">Open Seat</span></span></div>
-          <div class="casino-seat casino-seat-empty casino-seat-ai-ready" data-seat="6" data-ai-slot="6" id="casino-seat-6"><div class="casino-seat-spot casino-seat-cards-mount" aria-hidden="true"><span class="casino-seat-available"><span class="casino-seat-available-icon"></span><span class="casino-seat-available-text">Open Seat</span></span></div><span class="casino-seat-label"><span class="casino-seat-num">6</span><span class="casino-seat-status">Open Seat</span></span></div>
-          <div class="casino-seat casino-seat-empty casino-seat-ai-ready" data-seat="7" data-ai-slot="7" id="casino-seat-7"><div class="casino-seat-spot casino-seat-cards-mount" aria-hidden="true"><span class="casino-seat-available"><span class="casino-seat-available-icon"></span><span class="casino-seat-available-text">Open Seat</span></span></div><span class="casino-seat-label"><span class="casino-seat-num">7</span><span class="casino-seat-status">Open Seat</span></span></div>
         </div>
         </div>
       </div>
@@ -1261,18 +1216,18 @@
 
 <div id="toast-stack" class="fixed top-20 right-4 z-[60] flex flex-col gap-2 items-end pointer-events-none max-w-[92vw] sm:max-w-xs"></div>
 
-  <script src="js/00-capacitor-bridge.js?v=43"></script>
-  <script src="js/01-constants.js?v=43"></script>
-  <script src="js/02-core-types.js?v=43"></script>
-  <script src="js/03-counting.js?v=43"></script>
-  <script src="js/04-strategy.js?v=43"></script>
-  <script src="js/05-help-system.js?v=43"></script>
-  <script src="js/06-stats-storage.js?v=43"></script>
-  <script src="js/06b-validation.js?v=43"></script>
-  <script src="js/07-game-engine.js?v=43"></script>
-  <script src="js/08-tutorial.js?v=43"></script>
-  <script src="js/10-dealer-engine.js?v=43"></script>
-  <script src="js/09-tests.js?v=43"></script>
+  <script src="js/00-capacitor-bridge.js?v=45"></script>
+  <script src="js/01-constants.js?v=45"></script>
+  <script src="js/02-core-types.js?v=45"></script>
+  <script src="js/03-counting.js?v=45"></script>
+  <script src="js/04-strategy.js?v=45"></script>
+  <script src="js/05-help-system.js?v=45"></script>
+  <script src="js/06-stats-storage.js?v=45"></script>
+  <script src="js/06b-validation.js?v=45"></script>
+  <script src="js/07-game-engine.js?v=45"></script>
+  <script src="js/08-tutorial.js?v=45"></script>
+  <script src="js/10-dealer-engine.js?v=45"></script>
+  <script src="js/09-tests.js?v=45"></script>
   <script>
     if ('serviceWorker' in navigator && !window.__CQ_TEST_MODE && !window.__CQ_NATIVE) {
       window.addEventListener('load', () => {

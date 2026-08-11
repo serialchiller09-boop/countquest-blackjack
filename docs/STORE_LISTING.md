@@ -49,7 +49,7 @@ CountQuest Blackjack teaches real Hi-Lo card counting while you play. Progress f
 • Dealer Mode — run the table under pressure
 
 🎰 CASINO MODES
-• 7-seat table play with tiered stakes
+• Single-seat table play with tiered stakes
 • 1v1 quick matches and tournament brackets
 • Weekly special events
 • Rank up from Novice to Master

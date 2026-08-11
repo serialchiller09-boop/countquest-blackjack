@@ -8,13 +8,32 @@ const root = path.resolve(__dirname, '..');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 
 // Collect scripts (inline + external) in document order to execute manually.
-const scriptTags = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)];
+// Use index-based scanning rather than a tag regex — case- and
+// whitespace-tolerant, and immune to the "incomplete sanitization"
+// regex findings (e.g. uppercase or spaced <script/</script> variants).
 const srcs = [];
-for (const m of scriptTags) {
-  const attrs = m[1] || '';
-  const srcMatch = attrs.match(/src="([^"]+)"/);
-  if (srcMatch) srcs.push({ type: 'src', value: srcMatch[1] });
-  else if (m[2] && m[2].trim()) srcs.push({ type: 'inline', value: m[2] });
+{
+  const lower = html.toLowerCase();
+  let pos = 0;
+  while (pos < html.length) {
+    const open = lower.indexOf('<script', pos);
+    if (open === -1) break;
+    const openEnd = html.indexOf('>', open);
+    if (openEnd === -1) break;
+    const attrs = html.slice(open + 7, openEnd);
+    const srcMatch = attrs.match(/src="([^"]+)"/);
+    const close = lower.indexOf('</script', openEnd + 1);
+    if (close === -1) break;
+    const closeEnd = html.indexOf('>', close);
+    if (closeEnd === -1) break;
+    if (srcMatch) {
+      srcs.push({ type: 'src', value: srcMatch[1] });
+    } else {
+      const content = html.slice(openEnd + 1, close);
+      if (content.trim()) srcs.push({ type: 'inline', value: content });
+    }
+    pos = closeEnd + 1;
+  }
 }
 
 const errors = [];

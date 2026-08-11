@@ -38,21 +38,13 @@ const TYPES = {
   '.ttf': 'font/ttf',
 };
 
-/**
- * Resolve a URL path to a file inside ROOT, or null when it escapes ROOT.
- * Path traversal is rejected by comparing the resolved path against ROOT.
- */
-function resolveSafe(urlPath) {
-  let decoded;
+/** Strip the query/fragment and percent-decode a request target. */
+function decodeTarget(urlPath) {
   try {
-    decoded = decodeURIComponent(urlPath.split('?')[0].split('#')[0]);
+    return decodeURIComponent(urlPath.split('?')[0].split('#')[0]);
   } catch {
     return null;
   }
-  if (decoded.endsWith('/')) decoded += 'index.html';
-  const full = path.resolve(ROOT, '.' + path.posix.normalize(decoded));
-  if (full !== ROOT && !full.startsWith(ROOT + path.sep)) return null;
-  return full;
 }
 
 async function startStaticServer() {
@@ -61,11 +53,30 @@ async function startStaticServer() {
   }
 
   const server = http.createServer((req, res) => {
-    const file = resolveSafe(req.url || '/');
-    if (!file) {
+    let target = decodeTarget(req.url || '/');
+    if (target === null) {
+      res.writeHead(400).end('Bad request');
+      return;
+    }
+    if (target.endsWith('/')) target += 'index.html';
+
+    // Resolve, then require containment inside ROOT before any fs use.
+    // Kept inline (rather than in a helper) so the check is unambiguously
+    // a barrier on this data flow for static analysis and for readers.
+    const resolved = path.resolve(ROOT, '.' + path.posix.normalize(target));
+    if (resolved !== ROOT && !resolved.startsWith(ROOT + path.sep)) {
       res.writeHead(403).end('Forbidden');
       return;
     }
+    // Re-derive the path from a ROOT-relative segment so the value reaching
+    // fs is built from ROOT plus a verified-internal relative path.
+    const rel = path.relative(ROOT, resolved);
+    if (rel.startsWith('..') || path.isAbsolute(rel)) {
+      res.writeHead(403).end('Forbidden');
+      return;
+    }
+    const file = path.join(ROOT, rel);
+
     fs.stat(file, (err, stat) => {
       if (err || !stat.isFile()) {
         res.writeHead(404).end('Not found');

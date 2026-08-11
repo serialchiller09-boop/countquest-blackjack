@@ -258,11 +258,17 @@
     .count-change-popup.plus { color: #4ade80; }
     .count-change-popup.minus { color: #f87171; }
     .info-tip {
+      position: relative;
       display: inline-flex; align-items: center; justify-content: center;
       width: 1.75rem; height: 1.75rem; border-radius: 9999px; flex-shrink: 0;
       font-size: 0.8rem; font-weight: 800; font-style: italic; font-family: Georgia, serif;
       background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.25);
       color: #a7f3d0; cursor: help; pointer-events: auto;
+    }
+    /* Invisible hit-area extension: the visual dot stays 28px but the touch
+       target reaches the 40px minimum without disturbing surrounding layout. */
+    .info-tip::after {
+      content: ''; position: absolute; inset: -6px; border-radius: 9999px;
     }
     .info-tip:hover, .info-tip:focus { background: rgba(52,211,153,.25); outline: none; }
     .info-tip-panel {

@@ -1,8 +1,10 @@
 /* Real-browser verification: load index.html?test=1 in Chromium and run embedded runTests(). */
 const puppeteer = require('puppeteer-core');
 const bootChrome = require('./browser_env');
+const startStaticServer = require('./static_server');
 (async () => {
   const errors = [];
+  const server = await startStaticServer();
   const browser = await puppeteer.launch({
     executablePath: await bootChrome(),
     headless: true,
@@ -11,7 +13,7 @@ const bootChrome = require('./browser_env');
   const page = await browser.newPage();
   page.on('pageerror', e => errors.push('pageerror: ' + e.message));
   page.on('console', msg => { if (msg.type() === 'error') errors.push('console.error: ' + msg.text().slice(0, 300)); });
-  await page.goto('http://127.0.0.1:8080/index.html?test=1', { waitUntil: 'domcontentloaded', timeout: 45000 });
+  await page.goto(`${server.origin}/index.html?test=1`, { waitUntil: 'domcontentloaded', timeout: 45000 });
   await page.waitForFunction('window.__runTestsDone === true', { timeout: 120000 });
   const banner = await page.evaluate(() => {
     const b = document.getElementById('test-banner');
@@ -24,5 +26,6 @@ const bootChrome = require('./browser_env');
   console.log('errors:', errors.length);
   for (const e of errors.slice(0, 10)) console.log('  ERR:', e);
   await browser.close();
+  await server.close();
   process.exit(banner.text.includes('passed') && errors.length === 0 ? 0 : 1);
 })();

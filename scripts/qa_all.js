@@ -1,5 +1,6 @@
 const puppeteer = require('puppeteer-core');
-const boot = require('/home/user/countquest-blackjack/scripts/browser_env');
+const boot = require('./browser_env');
+const startStaticServer = require('./static_server');
 
 const FLOWS = [
   { name: 'solo_practice', vp: { width: 390, height: 844 }, setup: () => { window.app.startSession(true, 'practice-range'); window.app.beginBetPhase(); } },
@@ -9,6 +10,7 @@ const FLOWS = [
 ];
 
 (async () => {
+  const server = await startStaticServer();
   const browser = await puppeteer.launch({ executablePath: await boot(), headless: true,
     args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu'] });
   let allPass = true;
@@ -18,7 +20,7 @@ const FLOWS = [
     const errs = [];
     page.on('pageerror', e => errs.push(e.message));
     try {
-      await page.goto('http://127.0.0.1:8080/index.html', { waitUntil: 'domcontentloaded', timeout: 45000 });
+      await page.goto(`${server.origin}/index.html`, { waitUntil: 'domcontentloaded', timeout: 45000 });
       await page.waitForFunction(() => !!window.app, { timeout: 45000 });
       await page.evaluate(flow.setup);
       await new Promise(r => setTimeout(r, 400));
@@ -35,7 +37,6 @@ const FLOWS = [
       const snap = await page.evaluate(() => {
         const cards = [...document.querySelectorAll('#player-hands .playing-card')];
         const rects = cards.map(c => c.getBoundingClientRect());
-        const full = document.body.classList.contains('casino-table-full');
         return {
           layout: window.app.settings.tableLayout,
           fullClass: document.body.classList.contains('casino-table-full'),
@@ -69,6 +70,7 @@ const FLOWS = [
     await page.close();
   }
   await browser.close();
+  await server.close();
   console.log(allPass ? 'ALL FLOWS PASS' : 'SOME FLOWS FAILED');
   process.exit(allPass ? 0 : 1);
 })();

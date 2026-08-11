@@ -2,10 +2,11 @@
    Checks: page errors, horizontal overflow, tap targets, key element visibility. */
 const puppeteer = require('puppeteer-core');
 const bootChrome = require('./browser_env');
+const startStaticServer = require('./static_server');
 const fs = require('fs');
 const path = require('path');
 
-const OUT = '/home/user/countquest-blackjack/artifacts';
+const OUT = path.resolve(__dirname, '..', 'artifacts');
 const VIEWPORTS = [
   { name: 'desktop', width: 1280, height: 720 },
   { name: 'mobile', width: 390, height: 844 },
@@ -60,6 +61,8 @@ const tapTargets = (page) => page.evaluate(() => {
 
 (async () => {
   const allIssues = [];
+  fs.mkdirSync(OUT, { recursive: true });
+  const server = await startStaticServer();
   const browser = await puppeteer.launch({
     executablePath: await bootChrome(),
     headless: true,
@@ -75,7 +78,7 @@ const tapTargets = (page) => page.evaluate(() => {
 
     const report = { viewport: vp.name, errors: [] };
     try {
-      await page.goto('http://127.0.0.1:8080/index.html', { waitUntil: 'domcontentloaded', timeout: 45000 });
+      await page.goto(`${server.origin}/index.html`, { waitUntil: 'domcontentloaded', timeout: 45000 });
       await page.waitForFunction("() => !document.getElementById('screen-menu').className.includes('hidden')", { timeout: 20000 });
       await new Promise(r => setTimeout(r, 600));
 
@@ -138,6 +141,10 @@ const tapTargets = (page) => page.evaluate(() => {
     await page.close();
   }
   await browser.close();
+  await server.close();
   fs.writeFileSync(path.join(OUT, 'ui-audit-report.json'), JSON.stringify(allIssues, null, 2));
   console.log(JSON.stringify(allIssues, null, 2));
+  const failed = allIssues.some(r => (r.errors && r.errors.length)
+    || Object.values(r).some(v => v && typeof v === 'object' && Array.isArray(v.issues) && v.issues.length));
+  process.exit(failed ? 1 : 0);
 })();

@@ -28,9 +28,9 @@ ios/App/Pods/
 ios/App/App/public/
 ios/DerivedData/
 ios/capacitor-cordova-ios-plugins/
+.capacitor/
 artifacts/ui-audit-report.json
 artifacts/preview-*.png
-.capacitor/artifacts/
 artifacts/audit-*.png
 artifacts/qa-*.png
 artifacts/table-qa/

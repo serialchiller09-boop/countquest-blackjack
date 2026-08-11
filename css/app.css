@@ -657,95 +657,11 @@
       color: rgba(52,211,153,.42);
       font-weight: 600;
     }
-    .casino-seat-ai {
-      grid-template-rows: var(--cq-seat-spot-size) minmax(1.35rem, auto) minmax(0, 0.85rem);
-      grid-template-areas: "spot" "cards" "label";
-      height: auto;
-      max-height: none;
-      overflow: hidden;
-      border-color: rgba(167,243,208,.22);
-      background: linear-gradient(180deg, rgba(52,211,153,.06) 0%, rgba(0,0,0,.28) 100%);
-    }
-    .casino-seat-ai .casino-seat-spot {
-      border-style: solid;
-      border-color: rgba(167,243,208,.35);
-      padding: 0.12rem;
-    }
-    .casino-seat-ai-cards {
-      grid-area: cards;
-      width: 100%;
-      min-height: 1.35rem;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      align-items: flex-start;
-      gap: 0.1rem;
-      padding: 0.06rem 0.1rem;
-      overflow: hidden;
-    }
-    .casino-seat-ai-hand {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.04rem;
-      flex: 0 0 auto;
-    }
-    .casino-seat-ai-hand-row {
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-      gap: 0;
-      flex-wrap: nowrap;
-      overflow: hidden;
-      max-width: 100%;
-    }
-    .casino-seat-ai-hand-row .casino-ai-mini-card + .casino-ai-mini-card {
-      margin-left: -0.32rem;
-    }
-    .casino-seat-ai-hand-row.ai-mini-cards-5 .casino-ai-mini-card + .casino-ai-mini-card { margin-left: -0.4rem; }
-    .casino-seat-ai-hand-row.ai-mini-cards-6 .casino-ai-mini-card,
-    .casino-seat-ai-hand-row.ai-mini-cards-7 .casino-ai-mini-card {
-      width: 1rem;
-      height: 1.35rem;
-      font-size: 0.4rem;
-    }
-    .casino-seat-ai-hand-row.ai-mini-cards-6 .casino-ai-mini-card + .casino-ai-mini-card,
-    .casino-seat-ai-hand-row.ai-mini-cards-7 .casino-ai-mini-card + .casino-ai-mini-card { margin-left: -0.48rem; }
-    .casino-ai-mini-card {
-      width: 1.15rem;
-      height: 1.55rem;
-      border-radius: 0.2rem;
-      background: #fff;
-      color: #1c1917;
-      font-size: 0.48rem;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 1px 3px rgba(0,0,0,.35);
-      line-height: 1;
-    }
-    .casino-ai-mini-card.red { color: #dc2626; }
-    .casino-ai-mini-card.back {
-      background: linear-gradient(145deg, #1e3a5f, #0f172a);
-      color: rgba(147,197,253,.75);
-      font-size: 0.55rem;
-    }
     .casino-seat-ai-total {
       font-size: 0.42rem;
       font-family: ui-monospace, monospace;
       color: rgba(167,243,208,.65);
       line-height: 1;
-    }
-    .casino-seat-ai .casino-seat-label .casino-seat-num {
-      font-size: 0.46rem;
-      color: rgba(167,243,208,.75);
-      text-transform: none;
-      letter-spacing: 0.04em;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 100%;
     }
     .casino-seat-ai-result-win { color: rgba(52,211,153,.85); }
     .casino-seat-ai-result-loss { color: rgba(248,113,113,.85); }

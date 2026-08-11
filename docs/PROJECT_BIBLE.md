@@ -12,7 +12,7 @@
 ## Current Focus vs Future Ideas
 
 ### Current Focus (Active Development)
-- Refining the **7-seat casino table layout** (spacing, mobile behavior, scroll reduction, card positioning).
+- ~~7-seat casino table layout~~ — **removed** (v45): the game now uses a single-seat table only.
 - Fixing UI bugs and improving game flow / post-hand transitions.
 - **Play Store path:** Internal testing → device QA → Production when v1-ready.
 - Incremental updates with tests (`python scripts/run_web_tests.py`).
@@ -87,7 +87,7 @@ Table organization, spacing, and scrolling on the casino play screen — especia
 ## 3. UI/UX & Theming
 
 **Theme:** Quest Through the Casinos  
-**Priority:** 7-seat table — mobile viewport fit, reduced scroll, card/seat positioning.
+**Priority:** single-seat table — mobile viewport fit, reduced scroll, card positioning.
 
 **Casino shell:** `#screen-casino-play` fixed between header and action bar; `syncCasinoShellMetrics()` + `fitCasinoPlayViewport()` scale when content overflows.
 
@@ -116,7 +116,7 @@ python scripts/show_build_progress.py
 
 | Date       | Decision                                           | Status        |
 |------------|----------------------------------------------------|---------------|
-| 2026-07-07 | 7-seat traditional table layout                    | In Progress   |
+| 2026-08-11 | 7-seat format scrapped — single-seat table        | Removed       |
 | 2026-07-07 | Modular `js/` + bundled Tailwind (not CDN)         | Confirmed     |
 | 2026-07-08 | Capacitor 8 Android/iOS wrap                       | Complete      |
 | 2026-07-08 | Play Store release signing + AAB pipeline            | Complete      |

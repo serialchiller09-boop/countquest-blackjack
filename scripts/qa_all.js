@@ -2,10 +2,10 @@ const puppeteer = require('puppeteer-core');
 const boot = require('/home/user/countquest-blackjack/scripts/browser_env');
 
 const FLOWS = [
-  { name: 'solo_practice', vp: { width: 390, height: 844 }, setup: () => { window.app.setTableLayout('solo'); window.app.startSession(true, 'practice-range'); window.app.beginBetPhase(); } },
-  { name: 'full_campaign', vp: { width: 390, height: 844 }, setup: () => { window.app.setTableLayout('full'); window.app.startSession(false, 'campaign'); window.app.beginBetPhase(); } },
-  { name: 'full_practice_short', vp: { width: 360, height: 640 }, setup: () => { window.app.setTableLayout('full'); window.app.startSession(true, 'practice-range'); window.app.beginBetPhase(); } },
-  { name: 'practice_l2_full', vp: { width: 390, height: 844 }, setup: () => { window.app.save.helpLevel = 2; window.app.help.level = 2; window.app.setTableLayout('full'); window.app.startSession(true, 'practice-range'); window.app.beginBetPhase(); } },
+  { name: 'solo_practice', vp: { width: 390, height: 844 }, setup: () => { window.app.startSession(true, 'practice-range'); window.app.beginBetPhase(); } },
+  { name: 'solo_campaign', vp: { width: 390, height: 844 }, setup: () => { window.app.startSession(false, 'campaign'); window.app.beginBetPhase(); } },
+  { name: 'solo_practice_short', vp: { width: 360, height: 640 }, setup: () => { window.app.startSession(true, 'practice-range'); window.app.beginBetPhase(); } },
+  { name: 'practice_l2_solo', vp: { width: 390, height: 844 }, setup: () => { window.app.save.helpLevel = 2; window.app.help.level = 2; window.app.startSession(true, 'practice-range'); window.app.beginBetPhase(); } },
 ];
 
 (async () => {
@@ -53,8 +53,8 @@ const FLOWS = [
       const checks = {
         player_in_rail: snap.playerInRail === true,
         player_not_in_seat: snap.playerInSeat === false,
-        seven_seats: snap.layout === 'full' ? snap.seats === 7 : snap.seats === 1,
-        full_body_class: snap.layout === 'full' ? snap.fullClass : snap.soloClass,
+        single_seat: snap.seats === 1,
+        solo_body_class: snap.soloClass === true,
         cards_present: snap.cardCount >= 2,
         cards_separated: snap.separated === true,
         cards_large_enough: snap.minCardW >= 48,

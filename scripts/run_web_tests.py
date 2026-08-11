@@ -478,7 +478,12 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertIn("syncBottomDockVisibility", html)
         self.assertIn("syncCasinoSeatLayout", html)
         self.assertIn("TABLE_LAYOUT_SOLO", html)
-        self.assertIn("setTableLayout", html)
+        self.assertIn("syncCasinoSeatLayout", html)
+        self.assertNotIn("setTableLayout", html)
+        index_html = load_index_html()
+        self.assertNotIn("casino-table-full", index_html)
+        self.assertNotIn("data-ai-slot", index_html)
+        self.assertNotIn("casino-seat-1", index_html)
         self.assertIn("casino-felt-bet-panel", html)
         self.assertIn("casino-bet-active", html)
         self.assertIn("help.showCountInPlay()", html)
@@ -487,7 +492,7 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertIn("help.shouldShowHint(", html)
         self.assertIn("help.showBetSuggestion()", html)
         seat_markers = html.count('class="casino-seat')
-        self.assertGreaterEqual(seat_markers, 7)
+        self.assertGreaterEqual(seat_markers, 1)
 
     def test_casino_layout_css_contract(self) -> None:
         """Structural scroll-free layout contract (no browser)."""
@@ -502,11 +507,9 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertIn("--cq-felt-deep", html)
         self.assertIn("--cq-gold-glow", html)
         self.assertIn("--cq-cyan-glow", html)
-        self.assertIn('data-seat-count="7"', html)
-        self.assertIn('data-seat="4"', html)
-        self.assertIn("casino-seat-ai-ready", html)
+        self.assertIn('data-seat-count="1"', html)
+        self.assertIn('data-seat="1"', html)
         self.assertIn("casino-seat-cards-mount", html)
-        self.assertIn("data-ai-slot", html)
         self.assertIn("grid-template-rows: var(--cq-seat-spot-size)", html)
         self.assertIn("viewport.style.transform = ''", html)
         self.assertNotRegex(html, r'class="[^"]*casino-seat-badge')
@@ -528,26 +531,14 @@ class TestIndexHtmlStructure(unittest.TestCase):
         )
         self.assertIsNotNone(grid_match, "rendered casino seat grid not found")
         grid_html = grid_match.group(1)
-        for seat_id in range(1, 8):
-            marker = f'id="casino-seat-{seat_id}"' if seat_id != 4 else 'id="casino-seat-human"'
-            start = grid_html.index(marker)
-            next_markers = [
-                grid_html.index(f'id="casino-seat-{n}"', start + 1)
-                for n in range(1, 8)
-                if n != seat_id and f'id="casino-seat-{n}"' in grid_html[start + 1 :]
-            ]
-            human_next = grid_html.find('id="casino-seat-human"', start + 1)
-            if human_next > start and seat_id != 4:
-                next_markers.append(human_next)
-            end = min(next_markers) if next_markers else len(grid_html)
-            spot_before_label(grid_html[start:end])
+        self.assertIn('id="casino-seat-human"', grid_html)
+        self.assertNotIn('id="casino-seat-1"', grid_html)
+        self.assertNotIn('id="casino-seat-5"', grid_html)
         self.assertIn("casino-seat-cards-mount", grid_html)
         label_count = len(re.findall(r'class="casino-seat-label', grid_html))
-        self.assertEqual(label_count, 7)
+        self.assertEqual(label_count, 1)
         spot_count = len(re.findall(r'class="casino-seat-spot', grid_html))
-        self.assertEqual(spot_count, 7)
-        self.assertIn("casino-seat-ai", html)
-        self.assertIn("createTableAiSeats", html)
+        self.assertEqual(spot_count, 1)
 
     def test_casino_scroll_budget_at_720(self) -> None:
         """Static chrome + content budget at 1280x720 — values parsed from shipped CSS."""
@@ -659,9 +650,9 @@ class TestIndexHtmlStructure(unittest.TestCase):
         self.assertIn("game-table-wrap", html)
         self.assertIn('id="screen-casino-play"', html)
         self.assertIn('id="casino-seat-grid"', html)
-        self.assertIn('data-seat-count="7"', html)
+        self.assertIn('data-seat-count="1"', html)
         self.assertIn('id="casino-seat-human"', html)
-        self.assertIn('data-seat="4"', html)
+        self.assertIn('data-seat="1"', html)
         self.assertIn('id="screen-table" class="game-screen max-w-6xl', html)
         self.assertIn("--cq-felt-deep", html)
         self.assertIn("--cq-gold", html)

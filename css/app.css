@@ -1253,6 +1253,40 @@
         font-size: 0.65rem;
       }
     }
+    /* Ultra-compact in-play header on small phones — keep 40px tap targets
+       while freeing vertical space for the felt (cards must stay >= 48px). */
+    @media (max-width: 400px) {
+      body.casino-play-active #app-header { padding-top: 0.15rem; padding-bottom: 0.15rem; }
+      body.casino-play-active #app-header .app-main > div + div { margin-top: 0.2rem; }
+      body.casino-play-active #logo { width: 1.35rem; height: 1.35rem; }
+      body.casino-play-active .app-title { font-size: 0.8rem; line-height: 1.05; }
+      body.casino-play-active .brand-text { gap: 0; }
+      body.casino-play-active #header-currency .currency-chip,
+      body.casino-play-active #header-currency .currency-gem {
+        padding: 0.12rem 0.32rem;
+        font-size: 0.62rem;
+      }
+      body.casino-play-active #app-header .cq-build-stamp { display: none; }
+      body.casino-play-active #btn-help-settings { min-height: 2.25rem; }
+      /* Single-row action bar on tiny screens — 5 compact buttons across.
+         Keeps 40px tap targets and frees a full row of felt height. */
+      body.casino-play-active:not(.casino-readable-play) #action-bar .app-main {
+        gap: 0.3rem;
+        justify-content: center;
+      }
+      body.casino-play-active:not(.casino-readable-play) .action-btn {
+        min-width: 0;
+        flex: 1 1 auto;
+        padding-left: 0.3rem;
+        padding-right: 0.3rem;
+        font-size: 0.78rem;
+        white-space: nowrap;
+      }
+      body.casino-play-active:not(.casino-readable-play) #action-bar {
+        padding-top: 0.35rem;
+        padding-bottom: max(0.45rem, env(safe-area-inset-bottom));
+      }
+    }
     @media (min-width: 1280px) and (max-height: 799px) {
       :root {
         --cq-header-h: 4rem;

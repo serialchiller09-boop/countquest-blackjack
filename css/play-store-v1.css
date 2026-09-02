@@ -31,3 +31,103 @@ html.cq-dev #external-services-panel { display: block !important; }
     min-height: 3rem;
   }
 }
+
+/* Clubs + minigames stay on the first-session lobby (v54). */
+.lobby-clubs-btn {
+  min-width: 4.6rem !important;
+  min-height: 4.15rem !important;
+  background: linear-gradient(160deg, #c4b5fd 0%, #7c3aed 42%, #4c1d95 100%) !important;
+  border: 2px solid rgba(253, 224, 71, .6) !important;
+  box-shadow: 0 5px 0 #2e1065, 0 10px 22px rgba(124, 58, 237, .5), inset 0 1px 0 rgba(255,255,255,.35) !important;
+}
+.lobby-clubs-icon { font-size: 1.9rem !important; filter: drop-shadow(0 0 6px rgba(253,224,71,.45)); }
+.lobby-clubs-btn span:nth-child(2) { color: #fef9c3; }
+
+#lobby-bottom-dock.lobby-bottom-dock {
+  background: linear-gradient(180deg, rgba(15, 31, 24, .2), rgba(10, 22, 18, .92));
+  border-top: 2px solid rgba(251, 191, 36, .28);
+  padding-bottom: max(0.55rem, env(safe-area-inset-bottom));
+}
+#lobby-bottom-dock .lobby-dock-label {
+  color: #fde68a !important;
+  letter-spacing: .16em !important;
+  font-weight: 800;
+}
+.lobby-minigame-tile {
+  min-height: 4.6rem !important;
+  border-radius: .9rem !important;
+}
+.lobby-minigame-tile[data-lobby-minigame="spin-win"] {
+  background: linear-gradient(180deg, #fbbf24 0%, #b45309 100%) !important;
+  border-color: #fde68a !important;
+  box-shadow: 0 4px 0 #78350f, 0 0 16px rgba(251,191,36,.35) !important;
+}
+.lobby-minigame-tile[data-lobby-minigame="spin-win"] .mg-label,
+.lobby-minigame-tile[data-lobby-minigame="spin-win"] .mg-status { color: #1c1917 !important; font-weight: 800; }
+.lobby-minigame-tile[data-lobby-minigame="surprise-box"] {
+  background: linear-gradient(180deg, #34d399 0%, #065f46 100%) !important;
+  border-color: #6ee7b7 !important;
+}
+.lobby-minigame-tile[data-lobby-minigame="scratch-win"] {
+  background: linear-gradient(180deg, #67e8f9 0%, #0e7490 100%) !important;
+  border-color: #a5f3fc !important;
+}
+.lobby-minigame-tile[data-lobby-minigame="lucky-shot"] {
+  background: linear-gradient(180deg, #c4b5fd 0%, #5b21b6 100%) !important;
+  border-color: #ddd6fe !important;
+}
+.lobby-minigame-tile .mg-icon { font-size: 1.75rem !important; }
+
+.lobby-spin-wheel-wrap { width: 14rem !important; height: 14rem !important; }
+.lobby-spin-wheel {
+  border: 6px solid #fbbf24 !important;
+  box-shadow: 0 0 0 4px #78350f, 0 8px 28px rgba(0,0,0,.5), inset 0 0 24px rgba(0,0,0,.25) !important;
+}
+.lobby-spin-pointer {
+  border-top: 1.15rem solid #facc15 !important;
+  filter: drop-shadow(0 3px 4px rgba(0,0,0,.6)) !important;
+}
+#modal-lobby-minigame {
+  background: radial-gradient(ellipse at top, #1a4d38 0%, #0a1612 70%) !important;
+  border: 2px solid rgba(251,191,36,.5) !important;
+  box-shadow: 0 20px 50px rgba(0,0,0,.6), 0 0 40px rgba(251,191,36,.12) !important;
+}
+#modal-lobby-minigame #lobby-minigame-title { text-shadow: 0 0 12px rgba(251,191,36,.35); }
+#btn-lobby-minigame-action {
+  min-height: 3rem;
+  box-shadow: 0 4px 0 #78350f, 0 8px 18px rgba(251,191,36,.25);
+}
+
+#screen-clubs > .text-center.py-2 h2 {
+  font-size: 1.85rem;
+  letter-spacing: .04em;
+  text-shadow: 0 0 18px rgba(251,191,36,.35);
+}
+#screen-clubs #clubs-browse-panel .felt,
+#screen-clubs #clubs-hub-view .felt {
+  box-shadow: 0 8px 24px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.06);
+}
+#screen-clubs [data-join-club] {
+  background: linear-gradient(145deg, rgba(91,33,182,.35), rgba(15,31,24,.7)) !important;
+  border: 1px solid rgba(196,181,253,.35) !important;
+}
+#btn-club-create-open {
+  background: linear-gradient(145deg, #22d3ee, #0891b2) !important;
+  color: #0a1612 !important;
+  font-weight: 800 !important;
+  border: 0 !important;
+}
+#btn-club-invite-join {
+  background: linear-gradient(145deg, #a78bfa, #6d28d9) !important;
+  color: #faf5ff !important;
+  font-weight: 800 !important;
+}
+.cq-crew-badge {
+  width: 3.4rem; height: 3.4rem; margin: 0 auto .35rem;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fde68a, #b45309 62%, #78350f);
+  border: 3px solid rgba(253,224,71,.7);
+  box-shadow: 0 6px 16px rgba(0,0,0,.35), 0 0 18px rgba(251,191,36,.25);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.6rem; line-height: 1;
+}

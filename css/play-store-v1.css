@@ -1,5 +1,33 @@
-/* Play Store v1 / v47 — hide developer OAuth/Stripe panel unless ?dev=1 (html.cq-dev).
+/* Play Store v1 — hide developer OAuth/Stripe panel unless ?dev=1 (html.cq-dev).
    Applies to web and native. Overrides css/app.css html.cq-native-only hide. */
 #external-services-panel,
 html.cq-native #external-services-panel { display: none !important; }
 html.cq-dev #external-services-panel { display: block !important; }
+
+/* Phone table: Deal / chips / Hit-Stand stay thumb-sized above the home indicator. */
+@media (max-width: 640px) {
+  #casino-bottom-dock {
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+  }
+  #action-bar {
+    padding-bottom: max(0.85rem, env(safe-area-inset-bottom));
+  }
+  #btn-deal {
+    min-height: 3rem;
+    min-width: 6.5rem;
+    font-size: 1.05rem;
+    padding: 0.75rem 1.25rem;
+  }
+  #chip-buttons button {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+  }
+  #bet-input {
+    min-height: 2.75rem;
+    font-size: 1rem;
+  }
+  #action-buttons button,
+  .cq-readable-action-btn {
+    min-height: 3rem;
+  }
+}

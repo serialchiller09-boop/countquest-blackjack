@@ -1,4 +1,4 @@
-// §12 TESTER QA — dead-button guards (Play Store v1 / v47)
+// §12 TESTER QA — dead-button guards (Play Store v1 / v49)
 (function () {
   if (window.__CQ_TESTER_QA_BOOTED) return;
   window.__CQ_TESTER_QA_BOOTED = true;
@@ -16,14 +16,16 @@
     if (!document.querySelector('link[href*="play-store-v1.css"]')) {
       const l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = 'css/play-store-v1.css?v=47';
+      l.href = 'css/play-store-v1.css?v=49';
       document.head.appendChild(l);
     }
   }
 
   function relabelSkip() {
     const skip = document.getElementById('btn-tutorial-skip');
-    if (skip && /Full Campaign/i.test(skip.textContent || '')) skip.textContent = 'Skip Tutorial';
+    if (!skip) return;
+    if (/Full Campaign/i.test(skip.textContent || '')) skip.textContent = 'Skip Tutorial';
+    skip.setAttribute('aria-label', 'Skip tutorial and sit a beginner table');
   }
 
   function rewriteOauthCopy() {
@@ -251,6 +253,22 @@
       proto.continueToNextHand = function () {
         unstickDealLock(this);
         return origContinue.apply(this, arguments);
+      };
+    }
+
+    if (typeof proto.skipTutorial === 'function') {
+      proto.skipTutorial = function () {
+        if (typeof this.canTutorialNav === 'function' && !this.canTutorialNav()) return;
+        if (typeof this.lockTutorialNav === 'function') this.lockTutorialNav();
+        if (this.save && this.save.tutorial) {
+          this.save.tutorial.completed = true;
+          if (typeof TUTORIAL_STEPS !== 'undefined' && TUTORIAL_STEPS.length) {
+            this.save.tutorial.step = TUTORIAL_STEPS.length - 1;
+          }
+        }
+        if (typeof this.persist === 'function') this.persist();
+        if (typeof this.openTableLobby === 'function') this.openTableLobby();
+        else if (typeof this.goMenu === 'function') this.goMenu();
       };
     }
 

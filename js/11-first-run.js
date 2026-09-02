@@ -20,7 +20,11 @@
     '.cq-first-run-primary{width:100%;min-height:3rem;border-radius:.85rem;border:0;font-weight:800;font-size:1rem;color:#1a1208;background:linear-gradient(90deg,#d4af37,#f5d76e);cursor:pointer}',
     '.cq-first-run-secondary{width:100%;min-height:2.75rem;border-radius:.85rem;border:1px solid rgba(212,175,55,.35);font-weight:700;font-size:.95rem;color:#e8d5a3;background:rgba(255,255,255,.06);cursor:pointer}',
     '.cq-first-run-skip{width:100%;min-height:2.4rem;border:0;background:transparent;color:rgba(167,243,208,.7);font-size:.82rem;cursor:pointer;text-decoration:underline;text-underline-offset:3px}',
+    '.cq-first-run-legal{margin:.85rem 0 0;font-size:.78rem}',
+    '.cq-first-run-legal a{color:#7dd3c0}',
     '.cq-first-run-primary:focus-visible,.cq-first-run-secondary:focus-visible,.cq-first-run-skip:focus-visible{outline:2px solid rgba(212,175,55,.85);outline-offset:2px}',
+    '.cq-lobby-legal{display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;padding:.65rem 1rem 1.15rem;font-size:.78rem}',
+    '.cq-lobby-legal a{color:#7dd3c0;text-decoration:underline;text-underline-offset:3px}',
   ].join('');
 
   function injectCss() {
@@ -46,6 +50,23 @@
     }
     panel.setAttribute('hidden', '');
     panel.open = false;
+  }
+
+  function ensureLobbyLegal() {
+    if (document.getElementById('cq-lobby-legal')) return;
+    const nav = document.createElement('nav');
+    nav.id = 'cq-lobby-legal';
+    nav.className = 'cq-lobby-legal';
+    nav.setAttribute('aria-label', 'Legal');
+    nav.innerHTML =
+      '<a href="privacy.html" target="_blank" rel="noopener noreferrer">Privacy Policy</a>'
+      + '<a href="mailto:j.pierson1990@outlook.com">Support</a>';
+    const save = document.getElementById('menu-save-info');
+    if (save && save.parentNode) save.parentNode.insertBefore(nav, save.nextSibling);
+    else {
+      const menu = document.getElementById('screen-menu');
+      (menu || document.body).appendChild(nav);
+    }
   }
 
   function alreadySeen() {
@@ -111,7 +132,9 @@
       + '<button type="button" id="cq-first-run-tutorial" class="cq-first-run-primary">Start tutorial</button>'
       + '<button type="button" id="cq-first-run-table" class="cq-first-run-secondary">Sit a table</button>'
       + '<button type="button" id="cq-first-run-skip" class="cq-first-run-skip">Skip</button>'
-      + '</div></div>';
+      + '</div>'
+      + '<p class="cq-first-run-legal"><a href="privacy.html" target="_blank" rel="noopener noreferrer">Privacy Policy</a></p>'
+      + '</div>';
     document.body.appendChild(dlg);
     document.getElementById('cq-first-run-tutorial')?.addEventListener('click', startTutorial);
     document.getElementById('cq-first-run-table')?.addEventListener('click', sitTable);
@@ -122,6 +145,7 @@
   function maybeShow() {
     injectCss();
     applyDevPanelGate();
+    ensureLobbyLegal();
     if (window.__CQ_TEST_MODE || navigator.webdriver) return;
     if (alreadySeen()) return;
     if (isReturningPlayer()) {
@@ -143,7 +167,7 @@
   function boot() {
     injectCss();
     applyDevPanelGate();
-    const run = () => setTimeout(maybeShow, 60);
+    const run = () => { ensureLobbyLegal(); setTimeout(maybeShow, 60); };
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
     else run();
   }

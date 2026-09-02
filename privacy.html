@@ -3,88 +3,158 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Privacy Policy for CountQuest Blackjack" />
+  <meta name="description" content="Privacy Policy for CountQuest Blackjack — local-first Hi-Lo trainer. Simulated chips only." />
   <meta name="theme-color" content="#0a1612" />
   <title>Privacy Policy — CountQuest Blackjack</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png" />
   <style>
     :root {
       color-scheme: dark;
       --bg: #0a1612;
-      --panel: #0f1f18;
+      --panel: rgba(15, 31, 24, 0.92);
       --text: #e8f5ef;
       --muted: #8fb9a8;
       --gold: #d4af37;
-      --border: rgba(255, 255, 255, 0.1);
+      --gold-2: #f5d76e;
+      --border: rgba(212, 175, 55, 0.28);
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
+      min-height: 100vh;
       font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-      background: var(--bg);
       color: var(--text);
       line-height: 1.6;
+      background:
+        radial-gradient(ellipse 90% 50% at 50% -10%, #1a3d30 0%, transparent 55%),
+        radial-gradient(circle at 12% 88%, rgba(212, 175, 55, 0.12), transparent 32%),
+        radial-gradient(circle at 92% 18%, rgba(16, 185, 129, 0.12), transparent 28%),
+        #0a1612;
     }
-    .wrap {
-      max-width: 720px;
+    .felt {
+      position: relative;
+      max-width: 44rem;
       margin: 0 auto;
-      padding: 2rem 1.25rem 3rem;
+      padding: 1.75rem 1.25rem 3rem;
     }
-    header {
-      margin-bottom: 2rem;
-      padding-bottom: 1.5rem;
-      border-bottom: 1px solid var(--border);
+    .hero {
+      text-align: center;
+      margin-bottom: 1.75rem;
+      padding: 1.6rem 1.2rem 1.35rem;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 1.35rem;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.45);
+      overflow: hidden;
+    }
+    .hero-art {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 0.65rem;
+      height: 6.25rem;
+      margin-bottom: 0.85rem;
+    }
+    .badge { width: 4.5rem; height: 4.5rem; filter: drop-shadow(0 8px 18px rgba(0,0,0,.45)); }
+    .card-deco {
+      width: 2.4rem; height: 3.35rem; border-radius: 0.35rem;
+      background: linear-gradient(180deg, #fff8e7, #e8d5a3);
+      border: 1px solid #c4a035;
+      box-shadow: 0 6px 14px rgba(0,0,0,.35);
+    }
+    .card-deco.left { transform: rotate(-14deg) translateY(8px); }
+    .card-deco.right { transform: rotate(12deg) translateY(8px); background: linear-gradient(180deg, #1b3a2e, #0f241c); border-color: var(--gold); }
+    .chip {
+      width: 2.1rem; height: 2.1rem; border-radius: 50%;
+      background: radial-gradient(circle at 30% 25%, #ffe9a8, #d4af37 55%, #9a7b1a);
+      border: 3px dashed rgba(61, 46, 8, 0.45);
+      transform: translateY(10px);
     }
     .brand {
+      margin: 0;
       color: var(--gold);
-      font-weight: 700;
-      font-size: 1.125rem;
-      letter-spacing: 0.02em;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-size: 0.68rem;
     }
     h1 {
-      margin: 0.5rem 0 0.25rem;
-      font-size: 1.75rem;
-      line-height: 1.25;
+      margin: 0.4rem 0 0.25rem;
+      font-size: 1.85rem;
+      line-height: 1.2;
+      color: var(--gold-2);
     }
-    .effective {
-      margin: 0;
-      color: var(--muted);
-      font-size: 0.9rem;
+    .effective { margin: 0; color: var(--muted); font-size: 0.9rem; }
+    .play-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1rem;
+      min-height: 2.85rem;
+      padding: 0.7rem 1.35rem;
+      border-radius: 0.85rem;
+      border: 0;
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: #1a1208;
+      background: linear-gradient(90deg, var(--gold), var(--gold-2));
+      text-decoration: none;
     }
-    main section + section { margin-top: 1.75rem; }
+    .play-cta:hover { filter: brightness(1.06); }
+    main section {
+      background: var(--panel);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 1rem;
+      padding: 1.15rem 1.2rem;
+      margin-top: 0.85rem;
+    }
     h2 {
       margin: 0 0 0.5rem;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       color: var(--gold);
     }
-    p, li { color: var(--text); }
     p { margin: 0.5rem 0; }
-    ul { margin: 0.5rem 0 0.5rem 1.25rem; padding: 0; }
+    ul { margin: 0.5rem 0 0.5rem 1.15rem; padding: 0; }
     li + li { margin-top: 0.35rem; }
     a { color: #7dd3c0; }
     a:hover { color: #a7f3d0; }
     .note {
-      background: var(--panel);
+      background: rgba(212, 175, 55, 0.08);
       border: 1px solid var(--border);
       border-radius: 0.75rem;
-      padding: 1rem 1.125rem;
-      margin-top: 1rem;
-      font-size: 0.95rem;
+      padding: 0.9rem 1rem;
+      margin-top: 0.85rem;
     }
     footer {
-      margin-top: 2.5rem;
-      padding-top: 1.25rem;
-      border-top: 1px solid var(--border);
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      text-align: center;
       font-size: 0.9rem;
       color: var(--muted);
     }
+    .foot-links { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-top: 0.5rem; }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <div class="brand">CountQuest Blackjack</div>
+  <div class="felt">
+    <header class="hero">
+      <div class="hero-art" aria-hidden="true">
+        <span class="card-deco left"></span>
+        <svg class="badge" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="CountQuest">
+          <circle cx="16" cy="16" r="14" stroke="#d4af37" stroke-width="2" fill="#0a1612"/>
+          <rect x="9" y="8" width="14" height="16" rx="1.5" fill="#d4af37" opacity="0.2"/>
+          <text x="16" y="19" text-anchor="middle" font-family="system-ui,sans-serif" font-size="8" font-weight="700" fill="#d4af37">CQ</text>
+        </svg>
+        <span class="chip"></span>
+        <span class="card-deco right"></span>
+      </div>
+      <p class="brand">CountQuest Blackjack</p>
       <h1>Privacy Policy</h1>
-      <p class="effective">Effective date: July 8, 2026</p>
+      <p class="effective">Effective date: September 2, 2026</p>
+      <a class="play-cta" href="./index.html">Play CountQuest</a>
     </header>
 
     <main>
@@ -206,7 +276,11 @@
     </main>
 
     <footer>
-      <p><a href="./index.html">← Back to CountQuest</a></p>
+      <a class="play-cta" href="./index.html">← Back to CountQuest</a>
+      <div class="foot-links">
+        <a href="mailto:j.pierson1990@outlook.com">Support</a>
+        <a href="https://github.com/serialchiller09-boop/countquest-blackjack">GitHub</a>
+      </div>
     </footer>
   </div>
 </body>

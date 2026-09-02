@@ -1,3 +1,5 @@
-/* Play Store v1 — hide developer OAuth/Stripe panel unless ?dev=1 */
-#external-services-panel { display: none !important; }
+/* Play Store v1 / v47 — hide developer OAuth/Stripe panel unless ?dev=1 (html.cq-dev).
+   Applies to web and native. Overrides css/app.css html.cq-native-only hide. */
+#external-services-panel,
+html.cq-native #external-services-panel { display: none !important; }
 html.cq-dev #external-services-panel { display: block !important; }

@@ -17,6 +17,7 @@ JS_MODULES = [
     "07-game-engine.js",
     "08-tutorial.js",
     "09-tests.js",
+    "11-first-run.js",
 ]
 
 

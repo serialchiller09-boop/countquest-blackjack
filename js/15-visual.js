@@ -1,4 +1,4 @@
-// §15 VISUAL — labeled prize wheel + modern modal dress (v55)
+// §15 VISUAL — labeled prize wheel + modern modal dress (v56)
 (function () {
   if (window.__CQ_VISUAL_V55_BOOTED) return;
   window.__CQ_VISUAL_V55_BOOTED = true;
@@ -7,7 +7,7 @@
     if (document.querySelector('link[href*="cq-modern.css"]')) return;
     const l = document.createElement('link');
     l.rel = 'stylesheet';
-    l.href = 'css/cq-modern.css?v=55';
+    l.href = 'css/cq-modern.css?v=56';
     document.head.appendChild(l);
   }
 
@@ -25,7 +25,7 @@
     return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
 
-  function labeledSpinMarkup() {
+  function labeledSpinMarkup(locked) {
     const list = segs();
     const n = list.length;
     const slice = 360 / n;
@@ -39,13 +39,13 @@
       return '<span class="cq-spin-label" style="transform:rotate(' + rot + 'deg) translateY(-5.15rem)">' 
         + '<span class="cq-spin-label-text">' + esc(seg.label) + '</span></span>';
     }).join('');
-    return '<div class="lobby-spin-wheel-wrap cq-spin-wrap">'
+    return '<div class="lobby-spin-wheel-wrap cq-spin-wrap' + (locked ? ' cq-spin-locked' : '') + '">' 
       + '<div class="lobby-spin-pointer cq-spin-pointer" aria-hidden="true"></div>'
       + '<div id="lobby-spin-wheel" class="lobby-spin-wheel cq-spin-wheel" style="background:conic-gradient(' + stops + ')">' 
       + labels
       + '<div class="cq-spin-hub" aria-hidden="true"><span>SPIN</span></div>'
       + '</div></div>'
-      + '<p id="lobby-spin-result" class="cq-spin-result"></p>';
+      + '<p id="lobby-spin-result" class="cq-spin-result">' + (locked ? 'Come back tomorrow' : '') + '</p>';
   }
 
   function dressMinigameModal() {
@@ -58,7 +58,7 @@
 
   function patch() {
     injectSheet();
-    try { window.renderSpinWheelMarkup = labeledSpinMarkup; } catch (_) {}
+    try { window.renderSpinWheelMarkup = function () { return labeledSpinMarkup(false); }; } catch (_) {}
     if (typeof CountQuestApp === 'undefined') return false;
     const proto = CountQuestApp.prototype;
     if (proto.__cqVisualV55Patched) return true;
@@ -66,7 +66,7 @@
     if (typeof proto.renderMinigameBody === 'function') {
       const orig = proto.renderMinigameBody;
       proto.renderMinigameBody = function (id, ready) {
-        if (id === 'spin-win' && ready) return labeledSpinMarkup();
+        if (id === 'spin-win') return labeledSpinMarkup(!ready);
         return orig.apply(this, arguments);
       };
     }

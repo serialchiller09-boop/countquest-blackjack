@@ -1,0 +1,3 @@
+/* Play Store v1 — hide developer OAuth/Stripe panel unless ?dev=1 */
+#external-services-panel { display: none !important; }
+html.cq-dev #external-services-panel { display: block !important; }

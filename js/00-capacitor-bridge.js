@@ -1,5 +1,7 @@
 // Capacitor native shell — detect WebView, skip PWA SW, apply safe-area class.
 (function () {
+  window.__CQ_DEV_MODE = !!(window.__CQ_DEV_MODE || /(?:^|[?&])dev=1(?:&|$)/.test(location.search));
+  if (window.__CQ_DEV_MODE) document.documentElement.classList.add('cq-dev');
   function boot() {
     const cap = window.Capacitor;
     const native = !!(cap && typeof cap.isNativePlatform === 'function' && cap.isNativePlatform());

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Play Store v1 / v47–v50 structure checks (first-run, dev panel, new-player lobby)."""
+"""Play Store v1 / v47–v51 structure checks (first-run, mobile table, new-player lobby)."""
 from __future__ import annotations
 
 import unittest
@@ -58,6 +58,9 @@ class PlayStoreV1Tests(unittest.TestCase):
         self.assertIn("display: none !important", overlay)
         self.assertIn("html.cq-dev #external-services-panel", overlay)
         self.assertIn("html.cq-native #external-services-panel", overlay)
+        self.assertIn("#btn-deal", overlay)
+        self.assertIn("min-height: 3rem", overlay)
+        self.assertIn("safe-area-inset-bottom", overlay)
         qa = (ROOT / "js" / "12-tester-qa.js").read_text(encoding="utf-8")
         self.assertIn("#external-services-panel{display:none!important}", qa)
         self.assertIn("html.cq-dev #external-services-panel{display:block!important}", qa)

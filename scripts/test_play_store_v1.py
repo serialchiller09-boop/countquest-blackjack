@@ -125,6 +125,18 @@ class PlayStoreV1Tests(unittest.TestCase):
         self.assertIn("openTableLobby", lobby)
         self.assertIn("canSitBeginner", lobby)
 
+    def test_skip_tutorial_sits_beginner_even_in_webdriver(self) -> None:
+        qa = (ROOT / "js" / "12-tester-qa.js").read_text(encoding="utf-8")
+        tutorial = (ROOT / "js" / "08-tutorial.js").read_text(encoding="utf-8")
+        self.assertNotIn("if (window.__CQ_TEST_MODE || navigator.webdriver) return;", qa)
+        self.assertIn("sitBeginnerOrLobby", qa)
+        self.assertIn("joinTable('beginner')", qa)
+        self.assertIn("tutorialNavBusyUntil = 0", qa)
+        self.assertIn("updateTutorialNavButtons", qa)
+        self.assertIn("renderTutorial", qa)
+        self.assertIn("Skip tutorial and sit a beginner table", qa)
+        self.assertIn("?v=53", tutorial)
+
 
 if __name__ == "__main__":
     raise SystemExit(unittest.main())

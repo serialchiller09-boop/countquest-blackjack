@@ -1,8 +1,10 @@
-// §12 TESTER QA — dead-button guards (Play Store v1 / v49)
+// §12 TESTER QA — dead-button guards (Play Store v1 / v53)
 (function () {
   if (window.__CQ_TESTER_QA_BOOTED) return;
   window.__CQ_TESTER_QA_BOOTED = true;
-  if (window.__CQ_TEST_MODE || navigator.webdriver) return;
+  // Always patch skip/deal/locked tables — including ?test=1 and webdriver.
+  // Earlier builds returned early here, so Skip Tutorial stayed "Full Campaign"
+  // and no-op'd under live QA.
 
   const FIRST_RUN_KEY = 'cq.firstRunV1';
   const RANK_FALLBACK = ['Novice', 'Apprentice', 'Journeyman', 'Expert', 'Master'];
@@ -16,7 +18,7 @@
     if (!document.querySelector('link[href*="play-store-v1.css"]')) {
       const l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = 'css/play-store-v1.css?v=49';
+      l.href = 'css/play-store-v1.css?v=53';
       document.head.appendChild(l);
     }
   }
@@ -24,8 +26,25 @@
   function relabelSkip() {
     const skip = document.getElementById('btn-tutorial-skip');
     if (!skip) return;
-    if (/Full Campaign/i.test(skip.textContent || '')) skip.textContent = 'Skip Tutorial';
+    skip.textContent = 'Skip Tutorial';
     skip.setAttribute('aria-label', 'Skip tutorial and sit a beginner table');
+  }
+
+  function sitBeginnerOrLobby(app) {
+    try {
+      if (app && typeof app.joinTable === 'function') {
+        const tier = typeof getTableTier === 'function' ? getTableTier('beginner') : null;
+        const check = (typeof canJoinTable === 'function' && app.save && tier)
+          ? canJoinTable(app.save, tier)
+          : { ok: true };
+        if (check && check.ok) {
+          app.joinTable('beginner');
+          return;
+        }
+      }
+    } catch (_) {}
+    if (app && typeof app.openTableLobby === 'function') app.openTableLobby();
+    else if (app && typeof app.goMenu === 'function') app.goMenu();
   }
 
   function rewriteOauthCopy() {
@@ -256,19 +275,33 @@
       };
     }
 
-    if (typeof proto.skipTutorial === 'function') {
-      proto.skipTutorial = function () {
-        if (typeof this.canTutorialNav === 'function' && !this.canTutorialNav()) return;
-        if (typeof this.lockTutorialNav === 'function') this.lockTutorialNav();
-        if (this.save && this.save.tutorial) {
-          this.save.tutorial.completed = true;
-          if (typeof TUTORIAL_STEPS !== 'undefined' && TUTORIAL_STEPS.length) {
-            this.save.tutorial.step = TUTORIAL_STEPS.length - 1;
-          }
+    proto.skipTutorial = function () {
+      try { this.tutorialNavBusyUntil = 0; } catch (_) {}
+      if (this.save && this.save.tutorial) {
+        this.save.tutorial.completed = true;
+        if (typeof TUTORIAL_STEPS !== 'undefined' && TUTORIAL_STEPS.length) {
+          this.save.tutorial.step = TUTORIAL_STEPS.length - 1;
         }
-        if (typeof this.persist === 'function') this.persist();
-        if (typeof this.openTableLobby === 'function') this.openTableLobby();
-        else if (typeof this.goMenu === 'function') this.goMenu();
+      }
+      if (typeof this.persist === 'function') this.persist();
+      sitBeginnerOrLobby(this);
+    };
+
+    if (typeof proto.updateTutorialNavButtons === 'function') {
+      const origNav = proto.updateTutorialNavButtons;
+      proto.updateTutorialNavButtons = function () {
+        const out = origNav.apply(this, arguments);
+        relabelSkip();
+        return out;
+      };
+    }
+
+    if (typeof proto.renderTutorial === 'function') {
+      const origTut = proto.renderTutorial;
+      proto.renderTutorial = function () {
+        const out = origTut.apply(this, arguments);
+        relabelSkip();
+        return out;
       };
     }
 

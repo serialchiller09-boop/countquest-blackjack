@@ -1,4 +1,4 @@
-// §13 NEW-PLAYER LOBBY — hide VIP / crews / tournaments until one hand is played (Play Store v1)
+// §13 NEW-PLAYER LOBBY — hide extras until one hand; auto-sit beginner (Play Store v1)
 (function () {
   if (window.__CQ_NEW_PLAYER_LOBBY_BOOTED) return;
   window.__CQ_NEW_PLAYER_LOBBY_BOOTED = true;
@@ -36,6 +36,21 @@
       return hands < 1;
     } catch (_) {
       return true;
+    }
+  }
+
+  function canSitBeginner(app) {
+    try {
+      if (!app || typeof app.joinTable !== 'function') return false;
+      if (typeof getTableTier === 'function' && typeof canJoinTable === 'function') {
+        const tier = getTableTier('beginner');
+        if (!tier) return false;
+        const check = canJoinTable(app.save, tier);
+        return !!(check && check.ok);
+      }
+      return true;
+    } catch (_) {
+      return false;
     }
   }
 
@@ -97,6 +112,16 @@
         const out = origTable.apply(this, arguments);
         apply(this);
         return out;
+      };
+    }
+    if (typeof proto.openTableLobby === 'function') {
+      const origOpen = proto.openTableLobby;
+      proto.openTableLobby = function () {
+        if (isNewPlayer(this) && canSitBeginner(this)) {
+          this.joinTable('beginner');
+          return;
+        }
+        return origOpen.apply(this, arguments);
       };
     }
     apply(window.app);

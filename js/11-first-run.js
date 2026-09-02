@@ -120,7 +120,7 @@
   function maybeShow() {
     injectCss();
     applyDevPanelGate();
-    if (window.__CQ_TEST_MODE) return;
+    if (window.__CQ_TEST_MODE || navigator.webdriver) return;
     if (alreadySeen()) return;
     if (isReturningPlayer()) {
       markSeen();

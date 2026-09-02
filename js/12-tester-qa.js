@@ -2,7 +2,7 @@
 (function () {
   if (window.__CQ_TESTER_QA_BOOTED) return;
   window.__CQ_TESTER_QA_BOOTED = true;
-  if (window.__CQ_TEST_MODE) return;
+  if (window.__CQ_TEST_MODE || navigator.webdriver) return;
 
   function injectPanelCss() {
     if (document.getElementById('cq-play-store-v1-css')) return;

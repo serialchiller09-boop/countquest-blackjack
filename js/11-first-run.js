@@ -17,7 +17,7 @@
     '.cq-first-run-card p#cq-first-run-copy{margin:0 0 1.35rem;font-size:.95rem;line-height:1.45;color:rgba(209,250,229,.9)}',
     '.cq-first-run-actions{display:flex;flex-direction:column;gap:.55rem}',
     '.cq-first-run-primary{width:100%;min-height:3rem;border-radius:.85rem;border:0;font-weight:800;font-size:1rem;color:#1a1208;background:linear-gradient(90deg,#d4af37,#f5d76e);cursor:pointer}',
-    '.cq-first-run-secondary{width:100%;min-height:2.75rem;border-radius:.85rem;border:1px solid rgba(212,175,55,.35);font-weight:700;font-size:.95rem;color:#e8d5a3;background:rgba(255,255,255,.06);cursor:pointer}',
+    '.cq-first-run-secondary{width:100%;min-height:2.75rem;border-radius:.85rem;border:1px solid rgba(212,175,55,.35);font-weight:700;font-size:.95rem;color:#e8d5a3;background:rgba(255,255,55,.06);cursor:pointer}',
     '.cq-first-run-skip{width:100%;min-height:2.4rem;border:0;background:transparent;color:rgba(167,243,208,.7);font-size:.82rem;cursor:pointer;text-decoration:underline;text-underline-offset:3px}',
     '.cq-first-run-primary:focus-visible,.cq-first-run-secondary:focus-visible,.cq-first-run-skip:focus-visible{outline:2px solid rgba(212,175,55,.85);outline-offset:2px}',
   ].join('');
@@ -72,14 +72,25 @@
     document.body.classList.remove('cq-first-run-open');
   }
 
+  function callApp(name) {
+    const run = () => {
+      const fn = window.app && window.app[name];
+      if (typeof fn === 'function') { fn.call(window.app); return true; }
+      return false;
+    };
+    if (run()) return;
+    let n = 0;
+    const t = setInterval(() => { if (run() || ++n > 25) clearInterval(t); }, 40);
+  }
+
   function startTutorial() {
     dismiss();
-    if (typeof window.app?.openTutorial === 'function') window.app.openTutorial();
+    callApp('openTutorial');
   }
 
   function sitTable() {
     dismiss();
-    if (typeof window.app?.openTableLobby === 'function') window.app.openTableLobby();
+    callApp('openTableLobby');
   }
 
   function ensureMarkup() {
@@ -115,7 +126,12 @@
       markSeen();
       return;
     }
-    if (window.app?.phase && window.app.phase !== 'menu') return;
+    if (!window.app) {
+      maybeShow._tries = (maybeShow._tries || 0) + 1;
+      if (maybeShow._tries < 25) setTimeout(maybeShow, 80);
+      return;
+    }
+    if (window.app.phase && window.app.phase !== 'menu') return;
     ensureMarkup();
     const dlg = document.getElementById('cq-first-run');
     document.body.classList.add('cq-first-run-open');

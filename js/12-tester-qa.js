@@ -12,8 +12,10 @@
     const origMini = proto.openLobbyMinigame;
     proto.openLobbyMinigame = function (id) {
       origMini.call(this, id);
-      const btn = document.getElementById('btn-lobby-minigame-action');
-      if (btn) btn.disabled = false;
+      const action = document.getElementById('btn-lobby-minigame-action');
+      if (action) action.disabled = false;
+      const close = document.getElementById('btn-lobby-minigame-close');
+      if (close) close.disabled = false;
     };
 
     return true;
@@ -22,6 +24,7 @@
   function boot() {
     if (patch()) return;
     window.addEventListener('load', patch);
+    document.addEventListener('DOMContentLoaded', patch);
   }
   boot();
 })();

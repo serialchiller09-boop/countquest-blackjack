@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Play Store v1 / v47–v51 structure checks (first-run, mobile table, new-player lobby)."""
+"""Play Store v1 structure checks (first-run, privacy graphics, new-player lobby)."""
 from __future__ import annotations
 
 import unittest
@@ -23,11 +23,26 @@ class PlayStoreV1Tests(unittest.TestCase):
         self.assertIn("rgba(255,255,255,.06)", js)
         self.assertIn("cq-first-run-steps", js)
         self.assertIn("beginner table", js)
+        self.assertIn("cq-lobby-legal", js)
+        self.assertIn("privacy.html", js)
+
+    def test_privacy_page_graphics(self) -> None:
+        html = (ROOT / "privacy.html").read_text(encoding="utf-8")
+        self.assertIn("icons/icon-192.png", html)
+        self.assertIn("icons/icon-512.png", html)
+        self.assertIn("Play CountQuest", html)
+        self.assertIn("class=\"badge\"", html)
+        self.assertIn("class=\"play-cta\"", html)
+        self.assertIn("mailto:j.pierson1990@outlook.com", html)
+        self.assertIn("https://github.com/serialchiller09-boop/countquest-blackjack", html)
+        self.assertIn("./index.html", html)
+        self.assertIn("simulated chips", html.lower())
 
     def test_index_wires_first_run(self) -> None:
         html = (ROOT / "index.html").read_text(encoding="utf-8")
         tutorial = (ROOT / "js" / "08-tutorial.js").read_text(encoding="utf-8")
         self.assertIn("js/11-first-run.js", html)
+        self.assertIn("privacy.html", html)
         self.assertIn("__CQ_DEV_MODE", html)
         self.assertTrue(
             ">v46<" in html or ">v47<" in html or ">v48<" in html or ">v49<" in html or ">v50<" in html,

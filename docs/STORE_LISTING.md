@@ -70,15 +70,16 @@ Play in your browser or install the Android app. Progress saves locally on your 
 
 ---
 
-## What’s new (version 1.0)
+## What’s new (version 1.0 / tester build)
 
 ```
-Initial release of CountQuest Blackjack on Android.
+Tester-ready first session:
 
-• Full Hi-Lo card counting trainer with 5 help levels
-• 10+ training drills plus dealer mode
-• Casino tables, tournaments, daily goals, and Counting Crews
-• Branded native app with offline play — progress saves on your device
+• Start with the tutorial, or sit a beginner table immediately
+• Skip Tutorial seats you at the beginner felt — no Full Campaign dump
+• New players don’t see VIP, crews, tournaments, or minigames until they’ve played a hand
+• Developer OAuth/Stripe panel stays hidden unless you add ?dev=1
+• Phone Deal and Hit/Stand sit above the home indicator
 ```
 
 ---

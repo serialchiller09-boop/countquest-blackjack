@@ -39,6 +39,19 @@
     });
   }
 
+  function fixProTableCopy() {
+    try {
+      if (typeof TABLE_TIERS !== 'undefined' && Array.isArray(TABLE_TIERS)) {
+        TABLE_TIERS.forEach((tier) => {
+          if (!tier || typeof tier.desc !== 'string') return;
+          if (tier.id === 'pro' && /Expert rank required/i.test(tier.desc)) {
+            tier.desc = tier.desc.replace(/Expert rank required/gi, 'Journeyman rank required');
+          }
+        });
+      }
+    } catch (_) {}
+  }
+
   function clearFirstRunFlag() {
     try { localStorage.removeItem(FIRST_RUN_KEY); } catch (_) {}
   }
@@ -130,6 +143,7 @@
     injectPanelCss();
     relabelSkip();
     enableMinigameClose();
+    fixProTableCopy();
 
     if (typeof Storage !== 'undefined' && Storage && typeof Storage.reset === 'function' && !Storage.__cqFirstRunResetPatched) {
       const origReset = Storage.reset.bind(Storage);
@@ -218,6 +232,7 @@
     injectPanelCss();
     relabelSkip();
     enableMinigameClose();
+    fixProTableCopy();
     if (patch()) return;
     window.addEventListener('load', patch);
     document.addEventListener('DOMContentLoaded', patch);

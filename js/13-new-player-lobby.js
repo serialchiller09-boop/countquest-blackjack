@@ -1,17 +1,13 @@
-// §13 NEW-PLAYER LOBBY — hide extras until one hand; auto-sit beginner (Play Store v1)
+// §13 NEW-PLAYER LOBBY — hide extras until one hand; clubs + minigames stay visible (v54)
 (function () {
   if (window.__CQ_NEW_PLAYER_LOBBY_BOOTED) return;
   window.__CQ_NEW_PLAYER_LOBBY_BOOTED = true;
   if (window.__CQ_TEST_MODE || navigator.webdriver) return;
 
   const CSS = [
-    'html.cq-new-player #lobby-minigames-row{display:none!important}',
-    'html.cq-new-player #lobby-bottom-dock{display:none!important}',
-    'html.cq-new-player #lobby-clubs-btn{display:none!important}',
     'html.cq-new-player #lobby-pass-banner{display:none!important}',
     'html.cq-new-player [data-lobby-play="tournament"]{display:none!important}',
     'html.cq-new-player [data-lobby-play="special-event"]{display:none!important}',
-    'html.cq-new-player [data-lobby-play="clubs"]{display:none!important}',
     'html.cq-new-player [data-lobby-play="dealer-mode"]{display:none!important}',
     'html.cq-new-player [data-lobby-nav="shop"]{display:none!important}',
     'html.cq-new-player [data-lobby-nav="leaderboards"]{display:none!important}',

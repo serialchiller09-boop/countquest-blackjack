@@ -113,8 +113,8 @@ class PlayStoreV1Tests(unittest.TestCase):
         lobby = (ROOT / "js" / "13-new-player-lobby.js").read_text(encoding="utf-8")
         self.assertIn("cq-new-player", lobby)
         self.assertIn("lobby-pass-banner", lobby)
-        self.assertIn("lobby-minigames-row", lobby)
-        self.assertIn("lobby-bottom-dock", lobby)
+        self.assertNotIn("#lobby-minigames-row{display:none", lobby)
+        self.assertNotIn("#lobby-clubs-btn{display:none", lobby)
         self.assertIn("data-lobby-play=\"tournament\"", lobby)
         self.assertIn("data-lobby-nav=\"shop\"", lobby)
         self.assertIn("data-table-tier=\"pro\"", lobby)
@@ -135,7 +135,24 @@ class PlayStoreV1Tests(unittest.TestCase):
         self.assertIn("updateTutorialNavButtons", qa)
         self.assertIn("renderTutorial", qa)
         self.assertIn("Skip tutorial and sit a beginner table", qa)
-        self.assertIn("?v=53", tutorial)
+        self.assertIn("?v=54", tutorial)
+
+    def test_clubs_and_spin_visible_with_ui(self) -> None:
+        lobby = (ROOT / "js" / "13-new-player-lobby.js").read_text(encoding="utf-8")
+        ui = (ROOT / "js" / "14-clubs-spin-ui.js").read_text(encoding="utf-8")
+        css = (ROOT / "css" / "play-store-v1.css").read_text(encoding="utf-8")
+        tutorial = (ROOT / "js" / "08-tutorial.js").read_text(encoding="utf-8")
+        sw = (ROOT / "sw.js").read_text(encoding="utf-8")
+        self.assertNotIn("#lobby-clubs-btn{display:none", lobby)
+        self.assertNotIn("#lobby-minigames-row{display:none", lobby)
+        self.assertIn("cq-crew-badge", ui)
+        self.assertIn("openLobbyMinigame", ui)
+        self.assertIn("spin-win", css)
+        self.assertIn("cq-crew-badge", css)
+        self.assertIn("14-clubs-spin-ui.js", tutorial)
+        self.assertIn("?v=54", tutorial)
+        self.assertIn("./js/14-clubs-spin-ui.js", sw)
+        self.assertIn("cq-pwa-v21", sw)
 
 
 if __name__ == "__main__":

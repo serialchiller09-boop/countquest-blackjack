@@ -1,0 +1,32 @@
+name: Apply index.html v46
+
+on:
+  push:
+    branches: [play-store-v1]
+    paths:
+      - scripts/apply_play_store_v1_index.py
+      - .github/workflows/apply-index-v46.yml
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: play-store-v1
+      - name: Patch index.html
+        run: python3 scripts/apply_play_store_v1_index.py
+      - name: Commit if changed
+        run: |
+          git config user.name "Jeffp"
+          git config user.email "serialchiller09@gmail.com"
+          git add index.html
+          if git diff --cached --quiet; then
+            echo "No index.html changes"
+            exit 0
+          fi
+          git commit -m "index.html: v46 stamps, ?dev=1 gate, first-run script tag"
+          git push

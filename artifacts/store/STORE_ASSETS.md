@@ -6,12 +6,12 @@ This folder has the feature graphic only. Phone/tablet screenshots must come fro
 
 ## Provided here
 
-- Feature graphic: feature-graphic.svg and feature-graphic.png, 1024x500.
+- Feature graphic SVG: `artifacts/store/feature-graphic.svg`, 1024×500.
+- PNG: export locally (binary was not committed via API). From the repo root:
+  `rsvg-convert -w 1024 -h 500 artifacts/store/feature-graphic.svg -o artifacts/store/feature-graphic.png`
 - Colors: dark green felt #0a1612, gold #d4af37.
 - Wordmark: CountQuest Blackjack. Line: Learn Hi-Lo by playing.
 - Original CQ badge only. No third-party logos. No mock phone screenshots.
-
-Re-export PNG with rsvg-convert 1024x500.
 
 Hi-res icon already exists at icons/icon-512.png.
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Play Store v1 / v47 / v48 structure checks (first-run, dev panel, new-player lobby)."""
+"""Play Store v1 / v47–v49 structure checks (first-run, dev panel, new-player lobby)."""
 from __future__ import annotations
 
 import unittest
@@ -30,8 +30,8 @@ class PlayStoreV1Tests(unittest.TestCase):
         self.assertIn("js/11-first-run.js", html)
         self.assertIn("__CQ_DEV_MODE", html)
         self.assertTrue(
-            ">v46<" in html or ">v47<" in html or ">v48<" in html,
-            "index.html must show a v46, v47, or v48 build stamp",
+            ">v46<" in html or ">v47<" in html or ">v48<" in html or ">v49<" in html,
+            "index.html must show a v46–v49 build stamp",
         )
         self.assertTrue(
             "js/12-tester-qa.js" in html or "12-tester-qa.js" in tutorial,
@@ -72,6 +72,8 @@ class PlayStoreV1Tests(unittest.TestCase):
         self.assertIn("Local connect", qa)
         self.assertIn("Skip Tutorial", qa)
         self.assertIn("joinTable", qa)
+        self.assertIn("skipTutorial", qa)
+        self.assertIn("openTableLobby", qa)
 
     def test_reset_clears_first_run_flag(self) -> None:
         storage = (ROOT / "js" / "06b-validation.js").read_text(encoding="utf-8")
@@ -94,9 +96,13 @@ class PlayStoreV1Tests(unittest.TestCase):
         self.assertIn("cq-new-player", lobby)
         self.assertIn("lobby-pass-banner", lobby)
         self.assertIn("lobby-minigames-row", lobby)
+        self.assertIn("lobby-bottom-dock", lobby)
         self.assertIn("data-lobby-play=\"tournament\"", lobby)
+        self.assertIn("data-lobby-nav=\"shop\"", lobby)
+        self.assertIn("data-table-tier=\"pro\"", lobby)
         self.assertIn("handsPlayed", lobby)
         self.assertIn("Sit a table", lobby)
+        self.assertIn("Recommended", lobby)
 
 
 if __name__ == "__main__":

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Play Store v1 / v47 structure checks (first-run, dev panel, ship docs)."""
+"""Play Store v1 / v47 / v48 structure checks (first-run, dev panel, new-player lobby)."""
 from __future__ import annotations
 
 import unittest
@@ -21,6 +21,8 @@ class PlayStoreV1Tests(unittest.TestCase):
         self.assertIn("html.cq-dev", js)
         self.assertIn("__CQ_TEST_MODE", js)
         self.assertIn("rgba(255,255,255,.06)", js)
+        self.assertIn("cq-first-run-steps", js)
+        self.assertIn("beginner table", js)
 
     def test_index_wires_first_run(self) -> None:
         html = (ROOT / "index.html").read_text(encoding="utf-8")
@@ -28,18 +30,23 @@ class PlayStoreV1Tests(unittest.TestCase):
         self.assertIn("js/11-first-run.js", html)
         self.assertIn("__CQ_DEV_MODE", html)
         self.assertTrue(
-            ">v46<" in html or ">v47<" in html,
-            "index.html must show a v46 or v47 build stamp",
+            ">v46<" in html or ">v47<" in html or ">v48<" in html,
+            "index.html must show a v46, v47, or v48 build stamp",
         )
         self.assertTrue(
             "js/12-tester-qa.js" in html or "12-tester-qa.js" in tutorial,
             "12-tester-qa.js must be in index.html or injected from 08-tutorial.js",
+        )
+        self.assertTrue(
+            "js/13-new-player-lobby.js" in html or "13-new-player-lobby.js" in tutorial,
+            "13-new-player-lobby.js must be in index.html or injected from 08-tutorial.js",
         )
 
     def test_sw_and_docs(self) -> None:
         sw = (ROOT / "sw.js").read_text(encoding="utf-8")
         self.assertIn("./js/11-first-run.js", sw)
         self.assertIn("./js/12-tester-qa.js", sw)
+        self.assertIn("./js/13-new-player-lobby.js", sw)
         self.assertIn("./css/play-store-v1.css", sw)
         self.assertTrue((ROOT / "docs" / "PLAY_STORE_SHIP_CHECKLIST.md").is_file())
         self.assertTrue((ROOT / "artifacts" / "store" / "feature-graphic.svg").is_file())
@@ -81,6 +88,15 @@ class PlayStoreV1Tests(unittest.TestCase):
         self.assertIn("lockedTableMessage", qa)
         self.assertIn("minRank", qa)
         self.assertIn("dataset.locked", qa)
+
+    def test_new_player_lobby_hides_extras(self) -> None:
+        lobby = (ROOT / "js" / "13-new-player-lobby.js").read_text(encoding="utf-8")
+        self.assertIn("cq-new-player", lobby)
+        self.assertIn("lobby-pass-banner", lobby)
+        self.assertIn("lobby-minigames-row", lobby)
+        self.assertIn("data-lobby-play=\"tournament\"", lobby)
+        self.assertIn("handsPlayed", lobby)
+        self.assertIn("Sit a table", lobby)
 
 
 if __name__ == "__main__":

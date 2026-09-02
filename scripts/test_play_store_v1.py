@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Play Store v1 / v47–v49 structure checks (first-run, dev panel, new-player lobby)."""
+"""Play Store v1 / v47–v50 structure checks (first-run, dev panel, new-player lobby)."""
 from __future__ import annotations
 
 import unittest
@@ -30,8 +30,8 @@ class PlayStoreV1Tests(unittest.TestCase):
         self.assertIn("js/11-first-run.js", html)
         self.assertIn("__CQ_DEV_MODE", html)
         self.assertTrue(
-            ">v46<" in html or ">v47<" in html or ">v48<" in html or ">v49<" in html,
-            "index.html must show a v46–v49 build stamp",
+            ">v46<" in html or ">v47<" in html or ">v48<" in html or ">v49<" in html or ">v50<" in html,
+            "index.html must show a v46–v50 build stamp",
         )
         self.assertTrue(
             "js/12-tester-qa.js" in html or "12-tester-qa.js" in tutorial,
@@ -103,6 +103,9 @@ class PlayStoreV1Tests(unittest.TestCase):
         self.assertIn("handsPlayed", lobby)
         self.assertIn("Sit a table", lobby)
         self.assertIn("Recommended", lobby)
+        self.assertIn("joinTable('beginner')", lobby)
+        self.assertIn("openTableLobby", lobby)
+        self.assertIn("canSitBeginner", lobby)
 
 
 if __name__ == "__main__":

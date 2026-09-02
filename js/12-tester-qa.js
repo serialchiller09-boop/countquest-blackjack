@@ -124,8 +124,21 @@
     }
   }
 
+  function unstickDealLock(app) {
+    try {
+      if (!app) return;
+      const waiting = !!(app._awaitingNextHand || app.phase === 'handEnd' || app.phase === 'bet');
+      if (waiting && (app.dealing || app._betSubmitting)) {
+        app.dealing = false;
+        app._betSubmitting = false;
+      }
+      if (typeof app.unlockDealButton === 'function') app.unlockDealButton();
+    } catch (_) {}
+  }
+
   function ensureDealNext(app) {
     try {
+      unstickDealLock(app);
       if (app && app._awaitingNextHand && typeof app.renderSoloHandEndDealCta === 'function') {
         app.renderSoloHandEndDealCta();
       }
@@ -222,6 +235,22 @@
         const out = origFinish.apply(this, arguments);
         ensureDealNext(this);
         return out;
+      };
+    }
+
+    if (typeof proto.dealNextHand === 'function') {
+      const origDealNext = proto.dealNextHand;
+      proto.dealNextHand = function () {
+        unstickDealLock(this);
+        return origDealNext.apply(this, arguments);
+      };
+    }
+
+    if (typeof proto.continueToNextHand === 'function') {
+      const origContinue = proto.continueToNextHand;
+      proto.continueToNextHand = function () {
+        unstickDealLock(this);
+        return origContinue.apply(this, arguments);
       };
     }
 

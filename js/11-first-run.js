@@ -1,6 +1,9 @@
 // §11 FIRST-RUN ONBOARDING — one-time lobby overlay (Play Store v1)
 // localStorage key: cq.firstRunV1  |  never blocks returning users
 (function () {
+  if (window.__CQ_FIRST_RUN_BOOTED) return;
+  window.__CQ_FIRST_RUN_BOOTED = true;
+
   const STORAGE_KEY = 'cq.firstRunV1';
 
   const INJECTED_CSS = [

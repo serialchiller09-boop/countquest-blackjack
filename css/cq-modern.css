@@ -1,0 +1,229 @@
+/* CountQuest modern visual system v55
+   Felt + gold, labeled prize wheel, glass cards. Overlay — does not rewrite app.css. */
+
+:root {
+  --cq-felt: #0b1c16;
+  --cq-felt-mid: #123328;
+  --cq-gold: #e8c547;
+  --cq-gold-hi: #f6e59a;
+  --cq-ink: #f7f3e8;
+  --cq-muted: rgba(210, 236, 222, .74);
+  --cq-line: rgba(232, 197, 71, .28);
+  --cq-glass: linear-gradient(180deg, rgba(255,255,255,.08), rgba(0,0,0,.28));
+}
+
+html, body {
+  background:
+    radial-gradient(1100px 520px at 50% -8%, #1c4d39 0%, transparent 58%),
+    radial-gradient(900px 640px at 100% 110%, #0a2a20 0%, var(--cq-felt) 55%) !important;
+  color: var(--cq-ink);
+}
+
+#app-header, header.cq-app-header, .app-header {
+  backdrop-filter: blur(14px);
+  background: linear-gradient(180deg, rgba(8,20,16,.92), rgba(8,20,16,.55)) !important;
+  border-bottom: 1px solid var(--cq-line);
+}
+
+.felt, .cq-screen-panel .rounded-xl, .mode-card {
+  background: var(--cq-glass) !important;
+  border-color: var(--cq-line) !important;
+  box-shadow: 0 10px 28px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.06);
+}
+
+.cq-screen-panel h2, #screen-tutorial h2, #screen-training h2,
+#screen-clubs h2, #screen-campaign h2, #screen-daily h2 {
+  color: var(--cq-gold-hi) !important;
+  letter-spacing: .04em;
+  text-shadow: 0 0 18px rgba(232,197,71,.28);
+}
+
+#app-main button, main button, dialog button {
+  transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
+}
+#app-main button:hover, main button:hover, dialog button:hover { filter: brightness(1.08); }
+#app-main button:active, main button:active { transform: translateY(1px); }
+
+#btn-deal,
+#btn-lobby-minigame-action,
+.cq-first-run-primary,
+button.bg-gradient-to-r.from-amber-500,
+#btn-club-create-submit,
+#btn-club-edit-save {
+  background: linear-gradient(180deg, #f6e59a, #d4a017) !important;
+  color: #1a1408 !important;
+  border: 0 !important;
+  font-weight: 800 !important;
+  box-shadow: 0 4px 0 #8a5a10, 0 10px 22px rgba(232,197,71,.22);
+}
+
+input, textarea, select {
+  background: rgba(0,0,0,.38) !important;
+  border: 1px solid rgba(255,255,255,.12) !important;
+  color: var(--cq-ink) !important;
+  border-radius: .7rem !important;
+}
+
+dialog.dialog-premium, dialog[open].dialog-premium {
+  background: radial-gradient(ellipse at top, #1a4334 0%, #0b1a14 68%) !important;
+  border: 1px solid rgba(232,197,71,.42) !important;
+  border-radius: 1.35rem !important;
+  color: var(--cq-ink) !important;
+  box-shadow: 0 28px 70px rgba(0,0,0,.55), 0 0 40px rgba(232,197,71,.08) !important;
+}
+dialog.dialog-premium::backdrop {
+  background: rgba(5,12,10,.78) !important;
+  backdrop-filter: blur(8px);
+}
+
+.lobby-8bp { background: transparent !important; }
+#lobby-top-nav.lobby-8bp-topbar {
+  background: linear-gradient(180deg, rgba(18,48,38,.75), rgba(10,24,18,.35));
+  border: 1px solid var(--cq-line);
+  border-radius: 1.1rem;
+  padding: .55rem .7rem;
+  box-shadow: 0 8px 24px rgba(0,0,0,.25);
+}
+.lobby-hero-play {
+  background: linear-gradient(165deg, #f3d36a 0%, #c99212 42%, #8a5a10 100%) !important;
+  color: #1a1408 !important;
+  border: 2px solid #f8e7a0 !important;
+}
+.lobby-play-stage button,
+[data-lobby-play] { border-radius: 1rem; }
+
+#training-drill-list button, #training-drill-list .mode-card,
+[data-training-drill] {
+  border-radius: 1rem !important;
+  border: 1px solid var(--cq-line) !important;
+  background: linear-gradient(165deg, rgba(255,255,255,.08), rgba(8,24,18,.55)) !important;
+  min-height: 4.5rem;
+}
+[data-training-drill]:hover { border-color: var(--cq-gold) !important; }
+
+#screen-tutorial #tutorial-panel,
+#tutorial-panel.tutorial-step {
+  border: 1px solid var(--cq-line);
+  border-radius: 1.15rem;
+  background: var(--cq-glass);
+  box-shadow: 0 16px 40px rgba(0,0,0,.3);
+}
+#btn-tutorial-skip, #btn-tutorial-next { min-height: 2.85rem; }
+#btn-tutorial-next {
+  background: linear-gradient(180deg, #f6e59a, #d4a017) !important;
+  color: #1a1408 !important;
+  font-weight: 800 !important;
+}
+
+.game-table-wrap .felt, .casino-felt {
+  box-shadow: inset 0 0 90px rgba(0,0,0,.38), 0 18px 40px rgba(0,0,0,.28);
+}
+#chip-buttons button {
+  border-radius: 999px !important;
+  box-shadow: 0 3px 0 rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.25);
+}
+
+#modal-lobby-minigame {
+  background: radial-gradient(ellipse at 50% 0%, #245c45 0%, #0d1f18 62%) !important;
+  padding: 1.35rem 1.15rem 1.2rem !important;
+}
+#lobby-minigame-icon { filter: drop-shadow(0 6px 12px rgba(0,0,0,.35)); }
+#lobby-minigame-title { color: var(--cq-gold-hi) !important; font-weight: 800; }
+
+.cq-spin-wrap, .lobby-spin-wheel-wrap {
+  position: relative;
+  width: 16.5rem !important;
+  height: 16.5rem !important;
+  margin: .75rem auto 1rem !important;
+}
+.cq-spin-pointer, .lobby-spin-pointer {
+  position: absolute;
+  top: -0.15rem;
+  left: 50%;
+  z-index: 4;
+  width: 0; height: 0;
+  transform: translateX(-50%);
+  border-left: .7rem solid transparent;
+  border-right: .7rem solid transparent;
+  border-top: 1.35rem solid #f6e59a;
+  filter: drop-shadow(0 3px 4px rgba(0,0,0,.55));
+}
+.cq-spin-pointer::after {
+  content: "";
+  position: absolute;
+  top: -1.45rem; left: 50%;
+  width: .7rem; height: .7rem;
+  background: #f6e59a;
+  border-radius: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 0 0 3px #8a5a10;
+}
+.cq-spin-wheel, #lobby-spin-wheel.lobby-spin-wheel {
+  position: relative;
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 50%;
+  border: 8px solid #e8c547 !important;
+  box-shadow: 0 0 0 5px #6b3f0c, 0 12px 32px rgba(0,0,0,.45), inset 0 0 28px rgba(0,0,0,.28) !important;
+  overflow: hidden;
+}
+.cq-spin-label {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+.cq-spin-label-text {
+  display: block;
+  width: 4.6rem;
+  margin-left: -2.3rem;
+  text-align: center;
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .02em;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,.75), 0 0 6px rgba(0,0,0,.35);
+  white-space: nowrap;
+  line-height: 1.1;
+}
+.cq-spin-hub {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 3.5rem; height: 3.5rem;
+  margin: -1.75rem 0 0 -1.75rem;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff3c4, #e8c547 55%, #8a5a10);
+  border: 3px solid #6b3f0c;
+  box-shadow: 0 4px 12px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.5);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 3;
+  font-size: .62rem;
+  font-weight: 900;
+  letter-spacing: .12em;
+  color: #1a1408;
+}
+.cq-spin-result {
+  min-height: 1.25rem;
+  margin-top: .35rem;
+  text-align: center;
+  font-weight: 800;
+  color: var(--cq-gold-hi);
+  letter-spacing: .04em;
+}
+.lobby-scratch-tile {
+  background: linear-gradient(145deg, #cbd5e1, #64748b) !important;
+  border: 2px solid rgba(255,255,255,.28) !important;
+  border-radius: .85rem !important;
+  font-size: 1.4rem !important;
+}
+.lobby-scratch-tile.revealed {
+  background: linear-gradient(145deg, #1a4334, #0b1a14) !important;
+  color: var(--cq-gold-hi);
+}
+.cq-lobby-legal a { color: #9ae6c8 !important; }
+@media (max-width: 640px) {
+  .cq-spin-wrap, .lobby-spin-wheel-wrap { width: 14.5rem !important; height: 14.5rem !important; }
+  .cq-spin-label-text { font-size: .6rem; width: 4.1rem; margin-left: -2.05rem; }
+}

@@ -6,13 +6,20 @@
 
   const CSS = [
     'html.cq-new-player #lobby-minigames-row{display:none!important}',
+    'html.cq-new-player #lobby-bottom-dock{display:none!important}',
     'html.cq-new-player #lobby-clubs-btn{display:none!important}',
     'html.cq-new-player #lobby-pass-banner{display:none!important}',
     'html.cq-new-player [data-lobby-play="tournament"]{display:none!important}',
     'html.cq-new-player [data-lobby-play="special-event"]{display:none!important}',
     'html.cq-new-player [data-lobby-play="clubs"]{display:none!important}',
+    'html.cq-new-player [data-lobby-play="dealer-mode"]{display:none!important}',
+    'html.cq-new-player [data-lobby-nav="shop"]{display:none!important}',
+    'html.cq-new-player [data-lobby-nav="leaderboards"]{display:none!important}',
     'html.cq-new-player [data-k="3"]{display:none!important}',
     'html.cq-new-player [data-k="7"]{display:none!important}',
+    'html.cq-new-player [data-table-tier="high-roller"]{display:none!important}',
+    'html.cq-new-player [data-table-tier="pro"]{display:none!important}',
+    '.cq-recommended{margin-left:.4rem;font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;color:#f5d76e;font-weight:700}',
   ].join('');
 
   function injectCss() {
@@ -37,14 +44,34 @@
     const sub = document.querySelector('#lobby-hero-play .hero-sub');
     if (sub) sub.textContent = 'Beginner table — learn Hi-Lo at the felt';
     const title = document.querySelector('#lobby-hero-play .hero-title');
-    if (title && title.textContent === 'Play') title.textContent = 'Sit a table';
+    if (title && (title.textContent === 'Play' || title.textContent === '1v1 Tables')) title.textContent = 'Sit a table';
+    const hint = document.getElementById('menu-beginner-hint');
+    if (hint) {
+      hint.classList.remove('hidden');
+      hint.innerHTML = '<span class="text-gold font-semibold">Welcome!</span> Start the tutorial, or sit the beginner table.';
+    }
+  }
+
+  function recommendBeginner(app) {
+    if (!isNewPlayer(app)) return;
+    const btn = document.querySelector('[data-table-tier="beginner"]');
+    if (!btn || btn.querySelector('.cq-recommended')) return;
+    const name = btn.querySelector('.font-bold');
+    if (!name) return;
+    const tag = document.createElement('span');
+    tag.className = 'cq-recommended';
+    tag.textContent = 'Recommended';
+    name.appendChild(tag);
   }
 
   function apply(app) {
     injectCss();
     const newbie = isNewPlayer(app);
     document.documentElement.classList.toggle('cq-new-player', newbie);
-    if (newbie) relabelHero(app);
+    if (newbie) {
+      relabelHero(app);
+      recommendBeginner(app);
+    }
   }
 
   function patch() {
@@ -60,6 +87,14 @@
       const orig = proto.renderLobby;
       proto.renderLobby = function () {
         const out = orig.apply(this, arguments);
+        apply(this);
+        return out;
+      };
+    }
+    if (typeof proto.renderTableLobby === 'function') {
+      const origTable = proto.renderTableLobby;
+      proto.renderTableLobby = function () {
+        const out = origTable.apply(this, arguments);
         apply(this);
         return out;
       };

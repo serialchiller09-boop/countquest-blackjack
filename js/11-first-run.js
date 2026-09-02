@@ -14,7 +14,8 @@
     '.cq-first-run-card{padding:1.75rem 1.5rem 1.35rem;text-align:center}',
     '.cq-first-run-kicker{margin:0 0 .45rem;font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:#d4af37;font-weight:700}',
     '.cq-first-run-card h2{margin:0 0 .65rem;font-size:1.55rem;line-height:1.2;color:#d4af37;font-weight:800}',
-    '.cq-first-run-card p#cq-first-run-copy{margin:0 0 1.35rem;font-size:.95rem;line-height:1.45;color:rgba(209,250,229,.9)}',
+    '.cq-first-run-card p#cq-first-run-copy{margin:0 0 .55rem;font-size:.95rem;line-height:1.45;color:rgba(209,250,229,.9)}',
+    '.cq-first-run-card p#cq-first-run-steps{margin:0 0 1.35rem;font-size:.82rem;line-height:1.4;color:rgba(167,243,208,.75)}',
     '.cq-first-run-actions{display:flex;flex-direction:column;gap:.55rem}',
     '.cq-first-run-primary{width:100%;min-height:3rem;border-radius:.85rem;border:0;font-weight:800;font-size:1rem;color:#1a1208;background:linear-gradient(90deg,#d4af37,#f5d76e);cursor:pointer}',
     '.cq-first-run-secondary{width:100%;min-height:2.75rem;border-radius:.85rem;border:1px solid rgba(212,175,55,.35);font-weight:700;font-size:.95rem;color:#e8d5a3;background:rgba(255,255,255,.06);cursor:pointer}',
@@ -105,6 +106,7 @@
       + '<p class="cq-first-run-kicker">CountQuest Blackjack</p>'
       + '<h2 id="cq-first-run-title">Quest Through the Casinos</h2>'
       + '<p id="cq-first-run-copy">Learn Hi-Lo by playing, not by reading a book.</p>'
+      + '<p id="cq-first-run-steps">Start with the tutorial, then sit one beginner table. Tournaments, crews, and VIP wait until you have played a hand.</p>'
       + '<div class="cq-first-run-actions">'
       + '<button type="button" id="cq-first-run-tutorial" class="cq-first-run-primary">Start tutorial</button>'
       + '<button type="button" id="cq-first-run-table" class="cq-first-run-secondary">Sit a table</button>'

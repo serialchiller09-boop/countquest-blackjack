@@ -130,6 +130,7 @@ const Storage = {
     try {
       localStorage.removeItem(SAVE_KEY);
       localStorage.removeItem('countquest-v1');
+      localStorage.removeItem('cq.firstRunV1');
     } catch (err) {
       console.warn('CountQuest: reset failed —', err);
     }

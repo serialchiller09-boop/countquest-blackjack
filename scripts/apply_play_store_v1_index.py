@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Patch index.html for Play Store v1: v46 stamps, ?dev=1, first-run script tag."""
+"""Patch index.html for Play Store stamps: v47 stamps, ?dev=1, first-run script tag."""
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -21,14 +21,21 @@ if "window.__CQ_DEV_MODE" not in text:
         1,
     )
 
-text = text.replace("?v=45", "?v=46")
-text = text.replace(">v45<", ">v46<")
+text = text.replace("?v=46", "?v=47")
+text = text.replace(">v46<", ">v47<")
 
 if "js/11-first-run.js" not in text:
-    needle = '<script src="js/09-tests.js?v=46"></script>'
+    needle = '<script src="js/09-tests.js?v=47"></script>'
     text = text.replace(
         needle,
-        needle + '\n  <script src="js/11-first-run.js?v=46"></script>',
+        needle + '\n  <script src="js/11-first-run.js?v=47"></script>',
+        1,
+    )
+
+if "css/play-store-v1.css" not in text:
+    text = text.replace(
+        '<link rel="stylesheet" href="css/casino-felt-table.css?v=47" />',
+        '<link rel="stylesheet" href="css/casino-felt-table.css?v=47" />\n  <link rel="stylesheet" href="css/play-store-v1.css?v=47" />',
         1,
     )
 

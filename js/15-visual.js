@@ -10,7 +10,7 @@
       l.rel = 'stylesheet';
       document.head.appendChild(l);
     }
-    l.href = 'css/cq-modern.css?v=58';
+    l.href = 'css/cq-modern.css?v=59';
   }
 
   function segs() {
@@ -38,16 +38,9 @@
     }).join(', ');
     const labels = list.map(function (seg, i) {
       const rot = i * slice + slice / 2;
-      return '<span class="cq-spin-label" style="transform:rotate(' + rot + 'deg) translateY(-5.15rem)">'
-        + '<span class="cq-spin-label-text">' + esc(seg.label) + '</span></span>';
+      return '<span class="cq-spin-label" style="transform:rotate(' + rot + 'deg) translateY(-5.15rem)">' + '<span class="cq-spin-label-text">' + esc(seg.label) + '</span></span>';
     }).join('');
-    return '<div class="lobby-spin-wheel-wrap cq-spin-wrap' + (locked ? ' cq-spin-locked' : '') + '">'
-      + '<div class="lobby-spin-pointer cq-spin-pointer" aria-hidden="true"></div>'
-      + '<div id="lobby-spin-wheel" class="lobby-spin-wheel cq-spin-wheel" style="background:conic-gradient(' + stops + ')">'
-      + labels
-      + '<div class="cq-spin-hub" aria-hidden="true"><span>SPIN</span></div>'
-      + '</div></div>'
-      + '<p id="lobby-spin-result" class="cq-spin-result">' + (locked ? 'Come back tomorrow' : '') + '</p>';
+    return '<div class="lobby-spin-wheel-wrap cq-spin-wrap' + (locked ? ' cq-spin-locked' : '') + '">' + '<div class="lobby-spin-pointer cq-spin-pointer" aria-hidden="true"></div>' + '<div id="lobby-spin-wheel" class="lobby-spin-wheel cq-spin-wheel" style="background:conic-gradient(' + stops + ')">' + labels + '<div class="cq-spin-hub" aria-hidden="true"><span>SPIN</span></div>' + '</div></div>' + '<p id="lobby-spin-result" class="cq-spin-result">' + (locked ? 'Come back tomorrow' : '') + '</p>';
   }
 
   function dressMinigameModal() {

@@ -626,3 +626,135 @@ body.casino-readable-play .casino-player-rail .casino-hand-cards .playing-card +
   .cq-spin-wrap, .lobby-spin-wheel-wrap { width: 14.5rem !important; height: 14.5rem !important; }
   .cq-spin-label-text { font-size: .6rem; width: 4.1rem; margin-left: -2.05rem; }
 }
+
+
+/* ── v58 play-mode: full-bleed felt like the reference phone table ── */
+body.casino-play-active #franchise-dealer-hud,
+body.casino-play-active .franchise-dealer-hud,
+body.casino-play-active .casino-table-topbar,
+body.casino-play-active .cq-dealer-clipboard,
+body.casino-play-active #count-hud,
+body.casino-play-active #count-hud-bet,
+body.casino-play-active .cq-count-compact-grid,
+body.casino-play-active .cq-count-compact,
+body.casino-play-active #shoe-status,
+body.casino-play-active #how-to-count-bet,
+body.casino-play-active .cq-chip-rack,
+body.casino-play-active #bet-advice,
+body.casino-play-active #strategy-hint,
+body.casino-play-active .casino-bottom-advice,
+body.casino-play-active #action-buttons [data-action="read"],
+body.casino-play-active .cq-felt-svg-wrap {
+  display: none !important;
+}
+
+body.casino-play-active .casino-table-viewport,
+body.casino-play-active #screen-table.casino-table-viewport {
+  max-width: none !important;
+  width: 100% !important;
+  height: 100% !important;
+  padding: 0 !important;
+}
+
+body.casino-play-active .game-table-wrap.casino-table-surface,
+body.casino-play-active .cq-authentic-felt.casino-table-surface,
+body.casino-play-active .casino-felt,
+body.casino-play-active .casino-table-surface {
+  border: 0 !important;
+  outline: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background:
+    radial-gradient(ellipse 75% 60% at 50% 38%, #33d46a 0%, #1aa34a 40%, #0e7a36 78%, #0a5c2e 100%) !important;
+}
+
+body.casino-play-active .cq-table-lettering {
+  top: 38%;
+  color: rgba(232, 201, 110, .72);
+  z-index: 1;
+}
+
+body.casino-play-active .casino-dealer-zone {
+  z-index: 5;
+  padding-top: 1.2rem !important;
+}
+body.casino-play-active .casino-player-rail {
+  z-index: 5;
+}
+
+body.casino-play-active .casino-player-rail .playing-card,
+body.casino-play-active .casino-hand-cards .playing-card,
+body.casino-play-active .casino-seat-human .casino-seat-cards-wrap .playing-card {
+  width: 7.5rem !important;
+  height: 10.5rem !important;
+}
+body.casino-play-active .casino-dealer-zone .playing-card,
+body.casino-readable-play .casino-dealer-zone .playing-card {
+  width: 6.7rem !important;
+  height: 9.4rem !important;
+}
+body.casino-play-active .playing-card .cq-pip { font-size: 1.25rem; }
+body.casino-play-active .playing-card .corner { font-size: 1.25rem !important; }
+body.casino-play-active .playing-card.rank-10 .corner { font-size: 1.02rem !important; }
+body.casino-play-active .casino-dealer-zone #dealer-cards .playing-card + .playing-card {
+  margin-left: -1.7rem !important;
+}
+body.casino-play-active .casino-player-rail .casino-hand-cards .playing-card + .playing-card {
+  margin-left: -1.9rem !important;
+}
+
+body.casino-play-active .cq-hand-total-badge,
+body.casino-play-active .cq-hand-total--dealer .cq-hand-total-badge,
+body.casino-play-active .cq-hand-total--player .cq-hand-total-badge,
+body.casino-play-active #dealer-total,
+body.casino-play-active #dealer-total span,
+body.casino-play-active p.cq-hand-total,
+body.casino-play-active .cq-hand-total {
+  background: #fff !important;
+  color: #111 !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  min-width: 2.5rem !important;
+  height: 2.25rem !important;
+  font-weight: 800 !important;
+  box-shadow: 0 3px 10px rgba(0,0,0,.28) !important;
+}
+
+body.casino-play-active #action-bar {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: .35rem .4rem 0 !important;
+  overflow: visible;
+}
+body.casino-play-active #action-bar::after {
+  content: "";
+  display: block;
+  height: 1.05rem;
+  margin: .45rem -.4rem calc(-.05rem + env(safe-area-inset-bottom));
+  background: linear-gradient(180deg, #e0b07a 0%, #a86b3c 45%, #5a3214 100%);
+  pointer-events: none;
+}
+body.casino-play-active .cq-round-ico {
+  width: 4.2rem;
+  height: 4.2rem;
+}
+body.casino-play-active .cq-round-lbl {
+  font-size: .82rem;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,.45);
+}
+
+@media (max-width: 640px) {
+  body.casino-play-active .casino-player-rail .playing-card,
+  body.casino-play-active .casino-hand-cards .playing-card {
+    width: 6.4rem !important;
+    height: 9rem !important;
+  }
+  body.casino-play-active .casino-dealer-zone .playing-card {
+    width: 5.6rem !important;
+    height: 7.85rem !important;
+  }
+  body.casino-play-active .cq-round-ico { width: 3.8rem; height: 3.8rem; }
+}

@@ -1,4 +1,4 @@
-// §15 VISUAL — labeled prize wheel + modern modal dress (v57)
+// §15 VISUAL — labeled prize wheel + modern modal dress (v58)
 (function () {
   if (window.__CQ_VISUAL_V55_BOOTED) return;
   window.__CQ_VISUAL_V55_BOOTED = true;
@@ -10,7 +10,7 @@
       l.rel = 'stylesheet';
       document.head.appendChild(l);
     }
-    l.href = 'css/cq-modern.css?v=57';
+    l.href = 'css/cq-modern.css?v=58';
   }
 
   function segs() {
@@ -38,12 +38,12 @@
     }).join(', ');
     const labels = list.map(function (seg, i) {
       const rot = i * slice + slice / 2;
-      return '<span class="cq-spin-label" style="transform:rotate(' + rot + 'deg) translateY(-5.15rem)">' 
+      return '<span class="cq-spin-label" style="transform:rotate(' + rot + 'deg) translateY(-5.15rem)">'
         + '<span class="cq-spin-label-text">' + esc(seg.label) + '</span></span>';
     }).join('');
-    return '<div class="lobby-spin-wheel-wrap cq-spin-wrap' + (locked ? ' cq-spin-locked' : '') + '">' 
+    return '<div class="lobby-spin-wheel-wrap cq-spin-wrap' + (locked ? ' cq-spin-locked' : '') + '">'
       + '<div class="lobby-spin-pointer cq-spin-pointer" aria-hidden="true"></div>'
-      + '<div id="lobby-spin-wheel" class="lobby-spin-wheel cq-spin-wheel" style="background:conic-gradient(' + stops + ')">' 
+      + '<div id="lobby-spin-wheel" class="lobby-spin-wheel cq-spin-wheel" style="background:conic-gradient(' + stops + ')">'
       + labels
       + '<div class="cq-spin-hub" aria-hidden="true"><span>SPIN</span></div>'
       + '</div></div>'

@@ -106,42 +106,41 @@
     if (!ab) return;
     const btns = Array.from(ab.querySelectorAll('[data-action]'));
     if (!btns.length) return;
-    btns.sort(function (a, b) {
+    const ordered = btns.slice().sort(function (a, b) {
       const ia = ORDER.indexOf(a.dataset.action);
       const ib = ORDER.indexOf(b.dataset.action);
       return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib);
     });
-    btns.forEach(function (btn) {
-      ab.appendChild(btn);
+    const already = ordered.every(function (btn, i) {
+      return btn === btns[i]
+        && btn.dataset.cqRound === btn.dataset.action
+        && btn.querySelector('.cq-round-ico');
+    });
+    if (already) return;
+    ordered.forEach(function (btn) {
       const act = btn.dataset.action;
-      if (btn.dataset.cqRound === act && btn.querySelector('.cq-round-ico')) return;
-      const label = (btn.textContent || act).trim();
-      btn.dataset.cqRound = act;
-      btn.classList.add('cq-round-act', 'cq-act-' + act);
-      btn.innerHTML = '<span class="cq-round-ico" aria-hidden="true">' + (ICO[act] || '') + '</span>'
-        + '<span class="cq-round-lbl">' + label + '</span>';
+      if (!(btn.dataset.cqRound === act && btn.querySelector('.cq-round-ico'))) {
+        const label = (btn.querySelector('.cq-round-lbl') ? btn.querySelector('.cq-round-lbl').textContent : btn.textContent || act).trim();
+        btn.dataset.cqRound = act;
+        btn.classList.add('cq-round-act', 'cq-act-' + act);
+        btn.innerHTML = '<span class="cq-round-ico" aria-hidden="true">' + (ICO[act] || '') + '</span>'
+          + '<span class="cq-round-lbl">' + label + '</span>';
+      }
+      ab.appendChild(btn);
     });
   }
 
+  function tick() {
+    ensureLettering();
+    dressAllCards();
+    dressActions();
+  }
+
   function watch() {
-    const mo = new MutationObserver(function (muts) {
-      let cards = false;
-      let acts = false;
-      muts.forEach(function (m) {
-        if (m.target && m.target.id === 'action-buttons') acts = true;
-        if (m.target && (m.target.classList && (m.target.classList.contains('playing-card') || m.target.id === 'dealer-cards' || m.target.id === 'player-hands'))) {
-          cards = true;
-        }
-        m.addedNodes && m.addedNodes.forEach(function (n) {
-          if (!n || n.nodeType !== 1) return;
-          if (n.id === 'action-buttons' || (n.querySelector && n.querySelector('#action-buttons'))) acts = true;
-          if (n.classList && n.classList.contains('playing-card')) cards = true;
-          if (n.querySelector && n.querySelector('.playing-card')) cards = true;
-        });
-      });
-      if (acts) dressActions();
-      if (cards) dressAllCards();
-      ensureLettering();
+    const mo = new MutationObserver(function () {
+      mo.disconnect();
+      tick();
+      mo.observe(document.body, { childList: true, subtree: true });
     });
     mo.observe(document.body, { childList: true, subtree: true });
   }
@@ -150,15 +149,11 @@
     document.documentElement.classList.add('cq-v57');
     document.body && document.body.classList.add('cq-v57');
     injectSheet();
-    ensureLettering();
-    dressAllCards();
-    dressActions();
+    tick();
     watch();
     window.addEventListener('load', function () {
       injectSheet();
-      ensureLettering();
-      dressAllCards();
-      dressActions();
+      tick();
     });
   }
   if (document.body) boot();

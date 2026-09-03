@@ -1,9 +1,9 @@
-// §16 CASINO THEME — pips, round actions, table lettering (v57)
+// §16 CASINO THEME — pips, round actions, table lettering (v58)
 (function () {
-  if (window.__CQ_CASINO_V57_BOOTED) return;
-  window.__CQ_CASINO_V57_BOOTED = true;
+  if (window.__CQ_CASINO_V58_BOOTED) return;
+  window.__CQ_CASINO_V58_BOOTED = true;
 
-  const ORDER = ['stand', 'split', 'double', 'hit', 'surrender', 'read'];
+  const ORDER = ['stand', 'split', 'double', 'hit', 'surrender'];
   const PIPS = {
     A: [[50, 50]],
     '2': [[50, 18], [50, 82]],
@@ -17,30 +17,21 @@
     '10': [[28, 14], [72, 14], [50, 30], [28, 32], [72, 32], [28, 68], [72, 68], [50, 70], [28, 86], [72, 86]]
   };
   const ICO = {
-    stand: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 11V7.5a1.5 1.5 0 1 1 3 0V11"/><path d="M11 11V6.5a1.5 1.5 0 1 1 3 0V11"/><path d="M14 11V7.8a1.5 1.5 0 1 1 3 0V13"/><path d="M8 11c-1.8.2-3 1.6-3 3.4 0 2.8 2.2 5.6 7 5.6s7-2.8 7-5.6c0-1.2-.6-2.2-1.6-2.8"/><path d="M7.2 11.2c-.7-1.4.2-3.2 1.8-3.2"/></svg>',
-    split: '<svg viewBox="0 0 24 24" fill="#fff"><rect x="3.2" y="5.2" width="8.2" height="11.4" rx="1.2" transform="rotate(-12 7.3 11)"/><rect x="12.4" y="5.2" width="8.2" height="11.4" rx="1.2" transform="rotate(12 16.5 11)"/><path d="M11.2 11h1.6M12 10.2v1.6" stroke="#c026d3" stroke-width="1.6" stroke-linecap="round"/></svg>',
-    double: '<svg viewBox="0 0 24 24" fill="none"><circle cx="9.2" cy="13.2" r="5.1" fill="#fff" opacity=".95"/><circle cx="14.8" cy="10.4" r="5.1" fill="#fff"/><circle cx="9.2" cy="13.2" r="2.1" fill="#22d3ee"/><circle cx="14.8" cy="10.4" r="2.1" fill="#22d3ee"/></svg>',
-    hit: '<svg viewBox="0 0 24 24" fill="none"><rect x="6.2" y="4.4" width="11.6" height="15.2" rx="1.6" fill="#fff"/><path d="M12 8.4v7.2M8.4 12h7.2" stroke="#16a34a" stroke-width="2.2" stroke-linecap="round"/></svg>',
-    surrender: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.1" stroke-linecap="round"><path d="M6 20V5"/><path d="M6 5l10 3.2-10 3.2" fill="#fff" stroke="#fff"/></svg>',
-    read: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.1"><path d="M2.8 12s3.4-6 9.2-6 9.2 6 9.2 6-3.4 6-9.2 6-9.2-6-9.2-6Z"/><circle cx="12" cy="12" r="2.4" fill="#fff"/></svg>'
+    stand: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11.2V6.4a1.45 1.45 0 0 1 2.9 0V11"/><path d="M11.9 11V5.7a1.45 1.45 0 0 1 2.9 0V11"/><path d="M14.8 11V6.8a1.45 1.45 0 0 1 2.9 0V12.4"/><path d="M9 11.2c-2 .3-3.3 1.8-3.3 3.7 0 3 2.4 6 7.4 6s7.4-3 7.4-6c0-1.3-.7-2.4-1.8-3"/><path d="M8.2 11.1c-.8-1.5.1-3.3 1.8-3.3"/></svg>',
+    split: '<svg viewBox="0 0 24 24"><rect x="3.4" y="5.4" width="8.4" height="12.2" rx="1.3" fill="#fff" transform="rotate(-14 7.6 11.5)"/><rect x="12.2" y="5.4" width="8.4" height="12.2" rx="1.3" fill="#fff" transform="rotate(14 16.4 11.5)"/><circle cx="7.4" cy="10.2" r=".7" fill="#c026d3"/><circle cx="16.6" cy="10.2" r=".7" fill="#c026d3"/></svg>',
+    double: '<svg viewBox="0 0 24 24"><circle cx="12" cy="15.1" r="5.6" fill="#fff"/><circle cx="12" cy="15.1" r="2.05" fill="#0891b2"/><circle cx="12" cy="9.1" r="5.6" fill="#fff"/><circle cx="12" cy="9.1" r="2.05" fill="#0891b2"/></svg>',
+    hit: '<svg viewBox="0 0 24 24"><rect x="6.4" y="4.2" width="11.2" height="15.6" rx="1.5" fill="#fff"/><path d="M12 8.6v6.8M8.6 12h6.8" stroke="#16a34a" stroke-width="2.15" stroke-linecap="round"/></svg>',
+    surrender: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.1" stroke-linecap="round"><path d="M6 20V5"/><path d="M6 5l10 3.2-10 3.2" fill="#fff" stroke="#fff"/></svg>'
   };
 
   function injectSheet() {
-    if (!document.querySelector('link[href*="cq-modern.css"]')) {
-      const l = document.createElement('link');
+    let l = document.querySelector('link[href*="cq-modern.css"]');
+    if (!l) {
+      l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = 'css/cq-modern.css?v=57';
       document.head.appendChild(l);
     }
-    if (document.getElementById('cq-casino-v57-end')) return;
-    const s = document.createElement('style');
-    s.id = 'cq-casino-v57-end';
-    s.textContent = 'dialog.cq-first-run{background:linear-gradient(180deg,#fffdf6,#efe4c8)!important;color:#1a140c!important;border:3px solid #f3d36a!important}'
-      + 'dialog.cq-first-run::backdrop{background:rgba(6,40,20,.72)!important}'
-      + '.cq-first-run-card h2{color:#8a4b12!important}'
-      + '.cq-first-run-kicker{color:#b45309!important}'
-      + '.cq-first-run-card p{color:#5c4a32!important}';
-    document.head.appendChild(s);
+    l.href = 'css/cq-modern.css?v=58';
   }
 
   function ensureLettering() {
@@ -60,7 +51,6 @@
       if (card) {
         card.classList.remove('cq-pipped', 'cq-face');
         card.querySelector('.cq-pip-field')?.remove();
-        card.querySelector('.cq-face-mark')?.remove();
         if (card.dataset) delete card.dataset.cqPips;
       }
       return;
@@ -74,7 +64,6 @@
     if (card.dataset.cqPips === key + '|' + suit) return;
     card.dataset.cqPips = key + '|' + suit;
     card.querySelector('.cq-pip-field')?.remove();
-    card.querySelector('.cq-face-mark')?.remove();
     if (PIPS[key]) {
       card.classList.add('cq-pipped');
       card.classList.remove('cq-face');
@@ -93,7 +82,6 @@
     } else {
       card.classList.add('cq-face');
       card.classList.remove('cq-pipped');
-      if (suitEl) suitEl.style.opacity = '1';
     }
   }
 
@@ -104,7 +92,9 @@
   function dressActions() {
     const ab = document.getElementById('action-buttons');
     if (!ab) return;
-    const btns = Array.from(ab.querySelectorAll('[data-action]'));
+    const btns = Array.from(ab.querySelectorAll('[data-action]')).filter(function (b) {
+      return b.dataset.action !== 'read';
+    });
     if (!btns.length) return;
     const ordered = btns.slice().sort(function (a, b) {
       const ia = ORDER.indexOf(a.dataset.action);
@@ -146,8 +136,8 @@
   }
 
   function boot() {
-    document.documentElement.classList.add('cq-v57');
-    document.body && document.body.classList.add('cq-v57');
+    document.documentElement.classList.add('cq-v58');
+    document.body && document.body.classList.add('cq-v58');
     injectSheet();
     tick();
     watch();

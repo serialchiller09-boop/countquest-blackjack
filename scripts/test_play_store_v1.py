@@ -135,7 +135,7 @@ class PlayStoreV1Tests(unittest.TestCase):
         self.assertIn("updateTutorialNavButtons", qa)
         self.assertIn("renderTutorial", qa)
         self.assertIn("Skip tutorial and sit a beginner table", qa)
-        self.assertIn("?v=56", tutorial)
+        self.assertIn("?v=57", tutorial)
 
     def test_clubs_and_spin_visible_with_ui(self) -> None:
         lobby = (ROOT / "js" / "13-new-player-lobby.js").read_text(encoding="utf-8")
@@ -150,9 +150,9 @@ class PlayStoreV1Tests(unittest.TestCase):
         self.assertIn("spin-win", css)
         self.assertIn("cq-crew-badge", css)
         self.assertIn("14-clubs-spin-ui.js", tutorial)
-        self.assertIn("?v=56", tutorial)
+        self.assertIn("?v=57", tutorial)
         self.assertIn("./js/14-clubs-spin-ui.js", sw)
-        self.assertIn("cq-pwa-v22", sw)
+        self.assertIn("cq-pwa-v23", sw)
 
     def test_labeled_spin_wheel_and_modern_css(self) -> None:
         vis = (ROOT / "js" / "15-visual.js").read_text(encoding="utf-8")
@@ -169,7 +169,22 @@ class PlayStoreV1Tests(unittest.TestCase):
         self.assertIn("15-visual.js", tutorial)
         self.assertIn("cq-modern.css", sw)
         self.assertIn("./js/15-visual.js", sw)
-        self.assertIn("cq-pwa-v22", sw)
+        self.assertIn("cq-pwa-v23", sw)
+
+    def test_casino_theme_v57_overlay(self) -> None:
+        theme = (ROOT / "js" / "16-casino-theme.js").read_text(encoding="utf-8")
+        css = (ROOT / "css" / "cq-modern.css").read_text(encoding="utf-8")
+        tutorial = (ROOT / "js" / "08-tutorial.js").read_text(encoding="utf-8")
+        sw = (ROOT / "sw.js").read_text(encoding="utf-8")
+        self.assertIn("16-casino-theme.js", tutorial)
+        self.assertIn("./js/16-casino-theme.js", sw)
+        self.assertIn("cq-round-ico", theme)
+        self.assertIn("cq-pip-field", theme)
+        self.assertIn("cq-table-lettering", theme)
+        self.assertIn("--cq-wood", css)
+        self.assertIn(".cq-round-ico", css)
+        self.assertIn("cq-act-stand", css)
+        self.assertIn("cq-act-hit", css)
 
 
 if __name__ == "__main__":

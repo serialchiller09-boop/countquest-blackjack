@@ -1,135 +1,532 @@
-/* CountQuest modern visual system v55
-   Felt + gold, labeled prize wheel, glass cards. Overlay — does not rewrite app.css. */
+/* CountQuest casino theme v57
+   Bright felt + wood rail + circular actions. Matches the modern mobile casino table. */
 
 :root {
-  --cq-felt: #0b1c16;
-  --cq-felt-mid: #123328;
-  --cq-gold: #e8c547;
-  --cq-gold-hi: #f6e59a;
-  --cq-ink: #f7f3e8;
-  --cq-muted: rgba(210, 236, 222, .74);
-  --cq-line: rgba(232, 197, 71, .28);
-  --cq-glass: linear-gradient(180deg, rgba(255,255,255,.08), rgba(0,0,0,.28));
+  --cq-felt: #12944a;
+  --cq-felt-mid: #0e7d3e;
+  --cq-felt-deep: #0a5c2e;
+  --cq-felt-hi: #1db954;
+  --cq-wood: #8d5528;
+  --cq-wood-hi: #c48a4a;
+  --cq-wood-deep: #5a3214;
+  --cq-gold: #f3d36a;
+  --cq-gold-hi: #ffe9a3;
+  --cq-cream: #fff8ea;
+  --cq-ink: #1a140c;
+  --cq-stand: #ff8c1a;
+  --cq-split: #c026d3;
+  --cq-double: #22d3ee;
+  --cq-hit: #22c55e;
+  --cq-card: #fffdf8;
 }
 
 html, body {
   background:
-    radial-gradient(1100px 520px at 50% -8%, #1c4d39 0%, transparent 58%),
-    radial-gradient(900px 640px at 100% 110%, #0a2a20 0%, var(--cq-felt) 55%) !important;
-  color: var(--cq-ink);
+    radial-gradient(ellipse 90% 70% at 50% 28%, #24c45e 0%, #12944a 38%, #0b6b34 72%, #064422 100%) !important;
+  color: #fff8ea !important;
 }
 
-#app-header, header.cq-app-header, .app-header {
-  backdrop-filter: blur(14px);
-  background: linear-gradient(180deg, rgba(8,20,16,.92), rgba(8,20,16,.55)) !important;
-  border-bottom: 1px solid var(--cq-line);
+body::before {
+  content: "";
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  opacity: .18;
+  background-image:
+    repeating-linear-gradient(90deg, transparent 0 11px, rgba(0,0,0,.08) 11px 12px),
+    repeating-linear-gradient(0deg, transparent 0 11px, rgba(255,255,255,.05) 11px 12px);
 }
 
-.felt, .cq-screen-panel .rounded-xl, .mode-card {
-  background: var(--cq-glass) !important;
-  border-color: var(--cq-line) !important;
-  box-shadow: 0 10px 28px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.06);
+#app, #app-main, main, .cq-screen-panel { position: relative; z-index: 1; }
+
+/* ── Header / chrome ── */
+#app-header, header.cq-app-header, .app-header, #header-currency {
+  background: linear-gradient(180deg, rgba(6,40,20,.55), rgba(6,40,20,0)) !important;
+  border-bottom: 0 !important;
+  backdrop-filter: blur(8px);
+  box-shadow: none !important;
+}
+body.casino-play-active #app-header,
+body.casino-play-active #header-currency {
+  background: transparent !important;
+  backdrop-filter: none !important;
 }
 
-.cq-screen-panel h2, #screen-tutorial h2, #screen-training h2,
-#screen-clubs h2, #screen-campaign h2, #screen-daily h2 {
-  color: var(--cq-gold-hi) !important;
+/* ── Screens / menus: white casino cards on felt ── */
+.cq-screen-panel,
+#screen-training,
+#screen-clubs,
+#screen-tutorial,
+#screen-campaign,
+#screen-daily,
+#screen-table-lobby,
+#screen-practice-range,
+#how-to-count-menu,
+.mode-card,
+.cq-screen-panel .felt,
+#training-daily-goal,
+#tutorial-panel,
+#tutorial-panel.tutorial-step {
+  background: linear-gradient(180deg, #fffdf6 0%, #f3ead3 100%) !important;
+  color: var(--cq-ink) !important;
+  border: 2px solid rgba(255,255,255,.7) !important;
+  border-radius: 1.25rem !important;
+  box-shadow: 0 10px 0 rgba(0,0,0,.12), 0 18px 32px rgba(0,0,0,.22) !important;
+}
+
+.cq-screen-panel h2,
+#screen-tutorial h2,
+#screen-training h2,
+#screen-clubs h2,
+#screen-campaign h2,
+#screen-daily h2,
+#screen-table-lobby h2 {
+  color: #8a4b12 !important;
   letter-spacing: .04em;
-  text-shadow: 0 0 18px rgba(232,197,71,.28);
+  text-shadow: none !important;
 }
 
-#app-main button, main button, dialog button {
-  transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
+#screen-training .text-emerald-300\/80,
+#screen-clubs .text-emerald-300\/80,
+.cq-screen-panel p,
+.cq-screen-panel .text-emerald-300\/80 {
+  color: #5c4a32 !important;
 }
-#app-main button:hover, main button:hover, dialog button:hover { filter: brightness(1.08); }
-#app-main button:active, main button:active { transform: translateY(1px); }
 
+#screen-menu.lobby-8bp,
+.lobby-8bp {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: 0 !important;
+}
+
+#lobby-top-nav.lobby-8bp-topbar {
+  background: linear-gradient(180deg, rgba(255,248,234,.16), rgba(8,70,32,.35)) !important;
+  border: 1px solid rgba(255,233,163,.35) !important;
+  border-radius: 1.15rem !important;
+  box-shadow: 0 8px 22px rgba(0,0,0,.2);
+}
+
+.lobby-profile-name, .lobby-profile-rank, .lobby-dock-label {
+  color: #fff8ea !important;
+}
+
+.lobby-currency-pill {
+  background: linear-gradient(180deg, #fff8ea, #f3d36a) !important;
+  color: #1a140c !important;
+  border: 2px solid #fff !important;
+  border-radius: 999px !important;
+  font-weight: 800 !important;
+  box-shadow: 0 3px 0 #8a5a10;
+}
+
+.lobby-hero-play,
+[data-lobby-play],
+.lobby-play-stage button {
+  border-radius: 1.2rem !important;
+  font-weight: 800 !important;
+  letter-spacing: .02em;
+  box-shadow: 0 6px 0 rgba(0,0,0,.22), 0 14px 24px rgba(0,0,0,.18) !important;
+  border: 2px solid rgba(255,255,255,.55) !important;
+}
+.lobby-hero-play {
+  background: linear-gradient(165deg, #ffef9a 0%, #f3d36a 40%, #d4a017 100%) !important;
+  color: #1a140c !important;
+}
+
+.lobby-clubs-btn {
+  border-radius: 1.15rem !important;
+  background: linear-gradient(160deg, #e9d5ff 0%, #c026d3 48%, #6b21a8 100%) !important;
+}
+
+#lobby-bottom-dock.lobby-bottom-dock {
+  background: linear-gradient(180deg, #c48a4a 0%, #8d5528 38%, #5a3214 100%) !important;
+  border-top: 4px solid #e8c9a0 !important;
+  box-shadow: 0 -8px 24px rgba(0,0,0,.28);
+}
+#lobby-bottom-dock .lobby-dock-label {
+  color: #fff3d4 !important;
+  letter-spacing: .18em !important;
+}
+
+.lobby-minigame-tile {
+  border-radius: 1.1rem !important;
+  min-height: 4.7rem !important;
+  border: 2px solid rgba(255,255,255,.45) !important;
+  box-shadow: 0 5px 0 rgba(0,0,0,.25) !important;
+}
+
+#training-drill-list button,
+#training-drill-list .mode-card,
+[data-training-drill] {
+  border-radius: 1.1rem !important;
+  background: linear-gradient(180deg, #fffdf6, #efe2c4) !important;
+  color: var(--cq-ink) !important;
+  border: 2px solid rgba(141,85,40,.25) !important;
+  min-height: 4.6rem;
+  font-weight: 700 !important;
+  box-shadow: 0 6px 0 rgba(0,0,0,.12) !important;
+}
+
+/* Primary CTA buttons */
 #btn-deal,
 #btn-lobby-minigame-action,
 .cq-first-run-primary,
-button.bg-gradient-to-r.from-amber-500,
+#btn-tutorial-next,
 #btn-club-create-submit,
-#btn-club-edit-save {
-  background: linear-gradient(180deg, #f6e59a, #d4a017) !important;
-  color: #1a1408 !important;
-  border: 0 !important;
+#btn-club-edit-save,
+#btn-continue-session,
+button.bg-gradient-to-r.from-amber-500 {
+  background: linear-gradient(180deg, #ffe9a3, #f3d36a 45%, #d4a017) !important;
+  color: #1a140c !important;
+  border: 2px solid #fff6d0 !important;
   font-weight: 800 !important;
-  box-shadow: 0 4px 0 #8a5a10, 0 10px 22px rgba(232,197,71,.22);
+  border-radius: 999px !important;
+  box-shadow: 0 4px 0 #8a5a10, 0 10px 18px rgba(0,0,0,.22) !important;
 }
 
 input, textarea, select {
-  background: rgba(0,0,0,.38) !important;
-  border: 1px solid rgba(255,255,255,.12) !important;
+  background: #fffdf6 !important;
+  border: 2px solid rgba(141,85,40,.28) !important;
   color: var(--cq-ink) !important;
-  border-radius: .7rem !important;
+  border-radius: .85rem !important;
 }
 
-dialog.dialog-premium, dialog[open].dialog-premium {
-  background: radial-gradient(ellipse at top, #1a4334 0%, #0b1a14 68%) !important;
-  border: 1px solid rgba(232,197,71,.42) !important;
-  border-radius: 1.35rem !important;
+dialog, dialog.dialog-premium, dialog[open],
+#modal-table-options, #modal-lobby-minigame, #stats-sidebar {
+  background: linear-gradient(180deg, #fffdf6 0%, #efe4c8 100%) !important;
   color: var(--cq-ink) !important;
-  box-shadow: 0 28px 70px rgba(0,0,0,.55), 0 0 40px rgba(232,197,71,.08) !important;
+  border: 3px solid #f3d36a !important;
+  border-radius: 1.4rem !important;
+  box-shadow: 0 28px 70px rgba(0,0,0,.45) !important;
 }
-dialog.dialog-premium::backdrop {
-  background: rgba(5,12,10,.78) !important;
+dialog::backdrop, dialog.dialog-premium::backdrop {
+  background: rgba(6,40,20,.72) !important;
   backdrop-filter: blur(8px);
 }
+dialog h2, dialog h3, #lobby-minigame-title, #stats-sidebar h2 {
+  color: #8a4b12 !important;
+}
 
-.lobby-8bp { background: transparent !important; }
-#lobby-top-nav.lobby-8bp-topbar {
-  background: linear-gradient(180deg, rgba(18,48,38,.75), rgba(10,24,18,.35));
-  border: 1px solid var(--cq-line);
-  border-radius: 1.1rem;
-  padding: .55rem .7rem;
-  box-shadow: 0 8px 24px rgba(0,0,0,.25);
+/* First-run: kill the dark gold dialog */
+dialog.cq-first-run {
+  background: linear-gradient(180deg, #fffdf6 0%, #efe4c8 100%) !important;
+  color: var(--cq-ink) !important;
+  border: 3px solid #f3d36a !important;
+  box-shadow: 0 28px 70px rgba(0,0,0,.45) !important;
 }
-.lobby-hero-play {
-  background: linear-gradient(165deg, #f3d36a 0%, #c99212 42%, #8a5a10 100%) !important;
-  color: #1a1408 !important;
-  border: 2px solid #f8e7a0 !important;
+dialog.cq-first-run::backdrop { background: rgba(6,40,20,.72) !important; }
+.cq-first-run-kicker { color: #b45309 !important; }
+.cq-first-run-card h2 { color: #8a4b12 !important; }
+.cq-first-run-card p#cq-first-run-copy,
+.cq-first-run-card p#cq-first-run-steps { color: #5c4a32 !important; }
+.cq-first-run-secondary {
+  background: #fff !important;
+  color: #8a4b12 !important;
+  border: 2px solid #f3d36a !important;
 }
-.lobby-play-stage button,
-[data-lobby-play] { border-radius: 1rem; }
+.cq-first-run-skip { color: #6b7280 !important; }
 
-#training-drill-list button, #training-drill-list .mode-card,
-[data-training-drill] {
-  border-radius: 1rem !important;
-  border: 1px solid var(--cq-line) !important;
-  background: linear-gradient(165deg, rgba(255,255,255,.08), rgba(8,24,18,.55)) !important;
-  min-height: 4.5rem;
+/* ── TABLE ── */
+.game-table-wrap .felt,
+.casino-felt,
+.cq-authentic-felt.casino-table-surface,
+.casino-table-surface {
+  background:
+    radial-gradient(ellipse 80% 70% at 50% 42%, #2ad066 0%, #12944a 46%, #0a5c2e 100%) !important;
+  box-shadow:
+    inset 0 0 90px rgba(0,0,0,.28),
+    0 18px 40px rgba(0,0,0,.28) !important;
+  border: 10px solid #8d5528 !important;
+  outline: 4px solid #5a3214;
 }
-[data-training-drill]:hover { border-color: var(--cq-gold) !important; }
 
-#screen-tutorial #tutorial-panel,
-#tutorial-panel.tutorial-step {
-  border: 1px solid var(--cq-line);
-  border-radius: 1.15rem;
-  background: var(--cq-glass);
-  box-shadow: 0 16px 40px rgba(0,0,0,.3);
+.cq-table-lettering {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  pointer-events: none;
+  text-align: center;
+  color: rgba(255, 233, 163, .62);
+  font-family: Palatino, "Palatino Linotype", Georgia, serif;
+  text-transform: uppercase;
+  text-shadow: 0 2px 0 rgba(90,50,20,.25);
+  letter-spacing: .22em;
+  line-height: 1.15;
 }
-#btn-tutorial-skip, #btn-tutorial-next { min-height: 2.85rem; }
-#btn-tutorial-next {
-  background: linear-gradient(180deg, #f6e59a, #d4a017) !important;
-  color: #1a1408 !important;
+.cq-tl-title {
+  font-size: clamp(1.35rem, 6vw, 2.1rem);
+  font-weight: 700;
+  letter-spacing: .28em;
+}
+.cq-tl-pays {
+  margin-top: .15rem;
+  font-size: clamp(.62rem, 2.6vw, .85rem);
+  letter-spacing: .2em;
+  font-style: italic;
+}
+.cq-tl-ins {
+  margin-top: .35rem;
+  font-size: clamp(.48rem, 2.1vw, .68rem);
+  letter-spacing: .16em;
+  opacity: .85;
+}
+
+/* Totals: white oval badges like the reference */
+.cq-hand-total-badge,
+.cq-hand-total--dealer .cq-hand-total-badge,
+.cq-hand-total--player .cq-hand-total-badge,
+#dealer-total,
+#player-hands .cq-hand-total,
+p.cq-hand-total {
+  background: #fff !important;
+  color: #111 !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  font-family: ui-sans-serif, system-ui, sans-serif !important;
   font-weight: 800 !important;
+  box-shadow: 0 3px 10px rgba(0,0,0,.28) !important;
+  min-width: 2.35rem !important;
+  height: 2.15rem !important;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
 }
 
-.game-table-wrap .felt, .casino-felt {
-  box-shadow: inset 0 0 90px rgba(0,0,0,.38), 0 18px 40px rgba(0,0,0,.28);
+/* Cards */
+.playing-card,
+body.casino-play-active .playing-card,
+body.casino-readable-play .casino-player-rail .playing-card,
+body.casino-readable-play .casino-dealer-zone .playing-card,
+.cq-authentic-felt .playing-card,
+.casino-dealer-zone .playing-card,
+.casino-hand-cards .playing-card,
+.casino-seat-human .casino-seat-cards-wrap .playing-card {
+  width: 5.6rem !important;
+  height: 7.85rem !important;
+  border-radius: .55rem !important;
+  background: var(--cq-card) !important;
+  color: #161616 !important;
+  border: 1px solid rgba(15,23,42,.12) !important;
+  box-shadow:
+    0 8px 18px rgba(0,0,0,.28),
+    inset 0 0 0 1px rgba(255,255,255,.9) !important;
+  overflow: hidden;
+}
+.casino-dealer-zone .playing-card,
+body.casino-readable-play .casino-dealer-zone .playing-card {
+  width: 5rem !important;
+  height: 7rem !important;
+}
+.playing-card.red,
+.cq-authentic-felt .playing-card.red { color: #d52027 !important; }
+
+.playing-card .corner {
+  font-weight: 800 !important;
+  font-family: "Times New Roman", Palatino, serif !important;
+  font-size: 1.05rem !important;
+  letter-spacing: -0.02em;
+  z-index: 3;
+}
+.playing-card.rank-10 .corner { font-size: .88rem !important; }
+.playing-card .center-suit {
+  font-size: 2.6rem !important;
+  z-index: 2;
+}
+.playing-card.cq-pipped .center-suit { opacity: 0 !important; }
+
+.playing-card .cq-pip-field {
+  position: absolute;
+  inset: 16% 18% 16% 18%;
+  pointer-events: none;
+  z-index: 2;
+}
+.playing-card .cq-pip {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-style: normal;
+  font-size: 1.05rem;
+  line-height: 1;
+  font-family: "Times New Roman", Palatino, serif;
+}
+.playing-card .cq-pip.is-flip { transform: translate(-50%, -50%) rotate(180deg); }
+.playing-card.cq-face .cq-face-mark {
+  position: absolute;
+  left: 50%; top: 52%;
+  transform: translate(-50%, -50%);
+  font-size: 2.4rem;
+  font-weight: 800;
+  font-family: Palatino, Georgia, serif;
+  opacity: .92;
+  z-index: 2;
+  line-height: 1;
+}
+
+/* Bicycle-ish lattice back */
+.playing-card.back,
+.playing-card.hole-hidden,
+.cq-authentic-felt .playing-card.back,
+.cq-authentic-felt .casino-dealer-zone .playing-card.back,
+.cq-authentic-felt .casino-dealer-zone .playing-card.hole-hidden {
+  background:
+    repeating-linear-gradient(45deg, #1d4ed8 0 7px, #dc2626 7px 14px),
+    repeating-linear-gradient(-45deg, #1e3a8a 0 7px, #b91c1c 7px 14px) !important;
+  background-blend-mode: multiply !important;
+  border: 3px solid #f8fafc !important;
+}
+.playing-card.back .card-inner,
+.playing-card.hole-hidden .card-inner {
+  position: absolute;
+  inset: 7%;
+  border-radius: .28rem;
+  background:
+    repeating-conic-gradient(#2563eb 0% 25%, #1e3a8a 0% 50%) 50% / 10px 10px,
+    linear-gradient(135deg, #3b82f6, #1e3a8a);
+  box-shadow: inset 0 0 0 2px rgba(248,250,252,.55);
+}
+.playing-card.back .card-inner::after,
+.playing-card.hole-hidden .card-inner::after,
+.cq-authentic-felt .casino-dealer-zone .playing-card.hole-hidden .card-inner::after {
+  display: none !important;
+}
+
+body.casino-play-active .casino-dealer-zone #dealer-cards .playing-card + .playing-card,
+body.casino-readable-play .casino-dealer-zone #dealer-cards .playing-card + .playing-card {
+  margin-left: -1.45rem !important;
+}
+body.casino-play-active .casino-player-rail .casino-hand-cards .playing-card + .playing-card,
+body.casino-readable-play .casino-player-rail .casino-hand-cards .playing-card + .playing-card {
+  margin-left: -1.65rem !important;
+}
+
+/* Action bar = wood rail + round colored buttons */
+#action-bar {
+  background: linear-gradient(180deg, #d4a574 0%, #a86b3c 14%, #7a451f 55%, #5a3214 100%) !important;
+  border-top: 5px solid #f0d2a8 !important;
+  backdrop-filter: none !important;
+  box-shadow: 0 -10px 28px rgba(0,0,0,.28);
+  padding: .7rem .55rem calc(.55rem + env(safe-area-inset-bottom)) !important;
+  border-radius: 1.4rem 1.4rem 0 0;
+}
+#action-buttons,
+#action-buttons.cq-readable-actions,
+#action-buttons.cq-readable-actions:has(.cq-action-split),
+#action-buttons.cq-readable-actions:has(.cq-action-surrender) {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  justify-content: space-evenly !important;
+  align-items: flex-start !important;
+  gap: .2rem !important;
+  width: 100% !important;
+  max-width: 28rem !important;
+  margin: 0 auto !important;
+  grid-template-columns: none !important;
+}
+
+#action-buttons .action-btn,
+#action-buttons .cq-readable-action-btn,
+.cq-round-act {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: .28rem !important;
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  min-width: 4.15rem !important;
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  color: #fff8ea !important;
+  font-weight: 800 !important;
+  letter-spacing: .01em;
+  text-shadow: 0 1px 1px rgba(0,0,0,.35);
+}
+.cq-round-ico {
+  width: 3.65rem;
+  height: 3.65rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 5px 0 rgba(0,0,0,.22),
+    0 10px 16px rgba(0,0,0,.2),
+    inset 0 3px 0 rgba(255,255,255,.38);
+}
+.cq-round-ico svg { width: 1.7rem; height: 1.7rem; display: block; }
+.cq-round-lbl { font-size: .78rem; line-height: 1; }
+
+.cq-act-stand .cq-round-ico,
+.cq-action-stand .cq-round-ico { background: radial-gradient(circle at 32% 28%, #ffc16a, #ff8c1a 58%, #e07000); }
+.cq-act-split .cq-round-ico,
+.cq-action-split .cq-round-ico { background: radial-gradient(circle at 32% 28%, #e879f9, #c026d3 58%, #86198f); }
+.cq-act-double .cq-round-ico,
+.cq-action-double .cq-round-ico { background: radial-gradient(circle at 32% 28%, #67e8f9, #22d3ee 58%, #0e7490); }
+.cq-act-hit .cq-round-ico,
+.cq-action-hit .cq-round-ico { background: radial-gradient(circle at 32% 28%, #86efac, #22c55e 58%, #15803d); }
+.cq-act-surrender .cq-round-ico,
+.cq-action-surrender .cq-round-ico { background: radial-gradient(circle at 32% 28%, #cbd5e1, #64748b 58%, #334155); }
+.cq-act-read .cq-round-ico,
+.cq-action-read .cq-round-ico { background: radial-gradient(circle at 32% 28%, #c4b5fd, #7c3aed 58%, #4c1d95); }
+
+#casino-bottom-dock {
+  background: linear-gradient(180deg, rgba(13,90,42,.15), rgba(90,50,20,.55)) !important;
+  border-top: 0 !important;
 }
 #chip-buttons button {
   border-radius: 999px !important;
-  box-shadow: 0 3px 0 rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.25);
+  box-shadow: 0 3px 0 rgba(0,0,0,.35), inset 0 2px 0 rgba(255,255,255,.4) !important;
+  border: 2px solid rgba(255,255,255,.55) !important;
+  font-weight: 800 !important;
 }
 
-#modal-lobby-minigame {
-  background: radial-gradient(ellipse at 50% 0%, #245c45 0%, #0d1f18 62%) !important;
-  padding: 1.35rem 1.15rem 1.2rem !important;
+.cq-table-options-btn {
+  background: rgba(255,255,255,.92) !important;
+  color: #1a140c !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  box-shadow: 0 4px 14px rgba(0,0,0,.25) !important;
 }
-#lobby-minigame-icon { filter: drop-shadow(0 6px 12px rgba(0,0,0,.35)); }
-#lobby-minigame-title { color: var(--cq-gold-hi) !important; font-weight: 800; }
 
+/* Spin wheel stays loud */
+.cq-spin-wheel, #lobby-spin-wheel.lobby-spin-wheel {
+  border: 8px solid #f3d36a !important;
+  box-shadow: 0 0 0 5px #6b3f0c, 0 12px 32px rgba(0,0,0,.45) !important;
+}
+
+.cq-lobby-legal a { color: #fff3d4 !important; text-decoration: underline; }
+
+#menu-beginner-hint {
+  background: rgba(255,248,234,.92) !important;
+  color: #1a140c !important;
+  border-color: #f3d36a !important;
+}
+
+@media (max-width: 640px) {
+  .playing-card,
+  body.casino-play-active .playing-card,
+  body.casino-readable-play .casino-player-rail .playing-card,
+  .casino-hand-cards .playing-card {
+    width: 5.35rem !important;
+    height: 7.5rem !important;
+  }
+  .casino-dealer-zone .playing-card {
+    width: 4.7rem !important;
+    height: 6.55rem !important;
+  }
+  .cq-round-ico { width: 3.35rem; height: 3.35rem; }
+  .cq-round-lbl { font-size: .7rem; }
+}
+
+/* Labeled prize wheel (kept from v56) */
 .cq-spin-wrap, .lobby-spin-wheel-wrap {
   position: relative;
   width: 16.5rem !important;
@@ -163,8 +560,11 @@ dialog.dialog-premium::backdrop {
   width: 100% !important;
   height: 100% !important;
   border-radius: 50%;
-  border: 8px solid #e8c547 !important;
-  box-shadow: 0 0 0 5px #6b3f0c, 0 12px 32px rgba(0,0,0,.45), inset 0 0 28px rgba(0,0,0,.28) !important;
+  border: 8px solid #f3d36a !important;
+  box-shadow:
+    0 0 0 5px #6b3f0c,
+    0 12px 32px rgba(0,0,0,.45),
+    inset 0 0 28px rgba(0,0,0,.28) !important;
   overflow: hidden;
 }
 .cq-spin-label {
@@ -209,7 +609,7 @@ dialog.dialog-premium::backdrop {
   margin-top: .35rem;
   text-align: center;
   font-weight: 800;
-  color: var(--cq-gold-hi);
+  color: #8a4b12;
   letter-spacing: .04em;
 }
 .lobby-scratch-tile {
@@ -219,10 +619,9 @@ dialog.dialog-premium::backdrop {
   font-size: 1.4rem !important;
 }
 .lobby-scratch-tile.revealed {
-  background: linear-gradient(145deg, #1a4334, #0b1a14) !important;
-  color: var(--cq-gold-hi);
+  background: linear-gradient(145deg, #fff8ea, #efe4c8) !important;
+  color: #8a4b12;
 }
-.cq-lobby-legal a { color: #9ae6c8 !important; }
 @media (max-width: 640px) {
   .cq-spin-wrap, .lobby-spin-wheel-wrap { width: 14.5rem !important; height: 14.5rem !important; }
   .cq-spin-label-text { font-size: .6rem; width: 4.1rem; margin-left: -2.05rem; }

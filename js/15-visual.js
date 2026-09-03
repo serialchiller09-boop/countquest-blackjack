@@ -1,14 +1,16 @@
-// §15 VISUAL — labeled prize wheel + modern modal dress (v56)
+// §15 VISUAL — labeled prize wheel + modern modal dress (v57)
 (function () {
   if (window.__CQ_VISUAL_V55_BOOTED) return;
   window.__CQ_VISUAL_V55_BOOTED = true;
 
   function injectSheet() {
-    if (document.querySelector('link[href*="cq-modern.css"]')) return;
-    const l = document.createElement('link');
-    l.rel = 'stylesheet';
-    l.href = 'css/cq-modern.css?v=56';
-    document.head.appendChild(l);
+    let l = document.querySelector('link[href*="cq-modern.css"]');
+    if (!l) {
+      l = document.createElement('link');
+      l.rel = 'stylesheet';
+      document.head.appendChild(l);
+    }
+    l.href = 'css/cq-modern.css?v=57';
   }
 
   function segs() {

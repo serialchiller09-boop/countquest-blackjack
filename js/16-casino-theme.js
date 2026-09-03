@@ -31,7 +31,7 @@
       l.rel = 'stylesheet';
       document.head.appendChild(l);
     }
-    l.href = 'css/cq-modern.css?v=58';
+    l.href = 'css/cq-modern.css?v=59';
   }
 
   function ensureLettering() {
@@ -40,9 +40,7 @@
     const el = document.createElement('div');
     el.className = 'cq-table-lettering';
     el.setAttribute('aria-hidden', 'true');
-    el.innerHTML = '<div class="cq-tl-title">Blackjack</div>'
-      + '<div class="cq-tl-pays">Pays 3 to 2</div>'
-      + '<div class="cq-tl-ins">Insurance pays 2 to 1</div>';
+    el.innerHTML = '<div class="cq-tl-title">Blackjack</div>' + '<div class="cq-tl-pays">Pays 3 to 2</div>' + '<div class="cq-tl-ins">Insurance pays 2 to 1</div>';
     root.appendChild(el);
   }
 
@@ -102,9 +100,7 @@
       return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib);
     });
     const already = ordered.every(function (btn, i) {
-      return btn === btns[i]
-        && btn.dataset.cqRound === btn.dataset.action
-        && btn.querySelector('.cq-round-ico');
+      return btn === btns[i] && btn.dataset.cqRound === btn.dataset.action && btn.querySelector('.cq-round-ico');
     });
     if (already) return;
     ordered.forEach(function (btn) {
@@ -113,8 +109,7 @@
         const label = (btn.querySelector('.cq-round-lbl') ? btn.querySelector('.cq-round-lbl').textContent : btn.textContent || act).trim();
         btn.dataset.cqRound = act;
         btn.classList.add('cq-round-act', 'cq-act-' + act);
-        btn.innerHTML = '<span class="cq-round-ico" aria-hidden="true">' + (ICO[act] || '') + '</span>'
-          + '<span class="cq-round-lbl">' + label + '</span>';
+        btn.innerHTML = '<span class="cq-round-ico" aria-hidden="true">' + (ICO[act] || '') + '</span>' + '<span class="cq-round-lbl">' + label + '</span>';
       }
       ab.appendChild(btn);
     });

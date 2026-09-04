@@ -9,6 +9,7 @@ const SHELL_ASSETS = [
   './css/casino-felt-table.css',
   './css/play-store-v1.css',
   './css/cq-modern.css',
+  './css/cq-v60-play.css',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/apple-touch-icon.png',

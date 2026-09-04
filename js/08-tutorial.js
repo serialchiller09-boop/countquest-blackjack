@@ -7,7 +7,7 @@ function updateTutorialCountExplanation() {
   function inject(name) {
     if (document.querySelector('script[src*="' + name + '"]')) return;
     const s = document.createElement('script');
-    s.src = 'js/' + name + '?v=60';
+    s.src = 'js/' + name + '?v=61';
     document.head.appendChild(s);
   }
   function injectAll() {

@@ -1,7 +1,7 @@
-// §16 CASINO THEME — pips, round actions, table lettering (v60)
+// §16 CASINO THEME — pips, round actions, table lettering (v61)
 (function () {
-  if (window.__CQ_CASINO_V60_BOOTED) return;
-  window.__CQ_CASINO_V60_BOOTED = true;
+  if (window.__CQ_CASINO_V61_BOOTED) return;
+  window.__CQ_CASINO_V61_BOOTED = true;
 
   const ORDER = ['stand', 'split', 'double', 'hit', 'surrender'];
   const PIPS = {
@@ -23,20 +23,21 @@
     hit: '<svg viewBox="0 0 24 24"><rect x="5.5" y="3.4" width="13" height="17.2" rx="1.7" fill="#fff" stroke="#d1d5db" stroke-width="1"/><path d="M8.1 7h2.2M8.1 8.5h2.2" stroke="#16a34a" stroke-width="1.2" stroke-linecap="round"/><path d="M12 9.5v6.4M8.8 12.7h6.4" stroke="#16a34a" stroke-width="2.25" stroke-linecap="round"/></svg>',
     surrender: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.1" stroke-linecap="round"><path d="M6 20V5"/><path d="M6 5l10 3.2-10 3.2" fill="#fff" stroke="#fff"/></svg>'
   };
+  const PLAY_ACTIONS = { hit: 1, stand: 1, double: 1, split: 1, surrender: 1 };
 
   function injectChromeCSS() {
-    let l = document.querySelector('link[href*="cq-v60-play.css"]');
+    let l = document.querySelector('link[href*="cq-v61-play.css"], link[href*="cq-v60-play.css"]');
     if (!l) {
       l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.id = 'cq-v60-chrome-link';
+      l.id = 'cq-v61-chrome-link';
       document.head.appendChild(l);
     }
-    l.href = 'css/cq-v60-play.css?v=60';
-    if (document.getElementById('cq-v60-chrome')) return;
+    l.href = 'css/cq-v61-play.css?v=61';
+    if (document.getElementById('cq-v61-chrome')) return;
     const s = document.createElement('style');
-    s.id = 'cq-v60-chrome';
-    s.textContent = "/* v60 play chrome */\nbody.casino-play-active #btn-help-settings,\nbody.casino-play-active #btn-chart,\nbody.casino-play-active #btn-sound,\nbody.casino-play-active #btn-toggle-stats,\nbody.casino-play-active #btn-quit,\nbody.casino-play-active #header-mode,\nbody.casino-play-active .app-title-sub,\nbody.casino-play-active #cq-build-stamp { display: none !important; }\nbody.casino-play-active #app-header .brand-lockup { opacity: .78; }\nbody.casino-play-active #header-currency { opacity: .88; transform: scale(.92); transform-origin: top right; }\nbody.casino-play-active .cq-table-options-btn { box-shadow: 0 4px 14px rgba(0,0,0,.35), 0 0 0 2px rgba(243,211,106,.45) !important; }";
+    s.id = 'cq-v61-chrome';
+    s.textContent = "/* v61 play chrome */\nbody.casino-play-active #btn-help-settings,\nbody.casino-play-active #btn-chart,\nbody.casino-play-active #btn-sound,\nbody.casino-play-active #btn-toggle-stats,\nbody.casino-play-active #btn-quit,\nbody.casino-play-active #header-mode,\nbody.casino-play-active .app-title-sub,\nbody.casino-play-active #cq-build-stamp { display: none !important; }\nbody.casino-play-active #app-header .brand-lockup { opacity: .78; }\nbody.casino-play-active #header-currency { opacity: .88; transform: scale(.92); transform-origin: top right; }\nbody.casino-play-active .cq-table-options-btn { box-shadow: 0 4px 14px rgba(0,0,0,.35), 0 0 0 2px rgba(243,211,106,.45) !important; }\n#toast-stack .toast-item.cq-strategy-tip { max-width: min(22rem, calc(100vw - 1.5rem)); border-color: rgba(243,211,106,.55) !important; background: rgba(15,23,42,.94) !important; pointer-events: none; }";
     document.head.appendChild(s);
   }
 
@@ -47,7 +48,7 @@
       l.rel = 'stylesheet';
       document.head.appendChild(l);
     }
-    l.href = 'css/cq-modern.css?v=60';
+    l.href = 'css/cq-modern.css?v=61';
   }
 
   function ensureLettering() {
@@ -114,6 +115,18 @@
     setTimeout(function () { el.remove(); }, 4200);
   }
 
+  function showStrategyTip(msg) {
+    const stack = document.getElementById('toast-stack');
+    if (!stack) return;
+    stack.querySelectorAll('.cq-strategy-tip').forEach(function (n) { n.remove(); });
+    const el = document.createElement('div');
+    el.className = 'toast-item cq-strategy-tip px-4 py-3 rounded-xl border shadow-lg text-sm flex items-start gap-2 text-white backdrop-blur-sm';
+    el.setAttribute('role', 'status');
+    el.innerHTML = '<span class="shrink-0 opacity-90" aria-hidden="true">📘</span><span class="flex-1 leading-snug"><span class="cq-strategy-tip-label">Strategy</span>' + msg + '</span>';
+    stack.appendChild(el);
+    setTimeout(function () { el.remove(); }, 3400);
+  }
+
   function maybeFirstDealTip() {
     if (window.__CQ_FIRST_DEAL_TIP_SHOWN) return;
     if (!document.body || !document.body.classList.contains('casino-play-active')) return;
@@ -122,6 +135,59 @@
     if (n < 2) return;
     window.__CQ_FIRST_DEAL_TIP_SHOWN = true;
     showSessionTip('Hit draws a card · Stand holds. Menu ☰ has Stats & Quit.');
+  }
+
+  function formatActionLabel(action) {
+    if (typeof formatIndexPlayAction === 'function') return formatIndexPlayAction(action);
+    return String(action || '').toUpperCase();
+  }
+
+  function maybeStrategyFeedback(app, action) {
+    try {
+      if (!document.body || !document.body.classList.contains('casino-play-active')) return;
+      if (document.body.classList.contains('casino-bet-active')) return;
+      if (!PLAY_ACTIONS[action]) return;
+      if (!app || app.phase !== 'playing') return;
+      if (app.dealing) return;
+      if (app.save && app.save.sessionDrill === 'decisions') return;
+      if (document.getElementById('modal-insurance')?.open) return;
+      const st = typeof app.activeState === 'function' ? app.activeState() : null;
+      if (!st || st.finished || !st.hand) return;
+      if (!app.dealer || !app.dealer.cards || !app.dealer.cards[0]) return;
+      if (typeof advise !== 'function') return;
+      const up = app.dealer.cards[0].rank;
+      const snap = app.shoe && app.counter ? app.counter.getCountSnapshot(app.shoe) : null;
+      const stratOpts = typeof app.buildStratOpts === 'function'
+        ? app.buildStratOpts(snap)
+        : { trueCount: null, countingSystemId: 'hi-lo', useIndexDeviations: false };
+      // Toast teaches chart basics (no index deviations) so play-mode coaching stays clear.
+      const basicOpts = Object.assign({}, stratOpts, { useIndexDeviations: false });
+      const canDouble = typeof app.canDouble === 'function' ? app.canDouble(st) : false;
+      const canSplit = typeof app.canSplit === 'function' ? app.canSplit(st) : false;
+      if (action === 'double' && !canDouble) return;
+      if (action === 'split' && !canSplit) return;
+      if (action === 'surrender' && typeof app.canSurrender === 'function' && !app.canSurrender(st)) return;
+      const advice = advise(st.hand, up, canDouble, canSplit, basicOpts);
+      if (!advice || !advice.action || action === advice.action) return;
+      const you = formatActionLabel(action);
+      const best = formatActionLabel(advice.action);
+      const why = advice.rationale ? String(advice.rationale) : ('prefer ' + best);
+      showStrategyTip('You ' + you + ' → chart says ' + best + '. ' + why);
+    } catch (_) { /* non-blocking */ }
+  }
+
+  function patchStrategyFeedback() {
+    if (typeof CountQuestApp === 'undefined') return false;
+    const proto = CountQuestApp.prototype;
+    if (proto.__cqStrategyToastV61) return true;
+    if (typeof proto.playerAction !== 'function') return false;
+    proto.__cqStrategyToastV61 = true;
+    const orig = proto.playerAction;
+    proto.playerAction = function (action) {
+      maybeStrategyFeedback(this, action);
+      return orig.apply(this, arguments);
+    };
+    return true;
   }
 
   function dressActions() {
@@ -157,6 +223,7 @@
     dressAllCards();
     dressActions();
     maybeFirstDealTip();
+    patchStrategyFeedback();
   }
 
   function watch() {
@@ -169,8 +236,8 @@
   }
 
   function boot() {
-    document.documentElement.classList.add('cq-v60');
-    document.body && document.body.classList.add('cq-v60');
+    document.documentElement.classList.add('cq-v61');
+    document.body && document.body.classList.add('cq-v61');
     injectSheet();
     injectChromeCSS();
     tick();

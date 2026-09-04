@@ -1,7 +1,7 @@
-// §16 CASINO THEME — pips, round actions, table lettering (v58)
+// §16 CASINO THEME — pips, round actions, table lettering (v60)
 (function () {
-  if (window.__CQ_CASINO_V58_BOOTED) return;
-  window.__CQ_CASINO_V58_BOOTED = true;
+  if (window.__CQ_CASINO_V60_BOOTED) return;
+  window.__CQ_CASINO_V60_BOOTED = true;
 
   const ORDER = ['stand', 'split', 'double', 'hit', 'surrender'];
   const PIPS = {
@@ -20,7 +20,7 @@
     stand: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11.2V6.4a1.45 1.45 0 0 1 2.9 0V11"/><path d="M11.9 11V5.7a1.45 1.45 0 0 1 2.9 0V11"/><path d="M14.8 11V6.8a1.45 1.45 0 0 1 2.9 0V12.4"/><path d="M9 11.2c-2 .3-3.3 1.8-3.3 3.7 0 3 2.4 6 7.4 6s7.4-3 7.4-6c0-1.3-.7-2.4-1.8-3"/><path d="M8.2 11.1c-.8-1.5.1-3.3 1.8-3.3"/></svg>',
     split: '<svg viewBox="0 0 24 24"><rect x="3.4" y="5.4" width="8.4" height="12.2" rx="1.3" fill="#fff" transform="rotate(-14 7.6 11.5)"/><rect x="12.2" y="5.4" width="8.4" height="12.2" rx="1.3" fill="#fff" transform="rotate(14 16.4 11.5)"/><circle cx="7.4" cy="10.2" r=".7" fill="#c026d3"/><circle cx="16.6" cy="10.2" r=".7" fill="#c026d3"/></svg>',
     double: '<svg viewBox="0 0 24 24"><circle cx="12" cy="15.1" r="5.6" fill="#fff"/><circle cx="12" cy="15.1" r="2.05" fill="#0891b2"/><circle cx="12" cy="9.1" r="5.6" fill="#fff"/><circle cx="12" cy="9.1" r="2.05" fill="#0891b2"/></svg>',
-    hit: '<svg viewBox="0 0 24 24"><rect x="6.4" y="4.2" width="11.2" height="15.6" rx="1.5" fill="#fff"/><path d="M12 8.6v6.8M8.6 12h6.8" stroke="#16a34a" stroke-width="2.15" stroke-linecap="round"/></svg>',
+    hit: '<svg viewBox="0 0 24 24"><rect x="5.5" y="3.4" width="13" height="17.2" rx="1.7" fill="#fff" stroke="#d1d5db" stroke-width="1"/><path d="M8.1 7h2.2M8.1 8.5h2.2" stroke="#16a34a" stroke-width="1.2" stroke-linecap="round"/><path d="M12 9.5v6.4M8.8 12.7h6.4" stroke="#16a34a" stroke-width="2.25" stroke-linecap="round"/></svg>',
     surrender: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.1" stroke-linecap="round"><path d="M6 20V5"/><path d="M6 5l10 3.2-10 3.2" fill="#fff" stroke="#fff"/></svg>'
   };
 
@@ -31,7 +31,7 @@
       l.rel = 'stylesheet';
       document.head.appendChild(l);
     }
-    l.href = 'css/cq-modern.css?v=59';
+    l.href = 'css/cq-modern.css?v=60';
   }
 
   function ensureLettering() {
@@ -87,6 +87,27 @@
     (root || document).querySelectorAll('.playing-card').forEach(dressCard);
   }
 
+  function showSessionTip(msg) {
+    const stack = document.getElementById('toast-stack');
+    if (!stack) return;
+    const el = document.createElement('div');
+    el.className = 'toast-item cq-session-tip px-4 py-3 rounded-xl border shadow-lg text-sm flex items-start gap-2 bg-slate-800/95 border-slate-600 text-white backdrop-blur-sm';
+    el.setAttribute('role', 'status');
+    el.innerHTML = '<span class="shrink-0 opacity-90" aria-hidden="true">💡</span><span class="flex-1 leading-snug">' + msg + '</span>';
+    stack.appendChild(el);
+    setTimeout(function () { el.remove(); }, 4200);
+  }
+
+  function maybeFirstDealTip() {
+    if (window.__CQ_FIRST_DEAL_TIP_SHOWN) return;
+    if (!document.body || !document.body.classList.contains('casino-play-active')) return;
+    if (document.body.classList.contains('casino-bet-active')) return;
+    const n = document.querySelectorAll('#player-hands .playing-card, .casino-player-rail .playing-card').length;
+    if (n < 2) return;
+    window.__CQ_FIRST_DEAL_TIP_SHOWN = true;
+    showSessionTip('Hit draws a card · Stand holds. Menu ☰ has Stats & Quit.');
+  }
+
   function dressActions() {
     const ab = document.getElementById('action-buttons');
     if (!ab) return;
@@ -119,6 +140,7 @@
     ensureLettering();
     dressAllCards();
     dressActions();
+    maybeFirstDealTip();
   }
 
   function watch() {
@@ -131,8 +153,8 @@
   }
 
   function boot() {
-    document.documentElement.classList.add('cq-v58');
-    document.body && document.body.classList.add('cq-v58');
+    document.documentElement.classList.add('cq-v60');
+    document.body && document.body.classList.add('cq-v60');
     injectSheet();
     tick();
     watch();

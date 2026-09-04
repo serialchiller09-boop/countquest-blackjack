@@ -135,7 +135,7 @@ class PlayStoreV1Tests(unittest.TestCase):
         self.assertIn("updateTutorialNavButtons", qa)
         self.assertIn("renderTutorial", qa)
         self.assertIn("Skip tutorial and sit a beginner table", qa)
-        self.assertIn("?v=59", tutorial)
+        self.assertIn("?v=60", tutorial)
 
     def test_clubs_and_spin_visible_with_ui(self) -> None:
         lobby = (ROOT / "js" / "13-new-player-lobby.js").read_text(encoding="utf-8")
@@ -150,9 +150,9 @@ class PlayStoreV1Tests(unittest.TestCase):
         self.assertIn("spin-win", css)
         self.assertIn("cq-crew-badge", css)
         self.assertIn("14-clubs-spin-ui.js", tutorial)
-        self.assertIn("?v=59", tutorial)
+        self.assertIn("?v=60", tutorial)
         self.assertIn("./js/14-clubs-spin-ui.js", sw)
-        self.assertIn("cq-pwa-v25", sw)
+        self.assertIn("cq-pwa-v26", sw)
 
     def test_labeled_spin_wheel_and_modern_css(self) -> None:
         vis = (ROOT / "js" / "15-visual.js").read_text(encoding="utf-8")
@@ -169,7 +169,7 @@ class PlayStoreV1Tests(unittest.TestCase):
         self.assertIn("15-visual.js", tutorial)
         self.assertIn("cq-modern.css", sw)
         self.assertIn("./js/15-visual.js", sw)
-        self.assertIn("cq-pwa-v25", sw)
+        self.assertIn("cq-pwa-v26", sw)
 
     def test_casino_theme_v57_overlay(self) -> None:
         theme = (ROOT / "js" / "16-casino-theme.js").read_text(encoding="utf-8")
@@ -181,10 +181,26 @@ class PlayStoreV1Tests(unittest.TestCase):
         self.assertIn("cq-round-ico", theme)
         self.assertIn("cq-pip-field", theme)
         self.assertIn("cq-table-lettering", theme)
+        self.assertIn("maybeFirstDealTip", theme)
+        self.assertIn("Hit draws a card", theme)
+        self.assertIn('hit: \'<svg', theme)
+        self.assertIn('fill="#fff"', theme)
+        self.assertIn('stroke="#16a34a"', theme)
         self.assertIn("--cq-wood", css)
         self.assertIn(".cq-round-ico", css)
         self.assertIn("cq-act-stand", css)
         self.assertIn("cq-act-hit", css)
+        self.assertTrue(
+            "body.casino-play-active #btn-help-settings" in css
+            or "body.casino-play-active #btn-help-settings" in theme
+        )
+        self.assertTrue(
+            "body.casino-play-active #btn-toggle-stats" in css
+            or "body.casino-play-active #btn-toggle-stats" in theme
+        )
+        self.assertIn("injectChromeCSS", theme)
+        self.assertIn("cq-pwa-v26", sw)
+        self.assertIn("?v=60", theme)
 
 
 if __name__ == "__main__":

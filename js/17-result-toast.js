@@ -1,7 +1,7 @@
-// §17 RESULT TOAST — brief Win/Lose/Push after hand resolve (v63)
+// §17 RESULT TOAST — brief Win/Lose/Push after hand resolve (v64)
 (function () {
-  if (window.__CQ_RESULT_TOAST_V63_BOOTED) return;
-  window.__CQ_RESULT_TOAST_V63_BOOTED = true;
+  if (window.__CQ_RESULT_TOAST_V64_BOOTED) return;
+  window.__CQ_RESULT_TOAST_V64_BOOTED = true;
 
   function clearGenericHandToasts(stack) {
     stack.querySelectorAll('.toast-item').forEach(function (el) {
@@ -93,7 +93,7 @@
     el.innerHTML = '<span class="shrink-0 opacity-90" aria-hidden="true">' + (icons[kind] || '•') + '</span>'
       + '<span class="flex-1 leading-snug"><span class="cq-result-tip-label">' + label + '</span>' + delta + '</span>';
     stack.appendChild(el);
-    setTimeout(function () { el.remove(); }, 2800);
+    setTimeout(function () { el.remove(); }, 1800);
   }
 
   function maybeResultToast(app) {
@@ -112,9 +112,9 @@
   function patchResultToast() {
     if (typeof CountQuestApp === 'undefined') return false;
     const proto = CountQuestApp.prototype;
-    if (proto.__cqResultToastV63) return true;
+    if (proto.__cqResultToastV64) return true;
     if (typeof proto.finishHand !== 'function') return false;
-    proto.__cqResultToastV63 = true;
+    proto.__cqResultToastV64 = true;
     const orig = proto.finishHand;
     proto.finishHand = function () {
       const out = orig.apply(this, arguments);

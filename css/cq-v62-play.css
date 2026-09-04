@@ -1,0 +1,174 @@
+/* ── v62 portrait/mobile play: full-bleed felt layout polish ──
+   Card sizes, action-button spacing, and safe-area padding.
+   Keeps v61 chrome hide + strategy toast styles. */
+
+/* v61 chrome (still needed when this sheet replaces v61 link) */
+body.casino-play-active #btn-help-settings,
+body.casino-play-active #btn-chart,
+body.casino-play-active #btn-sound,
+body.casino-play-active #btn-toggle-stats,
+body.casino-play-active #btn-quit,
+body.casino-play-active #header-mode,
+body.casino-play-active .app-title-sub,
+body.casino-play-active #cq-build-stamp {
+  display: none !important;
+}
+
+body.casino-play-active #app-header .brand-lockup {
+  opacity: .78;
+}
+body.casino-play-active #header-currency {
+  opacity: .88;
+  transform: scale(.92);
+  transform-origin: top right;
+}
+
+body.casino-play-active .cq-table-options-btn {
+  box-shadow: 0 4px 14px rgba(0,0,0,.35), 0 0 0 2px rgba(243,211,106,.45) !important;
+  top: calc(var(--cq-header-h, 3.25rem) + 0.3rem + env(safe-area-inset-top, 0px));
+  right: max(0.45rem, env(safe-area-inset-right, 0px));
+}
+
+#toast-stack .toast-item.cq-strategy-tip {
+  max-width: min(22rem, calc(100vw - 1.5rem));
+  border-color: rgba(243, 211, 106, .55) !important;
+  background: rgba(15, 23, 42, .94) !important;
+  pointer-events: none;
+}
+#toast-stack .toast-item.cq-strategy-tip .cq-strategy-tip-label {
+  display: inline-block;
+  margin-right: .35rem;
+  padding: .05rem .4rem;
+  border-radius: 999px;
+  font-size: .65rem;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  background: rgba(243, 211, 106, .22);
+  color: #fde68a;
+}
+
+/* Safe-area inset for full-bleed felt play surface */
+body.casino-play-active .casino-table-viewport,
+body.casino-play-active #screen-table.casino-table-viewport {
+  padding-left: env(safe-area-inset-left, 0px) !important;
+  padding-right: env(safe-area-inset-right, 0px) !important;
+}
+
+body.casino-play-active .cq-table-play-layer {
+  padding-top: max(0.55rem, env(safe-area-inset-top, 0px));
+  padding-left: max(0.35rem, env(safe-area-inset-left, 0px));
+  padding-right: max(0.35rem, env(safe-area-inset-right, 0px));
+}
+
+body.casino-play-active .casino-dealer-zone {
+  padding-top: max(0.85rem, calc(0.55rem + env(safe-area-inset-top, 0px))) !important;
+}
+
+body.casino-play-active #action-bar {
+  padding-left: max(0.45rem, env(safe-area-inset-left, 0px)) !important;
+  padding-right: max(0.45rem, env(safe-area-inset-right, 0px)) !important;
+  padding-bottom: 0 !important;
+}
+
+body.casino-play-active #action-bar::after {
+  height: max(1.05rem, calc(0.65rem + env(safe-area-inset-bottom, 0px)));
+  margin-top: .4rem;
+  margin-bottom: 0;
+  margin-left: calc(-1 * max(0.45rem, env(safe-area-inset-left, 0px)));
+  margin-right: calc(-1 * max(0.45rem, env(safe-area-inset-right, 0px)));
+}
+
+body.casino-play-active #action-buttons,
+body.casino-play-active #action-buttons.cq-readable-actions {
+  gap: .55rem !important;
+  max-width: min(28rem, calc(100% - 0.25rem)) !important;
+  padding: 0 .15rem !important;
+}
+
+body.casino-play-active .cq-round-act,
+body.casino-play-active #action-buttons .action-btn {
+  min-width: 4.35rem !important;
+  gap: .32rem !important;
+}
+
+/* Portrait phone: balanced card scale + breathable action row */
+@media (max-width: 640px) and (orientation: portrait) {
+  body.casino-play-active .casino-player-rail .playing-card,
+  body.casino-play-active .casino-hand-cards .playing-card,
+  body.casino-play-active .casino-seat-human .casino-seat-cards-wrap .playing-card {
+    width: 5.85rem !important;
+    height: 8.2rem !important;
+  }
+  body.casino-play-active .casino-dealer-zone .playing-card {
+    width: 5.15rem !important;
+    height: 7.2rem !important;
+  }
+  body.casino-play-active .playing-card .cq-pip { font-size: 1.05rem; }
+  body.casino-play-active .playing-card .corner { font-size: 1.05rem !important; }
+  body.casino-play-active .playing-card.rank-10 .corner { font-size: 0.9rem !important; }
+  body.casino-play-active .casino-dealer-zone #dealer-cards .playing-card + .playing-card {
+    margin-left: -1.45rem !important;
+  }
+  body.casino-play-active .casino-player-rail .casino-hand-cards .playing-card + .playing-card {
+    margin-left: -1.55rem !important;
+  }
+
+  body.casino-play-active .cq-round-ico {
+    width: 3.55rem;
+    height: 3.55rem;
+  }
+  body.casino-play-active .cq-round-ico svg {
+    width: 1.55rem;
+    height: 1.55rem;
+  }
+  body.casino-play-active .cq-round-lbl {
+    font-size: .72rem;
+  }
+  body.casino-play-active #action-buttons,
+  body.casino-play-active #action-buttons.cq-readable-actions {
+    gap: .42rem !important;
+  }
+  body.casino-play-active .cq-round-act,
+  body.casino-play-active #action-buttons .action-btn {
+    min-width: 3.85rem !important;
+  }
+
+  body.casino-play-active .casino-player-rail {
+    padding-left: max(0.35rem, env(safe-area-inset-left, 0px));
+    padding-right: max(0.35rem, env(safe-area-inset-right, 0px));
+    padding-bottom: 0.35rem;
+  }
+}
+
+/* Short portrait phones (SE / compact): keep cards on-screen above actions */
+@media (max-width: 640px) and (orientation: portrait) and (max-height: 740px) {
+  body.casino-play-active .casino-player-rail .playing-card,
+  body.casino-play-active .casino-hand-cards .playing-card,
+  body.casino-play-active .casino-seat-human .casino-seat-cards-wrap .playing-card {
+    width: 5.1rem !important;
+    height: 7.15rem !important;
+  }
+  body.casino-play-active .casino-dealer-zone .playing-card {
+    width: 4.45rem !important;
+    height: 6.2rem !important;
+  }
+  body.casino-play-active .cq-round-ico {
+    width: 3.25rem;
+    height: 3.25rem;
+  }
+  body.casino-play-active .cq-round-lbl {
+    font-size: .68rem;
+  }
+  body.casino-play-active #action-buttons,
+  body.casino-play-active #action-buttons.cq-readable-actions {
+    gap: .32rem !important;
+  }
+  body.casino-play-active .cq-hand-total-badge,
+  body.casino-play-active .cq-hand-total--dealer .cq-hand-total-badge,
+  body.casino-play-active .cq-hand-total--player .cq-hand-total-badge {
+    min-width: 2.15rem !important;
+    height: 1.95rem !important;
+    font-size: 0.95rem !important;
+  }
+}

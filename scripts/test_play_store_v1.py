@@ -135,7 +135,7 @@ class PlayStoreV1Tests(unittest.TestCase):
         self.assertIn("updateTutorialNavButtons", qa)
         self.assertIn("renderTutorial", qa)
         self.assertIn("Skip tutorial and sit a beginner table", qa)
-        self.assertIn("?v=63", tutorial)
+        self.assertIn("?v=64", tutorial)
 
     def test_clubs_and_spin_visible_with_ui(self) -> None:
         lobby = (ROOT / "js" / "13-new-player-lobby.js").read_text(encoding="utf-8")
@@ -150,9 +150,9 @@ class PlayStoreV1Tests(unittest.TestCase):
         self.assertIn("spin-win", css)
         self.assertIn("cq-crew-badge", css)
         self.assertIn("14-clubs-spin-ui.js", tutorial)
-        self.assertIn("?v=63", tutorial)
+        self.assertIn("?v=64", tutorial)
         self.assertIn("./js/14-clubs-spin-ui.js", sw)
-        self.assertIn("cq-pwa-v29", sw)
+        self.assertIn("cq-pwa-v30", sw)
 
     def test_labeled_spin_wheel_and_modern_css(self) -> None:
         vis = (ROOT / "js" / "15-visual.js").read_text(encoding="utf-8")
@@ -169,7 +169,7 @@ class PlayStoreV1Tests(unittest.TestCase):
         self.assertIn("15-visual.js", tutorial)
         self.assertIn("cq-modern.css", sw)
         self.assertIn("./js/15-visual.js", sw)
-        self.assertIn("cq-pwa-v29", sw)
+        self.assertIn("cq-pwa-v30", sw)
 
     def test_casino_theme_v57_overlay(self) -> None:
         theme = (ROOT / "js" / "16-casino-theme.js").read_text(encoding="utf-8")
@@ -191,7 +191,7 @@ class PlayStoreV1Tests(unittest.TestCase):
         toast = (ROOT / "js" / "17-result-toast.js").read_text(encoding="utf-8")
         self.assertIn("maybeResultToast", toast)
         self.assertIn("patchResultToast", toast)
-        self.assertIn("__cqResultToastV63", toast)
+        self.assertIn("__cqResultToastV64", toast)
         self.assertIn("cq-result-tip", toast)
         self.assertIn("parseResultFromDom", toast)
         self.assertIn("17-result-toast.js", tutorial)
@@ -212,12 +212,12 @@ class PlayStoreV1Tests(unittest.TestCase):
             or "body.casino-play-active #btn-toggle-stats" in theme
         )
         self.assertIn("injectChromeCSS", theme)
-        self.assertIn("cq-v63-play.css", theme)
-        self.assertIn("./css/cq-v63-play.css", sw)
-        self.assertIn("cq-pwa-v29", sw)
-        self.assertIn("?v=63", theme)
+        self.assertIn("cq-v64-play.css", theme)
+        self.assertIn("./css/cq-v64-play.css", sw)
+        self.assertIn("cq-pwa-v30", sw)
+        self.assertIn("?v=64", theme)
 
-        play_css = (ROOT / "css" / "cq-v63-play.css").read_text(encoding="utf-8")
+        play_css = (ROOT / "css" / "cq-v64-play.css").read_text(encoding="utf-8")
         self.assertIn("orientation: portrait", play_css)
         self.assertIn("safe-area-inset-bottom", play_css)
         self.assertIn("safe-area-inset-top", play_css)
@@ -225,6 +225,8 @@ class PlayStoreV1Tests(unittest.TestCase):
         self.assertIn("cq-result-tip", play_css)
         self.assertIn("cq-result-win", play_css)
         self.assertIn("cq-result-push", play_css)
+        self.assertIn("bottom: auto !important", play_css)
+        self.assertIn("body.casino-play-active #toast-stack", play_css)
 
 
 if __name__ == "__main__":

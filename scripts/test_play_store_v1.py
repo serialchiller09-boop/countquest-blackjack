@@ -199,6 +199,8 @@ class PlayStoreV1Tests(unittest.TestCase):
             or "body.casino-play-active #btn-toggle-stats" in theme
         )
         self.assertIn("injectChromeCSS", theme)
+        self.assertIn("cq-v60-play.css", theme)
+        self.assertIn("./css/cq-v60-play.css", sw)
         self.assertIn("cq-pwa-v26", sw)
         self.assertIn("?v=60", theme)
 

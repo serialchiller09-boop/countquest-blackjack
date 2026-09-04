@@ -1,5 +1,5 @@
 /* CountQuest PWA service worker — cache app shell for offline repeat visits. */
-const CACHE_VERSION = 'cq-pwa-v28';
+const CACHE_VERSION = 'cq-pwa-v29';
 const SHELL_ASSETS = [
   './',
   './index.html',
@@ -12,6 +12,7 @@ const SHELL_ASSETS = [
   './css/cq-v60-play.css',
   './css/cq-v61-play.css',
   './css/cq-v62-play.css',
+  './css/cq-v63-play.css',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/apple-touch-icon.png',
@@ -33,6 +34,7 @@ const SHELL_ASSETS = [
   './js/14-clubs-spin-ui.js',
   './js/15-visual.js',
   './js/16-casino-theme.js',
+  './js/17-result-toast.js',
 ];
 
 self.addEventListener('install', (event) => {

@@ -1,0 +1,26 @@
+/* ── v60 play chrome: hide Level pill + redundant header clutter ──
+   Stats/Quit/Settings remain via #btn-table-options (☰). */
+body.casino-play-active #btn-help-settings,
+body.casino-play-active #btn-chart,
+body.casino-play-active #btn-sound,
+body.casino-play-active #btn-toggle-stats,
+body.casino-play-active #btn-quit,
+body.casino-play-active #header-mode,
+body.casino-play-active .app-title-sub,
+body.casino-play-active #cq-build-stamp {
+  display: none !important;
+}
+
+body.casino-play-active #app-header .brand-lockup {
+  opacity: .78;
+}
+body.casino-play-active #header-currency {
+  opacity: .88;
+  transform: scale(.92);
+  transform-origin: top right;
+}
+
+/* Keep the floating ☰ options control easy to spot on felt */
+body.casino-play-active .cq-table-options-btn {
+  box-shadow: 0 4px 14px rgba(0,0,0,.35), 0 0 0 2px rgba(243,211,106,.45) !important;
+}

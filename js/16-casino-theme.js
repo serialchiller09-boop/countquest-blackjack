@@ -24,6 +24,14 @@
     surrender: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.1" stroke-linecap="round"><path d="M6 20V5"/><path d="M6 5l10 3.2-10 3.2" fill="#fff" stroke="#fff"/></svg>'
   };
 
+  function injectChromeCSS() {
+    if (document.getElementById('cq-v60-chrome')) return;
+    const s = document.createElement('style');
+    s.id = 'cq-v60-chrome';
+    s.textContent = "/* v60 play chrome injected */\nbody.casino-play-active #btn-help-settings,\nbody.casino-play-active #btn-chart,\nbody.casino-play-active #btn-sound,\nbody.casino-play-active #btn-toggle-stats,\nbody.casino-play-active #btn-quit,\nbody.casino-play-active #header-mode,\nbody.casino-play-active .app-title-sub,\nbody.casino-play-active #cq-build-stamp { display: none !important; }\nbody.casino-play-active #app-header .brand-lockup { opacity: .78; }\nbody.casino-play-active #header-currency { opacity: .88; transform: scale(.92); transform-origin: top right; }\nbody.casino-play-active .cq-table-options-btn { box-shadow: 0 4px 14px rgba(0,0,0,.35), 0 0 0 2px rgba(243,211,106,.45) !important; }";
+    document.head.appendChild(s);
+  }
+
   function injectSheet() {
     let l = document.querySelector('link[href*="cq-modern.css"]');
     if (!l) {
@@ -156,10 +164,12 @@
     document.documentElement.classList.add('cq-v60');
     document.body && document.body.classList.add('cq-v60');
     injectSheet();
+    injectChromeCSS();
     tick();
     watch();
     window.addEventListener('load', function () {
       injectSheet();
+      injectChromeCSS();
       tick();
     });
   }

@@ -34,6 +34,7 @@ const SHELL_ASSETS = [
   './js/14-clubs-spin-ui.js',
   './js/15-visual.js',
   './js/16-casino-theme.js',
+  './js/17-result-toast.js',
 ];
 
 self.addEventListener('install', (event) => {

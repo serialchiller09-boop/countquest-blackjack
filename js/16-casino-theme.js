@@ -1,7 +1,7 @@
-// §16 CASINO THEME — pips, round actions, table lettering (v61)
+// §16 CASINO THEME — pips, round actions, table lettering (v62)
 (function () {
-  if (window.__CQ_CASINO_V61_BOOTED) return;
-  window.__CQ_CASINO_V61_BOOTED = true;
+  if (window.__CQ_CASINO_V62_BOOTED) return;
+  window.__CQ_CASINO_V62_BOOTED = true;
 
   const ORDER = ['stand', 'split', 'double', 'hit', 'surrender'];
   const PIPS = {
@@ -26,18 +26,18 @@
   const PLAY_ACTIONS = { hit: 1, stand: 1, double: 1, split: 1, surrender: 1 };
 
   function injectChromeCSS() {
-    let l = document.querySelector('link[href*="cq-v61-play.css"], link[href*="cq-v60-play.css"]');
+    let l = document.querySelector('link[href*="cq-v62-play.css"], link[href*="cq-v61-play.css"], link[href*="cq-v60-play.css"]');
     if (!l) {
       l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.id = 'cq-v61-chrome-link';
+      l.id = 'cq-v62-chrome-link';
       document.head.appendChild(l);
     }
-    l.href = 'css/cq-v61-play.css?v=61';
-    if (document.getElementById('cq-v61-chrome')) return;
+    l.href = 'css/cq-v62-play.css?v=62';
+    if (document.getElementById('cq-v62-chrome')) return;
     const s = document.createElement('style');
-    s.id = 'cq-v61-chrome';
-    s.textContent = "/* v61 play chrome */\nbody.casino-play-active #btn-help-settings,\nbody.casino-play-active #btn-chart,\nbody.casino-play-active #btn-sound,\nbody.casino-play-active #btn-toggle-stats,\nbody.casino-play-active #btn-quit,\nbody.casino-play-active #header-mode,\nbody.casino-play-active .app-title-sub,\nbody.casino-play-active #cq-build-stamp { display: none !important; }\nbody.casino-play-active #app-header .brand-lockup { opacity: .78; }\nbody.casino-play-active #header-currency { opacity: .88; transform: scale(.92); transform-origin: top right; }\nbody.casino-play-active .cq-table-options-btn { box-shadow: 0 4px 14px rgba(0,0,0,.35), 0 0 0 2px rgba(243,211,106,.45) !important; }\n#toast-stack .toast-item.cq-strategy-tip { max-width: min(22rem, calc(100vw - 1.5rem)); border-color: rgba(243,211,106,.55) !important; background: rgba(15,23,42,.94) !important; pointer-events: none; }";
+    s.id = 'cq-v62-chrome';
+    s.textContent = "/* v62 play chrome */\nbody.casino-play-active #btn-help-settings,\nbody.casino-play-active #btn-chart,\nbody.casino-play-active #btn-sound,\nbody.casino-play-active #btn-toggle-stats,\nbody.casino-play-active #btn-quit,\nbody.casino-play-active #header-mode,\nbody.casino-play-active .app-title-sub,\nbody.casino-play-active #cq-build-stamp { display: none !important; }\nbody.casino-play-active #app-header .brand-lockup { opacity: .78; }\nbody.casino-play-active #header-currency { opacity: .88; transform: scale(.92); transform-origin: top right; }\nbody.casino-play-active .cq-table-options-btn { box-shadow: 0 4px 14px rgba(0,0,0,.35), 0 0 0 2px rgba(243,211,106,.45) !important; }\n#toast-stack .toast-item.cq-strategy-tip { max-width: min(22rem, calc(100vw - 1.5rem)); border-color: rgba(243,211,106,.55) !important; background: rgba(15,23,42,.94) !important; pointer-events: none; }";
     document.head.appendChild(s);
   }
 
@@ -48,7 +48,7 @@
       l.rel = 'stylesheet';
       document.head.appendChild(l);
     }
-    l.href = 'css/cq-modern.css?v=61';
+    l.href = 'css/cq-modern.css?v=62';
   }
 
   function ensureLettering() {
@@ -160,7 +160,6 @@
       const stratOpts = typeof app.buildStratOpts === 'function'
         ? app.buildStratOpts(snap)
         : { trueCount: null, countingSystemId: 'hi-lo', useIndexDeviations: false };
-      // Toast teaches chart basics (no index deviations) so play-mode coaching stays clear.
       const basicOpts = Object.assign({}, stratOpts, { useIndexDeviations: false });
       const canDouble = typeof app.canDouble === 'function' ? app.canDouble(st) : false;
       const canSplit = typeof app.canSplit === 'function' ? app.canSplit(st) : false;
@@ -236,8 +235,8 @@
   }
 
   function boot() {
-    document.documentElement.classList.add('cq-v61');
-    document.body && document.body.classList.add('cq-v61');
+    document.documentElement.classList.add('cq-v62');
+    document.body && document.body.classList.add('cq-v62');
     injectSheet();
     injectChromeCSS();
     tick();

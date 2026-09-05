@@ -1,7 +1,7 @@
-// §16 CASINO THEME — pips, round actions, table lettering (v64)
+// §16 CASINO THEME — pips, round actions, table lettering (v65)
 (function () {
-  if (window.__CQ_CASINO_V64_BOOTED) return;
-  window.__CQ_CASINO_V64_BOOTED = true;
+  if (window.__CQ_CASINO_V65_BOOTED) return;
+  window.__CQ_CASINO_V65_BOOTED = true;
 
   const ORDER = ['stand', 'split', 'double', 'hit', 'surrender'];
   const PIPS = {
@@ -26,18 +26,18 @@
   const PLAY_ACTIONS = { hit: 1, stand: 1, double: 1, split: 1, surrender: 1 };
 
   function injectChromeCSS() {
-    let l = document.querySelector('link[href*="cq-v64-play.css"], link[href*="cq-v63-play.css"], link[href*="cq-v62-play.css"], link[href*="cq-v61-play.css"], link[href*="cq-v60-play.css"]');
+    let l = document.querySelector('link[href*="cq-v65-play.css"], link[href*="cq-v64-play.css"], link[href*="cq-v63-play.css"], link[href*="cq-v62-play.css"], link[href*="cq-v61-play.css"], link[href*="cq-v60-play.css"]');
     if (!l) {
       l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.id = 'cq-v64-chrome-link';
+      l.id = 'cq-v65-chrome-link';
       document.head.appendChild(l);
     }
-    l.href = 'css/cq-v64-play.css?v=64';
-    if (document.getElementById('cq-v64-chrome')) return;
+    l.href = 'css/cq-v65-play.css?v=65';
+    if (document.getElementById('cq-v65-chrome')) return;
     const s = document.createElement('style');
-    s.id = 'cq-v64-chrome';
-    s.textContent = "/* v64 play chrome + toast lift */\nbody.casino-play-active #btn-help-settings,\nbody.casino-play-active #btn-chart,\nbody.casino-play-active #btn-sound,\nbody.casino-play-active #btn-toggle-stats,\nbody.casino-play-active #btn-quit,\nbody.casino-play-active #header-mode,\nbody.casino-play-active .app-title-sub,\nbody.casino-play-active #cq-build-stamp { display: none !important; }\nbody.casino-play-active #app-header .brand-lockup { opacity: .78; }\nbody.casino-play-active #header-currency { opacity: .88; transform: scale(.92); transform-origin: top right; }\nbody.casino-play-active .cq-table-options-btn { box-shadow: 0 4px 14px rgba(0,0,0,.35), 0 0 0 2px rgba(243,211,106,.45) !important; }\n#toast-stack .toast-item.cq-strategy-tip { max-width: min(22rem, calc(100vw - 1.5rem)); border-color: rgba(243,211,106,.55) !important; background: rgba(15,23,42,.94) !important; pointer-events: none; }\n#toast-stack .toast-item.cq-result-tip { max-width: min(18rem, calc(100vw - 1.5rem)); pointer-events: none; font-weight: 700; }\n@media (max-width: 640px) { body.casino-play-active #toast-stack { top: calc(var(--cq-header-h, 3.25rem) + 0.85rem + env(safe-area-inset-top, 0px)); bottom: auto !important; left: 50%; right: auto; transform: translateX(-50%); align-items: center; } }";
+    s.id = 'cq-v65-chrome';
+    s.textContent = "/* v65 play chrome + toast lift */\nbody.casino-play-active #btn-help-settings,\nbody.casino-play-active #btn-chart,\nbody.casino-play-active #btn-sound,\nbody.casino-play-active #btn-toggle-stats,\nbody.casino-play-active #btn-quit,\nbody.casino-play-active #header-mode,\nbody.casino-play-active .app-title-sub,\nbody.casino-play-active #cq-build-stamp { display: none !important; }\nbody.casino-play-active #app-header .brand-lockup { opacity: .78; }\nbody.casino-play-active #header-currency { opacity: .88; transform: scale(.92); transform-origin: top right; }\nbody.casino-play-active .cq-table-options-btn { box-shadow: 0 4px 14px rgba(0,0,0,.35), 0 0 0 2px rgba(243,211,106,.45) !important; }\n#toast-stack .toast-item.cq-strategy-tip { max-width: min(22rem, calc(100vw - 1.5rem)); border-color: rgba(243,211,106,.55) !important; background: rgba(15,23,42,.94) !important; pointer-events: none; }\n#toast-stack .toast-item.cq-result-tip { max-width: min(18rem, calc(100vw - 1.5rem)); pointer-events: none; font-weight: 700; }\n@media (max-width: 640px) { body.casino-play-active #toast-stack { top: calc(var(--cq-header-h, 3.25rem) + 0.85rem + env(safe-area-inset-top, 0px)); bottom: auto !important; left: 50%; right: auto; transform: translateX(-50%); align-items: center; } }";
     document.head.appendChild(s);
   }
 
@@ -48,7 +48,7 @@
       l.rel = 'stylesheet';
       document.head.appendChild(l);
     }
-    l.href = 'css/cq-modern.css?v=64';
+    l.href = 'css/cq-modern.css?v=65';
   }
 
   function ensureLettering() {
@@ -235,8 +235,8 @@
   }
 
   function boot() {
-    document.documentElement.classList.add('cq-v64');
-    document.body && document.body.classList.add('cq-v64');
+    document.documentElement.classList.add('cq-v65');
+    document.body && document.body.classList.add('cq-v65');
     injectSheet();
     injectChromeCSS();
     tick();

@@ -19,6 +19,7 @@ function updateTutorialCountExplanation() {
     inject('16-casino-theme.js');
     inject('17-result-toast.js');
     inject('18-soft-total.js');
+    inject('19-shift-report.js');
   }
   if (document.readyState === 'complete') injectAll();
   else window.addEventListener('load', injectAll);

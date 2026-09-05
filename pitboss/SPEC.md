@@ -1,1 +1,1 @@
-{{file:/workspace/pitboss-push/pitboss/SPEC.md}}
+file:///workspace/pitboss-push/pitboss/SPEC.md

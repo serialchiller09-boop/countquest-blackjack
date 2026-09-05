@@ -1,4 +1,4 @@
-// §17 RESULT TOAST — brief Win/Lose/Push after hand resolve (v64)
+// §17 RESULT TOAST — brief Win/Lose/Push after hand resolve (v65)
 (function () {
   if (window.__CQ_RESULT_TOAST_V64_BOOTED) return;
   window.__CQ_RESULT_TOAST_V64_BOOTED = true;

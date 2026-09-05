@@ -27,6 +27,10 @@ Do not open `index.html` expecting The Shift — that is the old trainer shell.
 5. Ambient table talk (someone leaves, cut card coming, a hot streak) appears as quiet log lines — not checklist tutorials.
 6. After ~4 minutes or ~12 hands: **Shift over**. Quiet recap, then one job question — enter the running count. That quiz is the work, not a lesson.
 
+## Living floor events
+
+Mid-shift the table moves without tutorials: someone colors up and leaves an empty chair, then later Irene/Dana returns or a new face (Marco, Tess, …) sits; once per shift Ray goes off and another dealer takes over while the **same shoe and count continue**; when the cut hits, shuffle is just a table beat (“New shoe.”) and the count resets because the shoe does — no lecture. Glance stays a 1.2s peek only.
+
 ## Non-goals for v1
 
 No double/split/insurance UI. No Mags HUD. No bankroll meta-progression. No overlay on `js/07-game-engine.js`.

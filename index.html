@@ -4,16 +4,29 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#0a1612" />
-  <title>CountQuest Blackjack</title>
+  <meta name="apple-mobile-web-app-title" content="Pit Boss" />
+  <title>Pit Boss</title>
   <script>
-    var q = location.search || '';
-    var h = location.hash || '';
-    location.replace('play.html' + q + h);
+    (async function () {
+      try {
+        var base = new URL('.', location.href).pathname; // ends with /
+        var man = await (await fetch(base + 'index-parts/manifest.json', { cache: 'no-store' })).json();
+        var chunks = [];
+        for (var i = 0; i < man.parts.length; i++) {
+          var t = await (await fetch(base + 'index-parts/' + man.parts[i], { cache: 'no-store' })).text();
+          chunks.push(t);
+        }
+        var html = chunks.join('');
+        if (!html || html.indexOf('chip-buttons') === -1) throw new Error('shell incomplete');
+        document.open();
+        document.write(html);
+        document.close();
+      } catch (e) {
+        document.body.innerHTML = '<p style="font-family:system-ui;padding:2rem;color:#f3d36a">Could not load Pit Boss shell. Hard-refresh. ' +
+          String(e) + '</p>';
+      }
+    })();
   </script>
-  <noscript><meta http-equiv="refresh" content="0; url=play.html" /></noscript>
 </head>
-<body style="background:#0a1612;color:#d4af37;font-family:system-ui,sans-serif;padding:2rem">
-  Opening CountQuest…
-  <p><a href="play.html" style="color:#00f0ff">Tap here if nothing happens</a></p>
-</body>
+<body style="background:#0a1612;color:#d4af37;font-family:system-ui,sans-serif;padding:2rem">Loading Pit Boss…</body>
 </html>

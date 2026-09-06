@@ -1,19 +1,15 @@
 /* CountQuest PWA service worker — cache app shell for offline repeat visits. */
-const CACHE_VERSION = 'cq-pwa-v45';
+const CACHE_VERSION = 'cq-pwa-v38';
 const SHELL_ASSETS = [
   './',
   './index.html',
-  './play.html',
   './manifest.webmanifest',
   './index-parts/manifest.json',
   './index-parts/01.txt',
   './index-parts/02.txt',
   './index-parts/03.txt',
   './index-parts/04.txt',
-  './index-parts/05.part0.txt',
-  './index-parts/05.part1.txt',
-  './index-parts/05.part2.txt',
-  './index-parts/05.part3.txt',
+  './index-parts/05.txt',
   './css/tailwind.css',
   './css/app.css',
   './css/casino-felt-table.css',
@@ -38,7 +34,6 @@ const SHELL_ASSETS = [
   './js/05-help-system.js',
   './js/06-stats-storage.js',
   './js/06b-validation.js',
-  './js/06c-sounds-guard.js',
   './js/07-game-engine.js',
   './js/08-tutorial.js',
   './js/09-tests.js',
@@ -62,18 +57,6 @@ const SHELL_ASSETS = [
   './js/25-dice-minigame.js',
   './js/26-honor-path.js',
   './css/cq-honor-path.css',
-  './js/27-rail-count.js',
-  './js/27-rail-chunks/c0.txt',
-  './js/27-rail-chunks/c1.txt',
-  './js/27-rail-chunks/c2.txt',
-  './js/27-rail-chunks/c3.txt',
-  './js/27-rail-chunks/c4.txt',
-  './js/27-rail-chunks/c5.txt',
-  './js/27-rail-chunks/c6.txt',
-  './js/27-rail-chunks/c7.txt',
-  './js/27-rail-tests.js',
-  './css/cq-rail-count.css',
-  './js/28-click-unstick.js',
 ];
 
 self.addEventListener('install', (event) => {

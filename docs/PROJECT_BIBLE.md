@@ -1,7 +1,7 @@
 # CountQuest Blackjack — Project Bible
 
 **Status**: Living Document  
-**Last Updated**: 2026-07-08  
+**Last Updated**: 2026-09-06
 **SAVE_VERSION**: 18 (bump only when save schema changes)  
 **Purpose**: Vision, architecture, decisions, and development guidelines.
 
@@ -125,6 +125,8 @@ python scripts/show_build_progress.py
 | 2026-07-08 | Post-shoe mistake timeline                         | Future Idea   |
 
 ---
+
+- **2026-09-06** — Rail Count increment 1 specified & shipped; 7-seat UI stays gone. Quiet/Busy rail hands update CardCounter without restoring casino-table-full.
 
 ## 6. Roadmap & Current Priorities
 

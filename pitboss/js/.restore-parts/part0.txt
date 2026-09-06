@@ -1,0 +1,146 @@
+/**
+ * Case 01 UI  -  layout, briefing, controls, help levels, deal loop driver.
+ */
+(function (global) {
+  'use strict';
+
+  function qs(sel, root) {
+    return (root || document).querySelector(sel);
+  }
+  function qsa(sel, root) {
+    return Array.from((root || document).querySelectorAll(sel));
+  }
+
+  function parseHelp() {
+    const q = new URLSearchParams(location.search);
+    if (q.has('help')) {
+      const n = parseInt(q.get('help'), 10);
+      if (n >= 0 && n <= 4) return n;
+    }
+    // Beginners: Novice by default (plain labels + fact chips).
+    return 0;
+  }
+
+  function parseDebug() {
+    return new URLSearchParams(location.search).get('debug') === '1';
+  }
+
+  function cash(units) {
+    return `$${units * CASE01.unitCash}`;
+  }
+
+  class Case01UI {
+    constructor() {
+      this.helpLevel = parseHelp();
+      this.debug = parseDebug();
+      const seedQ = case01ParseSeedFromQuery();
+      this.engine = null;
+      this.timer = null;
+      this.stepOnce = false;
+      this.showMarksOnGraph = false;
+      this._seed = seedQ != null ? seedQ : (Date.now() >>> 0);
+      document.body.classList.toggle('help-novice', this.helpLevel === 0);
+      this._bind();
+      this._buildEngine();
+      this.showBriefing();
+    }
+
+    _buildEngine() {
+      this.engine = new Case01Engine({
+        seed: this._seed,
+        debug: this.debug,
+        helpLevel: this.helpLevel,
+        onUpdate: (snap) => this.render(snap),
+      });
+    }
+
+    _bind() {
+      this.el = {
+        briefing: qs('#briefing'),
+        briefingBody: qs('#briefingBody'),
+        briefingWarn: qs('#briefingWarn'),
+        dismissBriefing: qs('#dismissBriefing'),
+        clock: qs('#clock'),
+        meta: qs('#meta'),
+        seats: qs('#seats'),
+        dealerCards: qs('#dealerCards'),
+        shoeInfo: qs('#shoeInfo'),
+        discardInfo: qs('#discardInfo'),
+        flavor: qs('#flavor'),
+        notebook: qs('#notebook'),
+        notebookNote: qs('#notebookNote'),
+        btnHover: qs('#btnHover'),
+        btnShuffle: qs('#btnShuffle'),
+        btnPeek: qs('#btnPeek'),
+        btnPause: qs('#btnPause'),
+        btnStep: qs('#btnStep'),
+        coach: qs('#coach'),
+        btnPrimary: qs('#btnPrimary'),
+        btnPassLite: qs('#btnPassLite'),
+        btnMoreToggle: qs('#btnMoreToggle'),
+        moreTools: qs('#moreTools'),
+        seatSheet: qs('#seatSheet'),
+        sheetTitle: qs('#sheetTitle'),
+        sheetSub: qs('#sheetSub'),
+        sheetMark: qs('#sheetMark'),
+        sheetHover: qs('#sheetHover'),
+        sheetAccuse: qs('#sheetAccuse'),
+        sheetClose: qs('#sheetClose'),
+        sheetTip: qs('#sheetTip'),
+        btnMark: qs('#btnMark'),
+        btnBackOff: qs('#btnBackOff'),
+        btnPass: qs('#btnPass'),
+        callHint: qs('#callHint'),
+        speedBtns: qsa('[data-speed]'),
+        debug: qs('#debug'),
+        peekModal: qs('#peekModal'),
+        peekInput: qs('#peekInput'),
+        peekSubmit: qs('#peekSubmit'),
+        peekCancel: qs('#peekCancel'),
+        dossier: qs('#dossier'),
+        dossierBody: qs('#dossierBody'),
+        graphCanvas: qs('#graphCanvas'),
+        graphTip: qs('#graphTip'),
+        btnShowMarks: qs('#btnShowMarks'),
+        btnExportSeed: qs('#btnExportSeed'),
+        btnReplay: qs('#btnReplay'),
+      };
+
+      this.el.dismissBriefing.addEventListener('click', () => this.dismissBriefing());
+      this.el.btnPause.addEventListener('click', () => {
+        this.engine.togglePause();
+        if (!this.engine.paused) {
+          if (this.engine.phase === 'betting') this._scheduleResolve();
+          else this._scheduleNextHand();
+        }
+      });
+      this.el.btnStep.addEventListener('click', () => {
+        this.engine.paused = true;
+        this._stepHand();
+      });
+      this.el.speedBtns.forEach((b) => {
+        b.addEventListener('click', () => {
+          const ms = parseInt(b.getAttribute('data-speed'), 10);
+          this.engine.setSpeed(ms);
+          this.el.speedBtns.forEach((x) => x.classList.toggle('active', x === b));
+        });
+      });
+      this.el.btnMark.addEventListener('click', () => {
+        if (this.engine.selectedSeatId) this.engine.markSeat(this.engine.selectedSeatId, 'cycle');
+      });
+      this.el.btnHover.addEventListener('click', () => {
+        if (!this.engine.selectedSeatId) {
+          this._toast('Select a seat first.');
+          return;
+        }
+        this.engine.requestHover(this.engine.selectedSeatId);
+      });
+      this.el.btnShuffle.addEventListener('click', () => this.engine.requestShuffle());
+      this.el.btnPeek.addEventListener('click', () => this.openPeek());
+      this.el.peekCancel.addEventListener('click', () => this.el.peekModal.classList.add('hidden'));
+      this.el.peekSubmit.addEventListener('click', () => {
+        const v = parseInt(this.el.peekInput.value, 10);
+        if (!Number.isFinite(v)) return;
+        const res = this.engine.peekCount(v);
+        this.el.peekModal.classList.add('hidden');
+        if (res.message) th

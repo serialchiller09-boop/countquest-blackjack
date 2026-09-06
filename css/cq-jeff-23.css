@@ -128,3 +128,32 @@
 #chip-buttons .bet-chip {
   min-width: 3.1rem;
 }
+
+/* Progress: reliable open/close + mobile sheet */
+#stats-sidebar {
+  border-radius: 0 !important;
+  right: 0; top: 0; bottom: 0;
+  width: min(22rem, 92vw) !important;
+  max-width: 92vw !important;
+  height: 100% !important;
+  height: 100dvh !important;
+  transform: translateX(100%) !important;
+  transition: transform .28s ease !important;
+  z-index: 60 !important;
+}
+#stats-sidebar.open {
+  transform: translateX(0) !important;
+}
+@media (max-width: 640px) {
+  #stats-sidebar {
+    left: 0; right: 0; top: auto; bottom: 0;
+    width: 100% !important; max-width: none !important;
+    height: min(90dvh, 100%) !important;
+    border-radius: 1.25rem 1.25rem 0 0 !important;
+    transform: translateY(110%) !important;
+    box-shadow: 0 -16px 48px rgba(0,0,0,.55) !important;
+  }
+  #stats-sidebar.open {
+    transform: translateY(0) !important;
+  }
+}

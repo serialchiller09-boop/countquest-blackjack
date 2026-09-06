@@ -148,14 +148,7 @@ class HelpSystem {
     const base = `${HELP_LABELS[this.level]} — ${HELP_DESC[this.level]}`;
     return mh ? `${base}\n${mh}` : base;
   }
-  railDwellMs() {
-    return [900, 700, 550, 450, 350][this.level] || 350;
-  }
-  railShowTagLabel() { return this.level === 0 || this.modeProfile === 'tutorial'; }
-  railShowTagPip() { return this.level <= 1; }
-  railKeepFaces() { return this.level <= 1; }
-  railWhisper() { return this.level === 0; }
-    /** Append running count to shoe history (used for end-of-shoe ASCII/canvas graph). */
+  /** Append running count to shoe history (used for end-of-shoe ASCII/canvas graph). */
   recordRunningCountSnapshot(runningCount) { this.runningCountHistory.push(runningCount); }
   recordHandMeta(trueCount, bet, suggested) {
     this.trueCountsPerHand.push(trueCount);

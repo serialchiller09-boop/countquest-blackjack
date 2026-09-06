@@ -124,9 +124,9 @@
     dlg.setAttribute('aria-describedby', 'cq-first-run-copy');
     dlg.innerHTML =
       '<div class="cq-first-run-card">'
-      + '<p class="cq-first-run-kicker">CountQuest Blackjack</p>'
-      + '<h2 id="cq-first-run-title">Quest Through the Casinos</h2>'
-      + '<p id="cq-first-run-copy">Learn Hi-Lo by playing, not by reading a book.</p>'
+      + '<p class="cq-first-run-kicker">Welcome to the floor</p>'
+      + '<h2 id="cq-first-run-title">Pit Boss Training Path</h2>'
+      + '<p id="cq-first-run-copy">Learn the count and climb from Railbird to Pit Boss — by playing, not by reading a book.</p>'
       + '<p id="cq-first-run-steps">Start with the tutorial, then sit one beginner table. Tournaments, crews, and VIP wait until you have played a hand.</p>'
       + '<div class="cq-first-run-actions">'
       + '<button type="button" id="cq-first-run-tutorial" class="cq-first-run-primary">Start tutorial</button>'

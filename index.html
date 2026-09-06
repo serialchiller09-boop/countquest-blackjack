@@ -6,21 +6,21 @@
   <meta name="theme-color" content="#0a1612" />
   <title>CountQuest Blackjack</title>
   <script>
-    (async function () {
-      var sha = '0030e44855b802e036f465578e831552bad9d68e';
-      var url = 'https://raw.githubusercontent.com/serialchiller09-boop/countquest-blackjack/' + sha + '/index.html';
-      try {
-        var html = await (await fetch(url, { cache: 'no-store' })).text();
-        if (!html || html.indexOf('<!DOCTYPE') === -1) throw new Error('bad html');
-        html = html.split('?v=46').join('?v=48');
-        document.open();
-        document.write(html);
-        document.close();
-      } catch (e) {
-        document.body.textContent = 'Failed to restore shell. Hard-refresh or reopen the app. ' + (e && e.message ? e.message : e);
-      }
-    })();
+  (async function () {
+    try {
+      var b64 = (await (await fetch('_rebuild/index.html.gz.b64?v=1', { cache: 'no-store' })).text()).trim();
+      var bin = Uint8Array.from(atob(b64), function (c) { return c.charCodeAt(0); });
+      var stream = new Blob([bin]).stream().pipeThrough(new DecompressionStream('gzip'));
+      var html = await new Response(stream).text();
+      if (html.indexOf('<!DOCTYPE') === -1) throw new Error('bad html');
+      document.open();
+      document.write(html);
+      document.close();
+    } catch (e) {
+      document.body.textContent = 'Shell restore failed: ' + (e && e.message ? e.message : e);
+    }
+  })();
   </script>
 </head>
-<body style="background:#0a1612;color:#d4af37;font-family:system-ui,sans-serif;padding:2rem">Loading CountQuest…</body>
+<body style="background:#0a1612;color:#d4af37;font-family:system-ui,sans-serif;padding:2rem">Loading…</body>
 </html>

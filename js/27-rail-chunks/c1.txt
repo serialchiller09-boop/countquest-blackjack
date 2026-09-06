@@ -1,9 +1,3 @@
-    var raw = (app.save && app.save.settings && app.save.settings.railDensity) || 'off';
-    if (raw !== 'off' && raw !== 'quiet' && raw !== 'busy') raw = 'off';
-    if (raw === 'busy' && typeof window !== 'undefined' && window.innerHeight && window.innerHeight < 400) {
-      raw = 'quiet';
-    }
-    if (mp === 'drill-combined' || mp === 'drill-betting') {
       if (raw === 'off') return 'quiet';
     }
     if (mp === 'normal' || mp === 'campaign' || mp === 'daily') {
@@ -32,95 +26,67 @@
     return app.rail;
   }
 
-  function resetRound(app) {
-    if (!app) return;
-    var density = densityFor(app);
-    ensureAppRail(app, density);
-    app.rail.hands = {};
-    app.rail.dealt = [];
-    app.rail.density = density;
-    var strip = document.getElementById('cq-rail-strip');
-    if (strip) {
-      var stack = strip.querySelector('.cq-rail-stack');
-      if (stack) stack.innerHTML = '';
-      var countEl = strip.querySelector('.cq-rail-seen-count');
-      if (countEl) countEl.textContent = '';
-      var fly = strip.querySelector('.cq-rail-fly-layer');
-      if (fly) fly.innerHTML = '';
-    }
-    updateStripVisibility(app);
-  }
-
   function planRound(app) {
     var density = densityFor(app);
-    ensureAppRail(app, density);
-    app.rail.hands = {};
-    app.rail.dealt = [];
-    app.rail.density = density;
+    var rail = ensureAppRail(app, density);
+    rail.density = density;
+    rail.dealt = [];
+    rail.hands = {};
+    var ids = handIdsFor(density);
+    for (var i = 0; i < ids.length; i++) {
+      rail.hands[ids[i]] = typeof Hand !== 'undefined' ? new Hand() : { cards: [], add: function (c) { this.cards.push(c); }, get size() { return this.cards.length; } };
+    }
     mountStrip(app);
     updateStripVisibility(app);
-    maybeCoachMark(app);
     maybeWhisper(app);
+    maybeCoachMark(app);
+    return rail;
+  }
+
+  function resetRound(app) {
+    if (!app) return;
+    var rail = ensureAppRail(app, densityFor(app));
+    rail.dealt = [];
+    rail.hands = {};
+    if (rail.stripEl) {
+      var stack = rail.stripEl.querySelector('.cq-rail-stack');
+      if (stack) stack.innerHTML = '';
+      var fly = rail.stripEl.querySelector('.cq-rail-fly-layer');
+      if (fly) fly.innerHTML = '';
+      var whisper = rail.stripEl.querySelector('.cq-rail-whisper');
+      if (whisper) {
+        whisper.textContent = '';
+        whisper.classList.add('hidden');
+      }
+      var countEl = rail.stripEl.querySelector('.cq-rail-seen-count');
+      if (countEl) countEl.textContent = '';
+    }
+    updateStripVisibility(app);
   }
 
   function mountStrip(app) {
     ensureCss();
     var existing = document.getElementById('cq-rail-strip');
     if (existing) {
-      if (app) app.rail && (app.rail.stripEl = existing);
+      if (app && app.rail) app.rail.stripEl = existing;
       return existing;
     }
-    var el = document.createElement('div');
-    el.id = 'cq-rail-strip';
-    el.className = 'cq-rail-strip';
-    el.setAttribute('aria-hidden', 'true');
-    el.innerHTML =
-      '<div class="cq-rail-fly-layer"></div>' +
-      '<div class="cq-rail-stack"></div>' +
-      '<div class="cq-rail-seen-count"></div>' +
-      '<div class="cq-rail-whisper hidden" id="cq-rail-whisper"></div>';
-    var host =
-      document.getElementById('casino-table-surface') ||
-      document.querySelector('.casino-table-surface') ||
-      document.getElementById('screen-play') ||
-      document.body;
-    host.appendChild(el);
-    if (app) {
-      ensureAppRail(app, densityFor(app));
-      app.rail.stripEl = el;
-    }
-    return el;
-  }
+    var strip = document.createElement('div');
+    strip.id = 'cq-rail-strip';
+    strip.className = 'cq-rail-strip';
+    strip.setAttribute('aria-label', 'The Rail — other seats');
+    strip.innerHTML =
+      '<div class="cq-rail-title">THE RAIL</div>' +
+      '<div class="cq-rail-fly-layer" aria-hidden="true"></div>' +
+      '<div class="cq-rail-stack" aria-live="polite"></div>' +
+      '<div class="cq-rail-seen-count" aria-hidden="true"></div>' +
+      '<p class="cq-rail-whisper hidden" role="status"></p>';
 
-  function updateStripVisibility(app) {
-    var strip = document.getElementById('cq-rail-strip') || (app && app.rail && app.rail.stripEl);
-    var density = densityFor(app);
-    document.body.classList.toggle('cq-rail-off', density === 'off');
-    document.body.classList.toggle('cq-rail-quiet', density === 'quiet');
-    document.body.classList.toggle('cq-rail-busy', density === 'busy');
-    if (!strip) return;
-    strip.style.display = density === 'off' ? 'none' : '';
-    strip.setAttribute('aria-hidden', density === 'off' ? 'true' : 'false');
-  }
+    var layer = document.querySelector('.cq-table-play-layer');
+    var dealerZone = document.querySelector('.casino-dealer-zone');
+    var seatGrid = document.getElementById('casino-seat-grid');
+    var play = document.getElementById('screen-casino-play');
 
-  function maybeWhisper(app) {
-    var el = document.getElementById('cq-rail-whisper');
-    if (!el || !app || !app.help) return;
-    var help = app.help;
-    if (typeof help.railWhisper === 'function' ? !help.railWhisper() : help.level > 0) {
-      el.textContent = '';
-      el.classList.add('hidden');
-      return;
-    }
-    if (help.level === 0) {
-      el.textContent = 'Watch the rail — those cards still count.';
-      el.classList.remove('hidden');
-    } else if (help.level === 1) {
-      el.textContent = 'Rail first — then your hand.';
-      el.classList.remove('hidden');
-      setTimeout(function () { el.classList.add('hidden'); }, 1600);
-    } else {
-      el.textContent = '';
-      el.classList.add('hidden');
-    }
-  }
+    if (layer && dealerZone && dealerZone.parentElement === layer) {
+      if (dealerZone.nextSibling) layer.insertBefore(strip, dealerZone.nextSibling);
+      else layer.appendChild(strip);

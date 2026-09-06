@@ -30,10 +30,10 @@
     }
     window.addEventListener('load', bootstrapPwaShell);
   </script>
-  <link rel="stylesheet" href="css/tailwind.css?v=48" />
-  <link rel="stylesheet" href="css/app.css?v=48" />
-  <link rel="stylesheet" href="css/casino-felt-table.css?v=48" />
-  <link rel="stylesheet" href="css/cq-jeff-23.css?v=48" />
+  <link rel="stylesheet" href="css/tailwind.css?v=49" />
+  <link rel="stylesheet" href="css/app.css?v=49" />
+  <link rel="stylesheet" href="css/casino-felt-table.css?v=49" />
+  <link rel="stylesheet" href="css/cq-jeff-23.css?v=49" />
 </head>
 <body class="min-h-screen text-white font-sans antialiased">
 

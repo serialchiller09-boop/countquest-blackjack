@@ -12,7 +12,259 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <title>Pit Boss</title>
-  <!-- PARTIAL RESTORE IN PROGRESS: full 01.txt body follows in next commit -->
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' stroke='%23d4af37' stroke-width='2' fill='%230a1612'/%3E%3Crect x='9' y='8' width='14' height='16' rx='1.5' fill='%23d4af37' opacity='0.2'/%3E%3Ctext x='16' y='18' text-anchor='middle' font-family='system-ui,sans-serif' font-size='8' font-weight='700' fill='%23d4af37'%3ECQ%3C/text%3E%3C/svg%3E" />
+  <script>
+    window.__CQ_TEST_MODE = /[?&]test(?:=|&|$)/.test(location.search);
+    window.__CQ_DEV_MODE = /[?&]dev=1(?:&|$)/.test(location.search);
+    window.__runTestsDone = false;
+    window.__runTestsBootstrapped = false;
+    if (window.__CQ_DEV_MODE) document.documentElement.classList.add('cq-dev');
+    if (window.__CQ_TEST_MODE) { try { localStorage.clear(); sessionStorage.clear(); } catch (_) {} }
+
+    function bootstrapPwaShell() {
+      if (!('serviceWorker' in navigator) || window.__CQ_TEST_MODE) return;
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    }
+    window.addEventListener('load', bootstrapPwaShell);
+  </script>
+  <link rel="stylesheet" href="css/tailwind.css?v=48" />
+  <link rel="stylesheet" href="css/app.css?v=48" />
+  <link rel="stylesheet" href="css/casino-felt-table.css?v=48" />
+  <link rel="stylesheet" href="css/cq-jeff-23.css?v=48" />
 </head>
-<body>Loading…</body>
-</html>
+<body class="min-h-screen text-white font-sans antialiased">
+
+<div id="stats-backdrop" class="stats-backdrop hidden" aria-hidden="true"></div>
+
+<!-- Stats sidebar — collapsible overlay on all screen sizes -->
+<aside id="stats-sidebar" class="fixed right-0 top-0 z-50 h-full w-80 max-w-[90vw] translate-x-full bg-[#0f1f18]/98 backdrop-blur border-l border-white/10 flex flex-col shadow-2xl" aria-label="Your progress">
+  <div class="p-4 border-b border-white/10 flex items-center justify-between">
+    <h2 class="font-bold text-gold">Your Progress</h2>
+    <button id="btn-close-stats" type="button" class="p-2 rounded-lg bg-white/10 hover:bg-white/20" aria-label="Close stats panel">✕</button>
+  </div>
+  <div id="stats-sidebar-body" class="p-4 flex-1 overflow-y-auto space-y-4 text-sm"></div>
+  <div class="p-4 border-t border-white/10 space-y-2 shrink-0">
+    <button id="btn-export-stats" class="w-full py-2.5 rounded-lg bg-cyan-900/40 hover:bg-cyan-800/50 border border-cyan-600/30 text-cyan-200 text-xs font-medium">⬇ Export Stats (JSON)</button>
+    <button id="btn-reset-progress-sidebar" class="w-full py-2.5 rounded-lg bg-red-900/30 hover:bg-red-800/40 border border-red-700/30 text-red-300 text-xs">Reset Progress</button>
+    <p id="save-status" class="text-[10px] text-emerald-500/50 text-center">Auto-saves to this browser</p>
+  </div>
+</aside>
+
+<header id="app-header" class="app-header main-header hidden sticky top-0 z-40 backdrop-blur border-b border-white/10 px-4 sm:px-6 py-3 w-full">
+  <div class="app-main space-y-2">
+    <div class="flex flex-wrap items-center gap-3 justify-between">
+      <div class="brand-lockup min-w-0">
+        <svg id="logo" class="logo cq-logo" width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Pit Boss">
+          <circle cx="21" cy="21" r="19" stroke="currentColor" stroke-width="2.5"/>
+          <rect x="12" y="11" width="18" height="20" rx="2" ry="2" fill="currentColor" opacity="0.15"/>
+          <path d="M15 14 L21 20 L27 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="21" cy="26" r="3" fill="currentColor"/>
+          <text x="21" y="23" text-anchor="middle" dominant-baseline="middle" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="700" fill="currentColor">CQ</text>
+        </svg>
+        <div class="brand-text min-w-0">
+          <div id="app-title" class="app-title truncate">Pit Boss</div>
+          <div class="app-title-sub">Blackjack</div>
+          <p id="header-mode" class="header-session-mode truncate"></p>
+          <span id="cq-build-stamp" class="cq-build-stamp" title="App build">v46</span>
+        </div>
+      </div>
+      <div id="header-currency" class="flex flex-wrap items-center gap-2 justify-end">
+        <div id="header-chips" class="currency-chip rounded-xl bg-emerald-900/60 border border-emerald-600/30 font-mono font-bold text-emerald-300 px-3 py-1.5 text-sm"></div>
+        <div id="header-gems" class="currency-gem rounded-xl bg-violet-950/60 border border-violet-500/40 font-mono font-bold text-violet-200 px-3 py-1.5 text-sm"></div>
+        <div id="header-bankroll-chip" class="hidden rounded-xl bg-emerald-900/60 border border-emerald-600/30 font-mono font-bold text-emerald-300"></div>
+      </div>
+    </div>
+    <div class="flex flex-wrap items-center gap-2 justify-between text-xs">
+      <button id="btn-help-settings" class="px-3 py-1.5 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-300 font-medium">
+        <span id="header-help-label">Novice</span> ▾
+      </button>
+      <div id="header-shoe" class="flex-1 min-w-[140px] max-w-xs flex items-center gap-2 text-emerald-400/70">
+        <span id="header-shoe-label" title="Cards still in the shoe — the dispenser holding the decks">Cards left in shoe</span>
+        <div class="flex-1 h-2 bg-black/40 rounded-full overflow-hidden">
+          <div id="shoe-bar-fill" class="shoe-bar-fill h-full bg-emerald-500 rounded-full" style="width:100%"></div>
+        </div>
+        <span id="shoe-bar-label" class="font-mono">—</span>
+      </div>
+      <div class="flex gap-1 items-center">
+        <button id="btn-sound" class="px-2 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-sm" title="Toggle sound">🔊</button>
+        <button id="btn-toggle-stats" type="button" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/15 text-sm">Stats</button>
+        <button id="btn-chart" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-sm">Chart</button>
+        <button id="btn-quit" class="px-3 py-1.5 rounded-lg bg-red-900/40 hover:bg-red-800/50 text-sm">Quit</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="app-main" class="app-main px-4 sm:px-6 py-4 sm:py-5 pb-28">
+  <!-- LOBBY (Plan 21 — 8 Ball Pool production home) -->
+  <section id="screen-menu" class="lobby-8bp w-full mx-auto">
+    <header id="lobby-top-nav" class="lobby-8bp-topbar">
+      <button type="button" id="lobby-clubs-btn" class="lobby-clubs-btn" data-lobby-nav="clubs" title="Counting Crews">
+        <span class="lobby-clubs-icon">👥</span>
+        <span>Clubs</span>
+        <span id="lobby-clubs-sub" class="lobby-clubs-sub"></span>
+      </button>
+      <div class="lobby-profile-zone">
+        <div class="lobby-profile-ring">
+          <div id="lobby-profile-avatar" class="lobby-profile-inner">CQ</div>
+        </div>
+        <div class="lobby-profile-meta">
+          <div id="lobby-profile-name" class="lobby-profile-name">Player</div>
+          <div id="lobby-profile-rank" class="lobby-profile-rank">Novice · Help Level 0</div>
+          <div class="lobby-xp-row">
+            <div id="lobby-xp-bar" class="lobby-xp-bar" title="XP to next level"><div id="lobby-xp-fill" class="lobby-xp-fill" style="width:0%"></div></div>
+            <span id="lobby-profile-level" class="lobby-level-badge">1</span>
+          </div>
+        </div>
+      </div>
+      <div class="lobby-currency-zone">
+        <div class="lobby-currency-pill lobby-currency-chips">
+          <span>🪙</span><span id="lobby-chips">—</span>
+          <button type="button" class="lobby-currency-buy" data-lobby-buy="chips" aria-label="Buy chips">+</button>
+        </div>
+        <div class="lobby-currency-pill lobby-currency-gems">
+          <span>💎</span><span id="lobby-gems">—</span>
+          <button type="button" class="lobby-currency-buy" data-lobby-buy="gems" aria-label="Buy gems">+</button>
+        </div>
+      </div>
+      <div id="lobby-nav-icons" class="lobby-nav-icons"></div>
+      <span id="lobby-build-stamp" class="cq-build-stamp lobby-build-stamp" title="Web build">v46</span>
+    </header>
+
+    <button type="button" id="lobby-pass-banner" class="lobby-pass-banner text-left">
+      <div>
+        <div class="text-[10px] uppercase tracking-wider text-purple-100/90 font-bold">Shift Pass</div>
+        <div id="lobby-pass-label" class="text-sm font-bold text-white">Unlock VIP perks</div>
+      </div>
+      <div id="lobby-pass-timer" class="lobby-pass-timer live">—</div>
+    </button>
+
+    <div id="lobby-play-stage" class="lobby-play-stage">
+      <div id="lobby-secondary-left" class="lobby-secondary-col"></div>
+      <div id="lobby-hero-play-slot" class="lobby-hero-col"></div>
+      <div id="lobby-secondary-right" class="lobby-secondary-col"></div>
+    </div>
+    <div id="lobby-play-grid" aria-hidden="true"></div>
+
+    <div id="menu-beginner-hint" class="hidden mx-3 rounded-xl bg-amber-950/50 border border-amber-600/35 px-4 py-3 text-sm text-amber-100/90 text-center">
+      <span class="text-gold font-semibold">Welcome!</span> Tap <strong>Play</strong> for tables or <strong>Training</strong> for drills.
+    </div>
+    <div id="menu-continue-row" class="hidden mx-3">
+      <button id="btn-continue-session" class="w-full py-3 rounded-xl bg-emerald-700/40 hover:bg-emerald-600/50 border border-emerald-500/30 text-sm font-semibold"></button>
+    </div>
+
+    <div id="menu-save-info" class="text-center text-xs text-emerald-500/60 px-3 pt-2"></div>
+    <div id="menu-achievements-preview" class="hidden text-center text-xs text-emerald-400/70 px-3"></div>
+    <div id="how-to-count-menu" class="max-w-lg mx-auto px-3"></div>
+
+    <nav id="lobby-bottom-dock" class="lobby-bottom-dock">
+      <p class="lobby-dock-label">Minigames</p>
+      <div id="lobby-minigames-row" class="lobby-minigames-dock"></div>
+    </nav>
+
+    <!-- Legacy hooks for keyboard shortcuts [1]–[8] and tests -->
+    <div id="menu-currency-bar" class="sr-only" aria-hidden="true">
+      <div id="menu-chips">—</div>
+      <div id="menu-gems">—</div>
+    </div>
+    <div id="menu-buttons" class="hidden" aria-hidden="true"></div>
+    <div id="lobby-nav-row" class="hidden" aria-hidden="true"></div>
+    <div class="menu-hero hidden" aria-hidden="true">
+      <div id="menu-logo-slot"></div>
+      <h2 id="menu-app-title">Pit Boss</h2>
+      <span id="menu-theme-label"></span>
+    </div>
+    <button id="btn-menu-stats" type="button" class="mx-3 mb-2 w-[calc(100%-1.5rem)] py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-emerald-300/70">📊 Progress &amp; Stats</button>
+  </section>
+
+  <!-- TRAINING MODE -->
+  <section id="screen-training" class="hidden cq-screen-panel cq-screen-compact space-y-3 max-w-lg mx-auto w-full">
+    <div class="text-center py-2">
+      <h2 class="text-2xl font-bold text-amber-400">Training Mode</h2>
+      <p id="training-mode-subtitle" class="text-emerald-300/80 text-sm mt-0.5"></p>
+    </div>
+    <div id="training-daily-goal" class="felt rounded-xl p-3 border border-cyan-800/25 space-y-1"></div>
+    <div id="training-drill-list" class="grid gap-2"></div>
+    <button id="btn-training-history" type="button" class="w-full py-3 rounded-xl bg-cyan-950/40 hover:bg-cyan-950/60 border border-cyan-700/30 text-sm text-cyan-200">📈 Training History</button>
+    <button id="btn-training-mistakes" type="button" class="w-full py-3 rounded-xl bg-red-950/40 hover:bg-red-950/60 border border-red-700/30 text-sm text-red-200">📋 Review Mistakes</button>
+    <button id="btn-training-back" type="button" class="w-full py-3 rounded-xl bg-white/10 hover:bg-white/15 text-sm">← Main Menu</button>
+  </section>
+
+  <!-- TRAINING HISTORY -->
+  <section id="screen-training-history" class="hidden cq-screen-panel cq-screen-compact space-y-3 max-w-2xl mx-auto w-full">
+    <div class="text-center py-2">
+      <h2 class="text-2xl font-bold text-amber-400">Training History</h2>
+    </div>
+    <div id="training-history-trend" class="felt rounded-xl p-4 text-sm text-emerald-200/90 space-y-2"></div>
+    <div id="training-history-filters" class="flex gap-2 flex-wrap justify-center"></div>
+    <div id="training-history-list" class="space-y-2 max-h-[52vh] overflow-y-auto pr-1"></div>
+    <p id="training-history-empty" class="hidden text-center text-sm text-emerald-400/60 py-6">No sessions yet — complete a drill to start tracking progress.</p>
+    <button id="btn-training-history-back" type="button" class="w-full py-3 rounded-xl bg-white/10 hover:bg-white/15 text-sm">← Training Mode</button>
+  </section>
+
+  <!-- MISTAKE REVIEW LOG -->
+  <section id="screen-training-mistakes" class="hidden cq-screen-panel cq-screen-compact space-y-3 max-w-2xl mx-auto w-full">
+    <div class="text-center py-2">
+      <h2 class="text-2xl font-bold text-amber-400">Review Mistakes</h2>
+    </div>
+    <div id="training-mistakes-summary" class="felt rounded-xl p-4 text-sm text-emerald-200/90 space-y-2"></div>
+    <div id="training-mistakes-filters" class="flex gap-2 flex-wrap justify-center"></div>
+    <div id="training-mistakes-list" class="space-y-2 max-h-[52vh] overflow-y-auto pr-1"></div>
+    <p id="training-mistakes-empty" class="hidden text-center text-sm text-emerald-400/60 py-6">No mistakes logged yet — great work, or complete a drill to start learning from errors.</p>
+    <button id="btn-training-mistakes-back" type="button" class="w-full py-3 rounded-xl bg-white/10 hover:bg-white/15 text-sm">← Training Mode</button>
+  </section>
+
+  <!-- DRILL SESSION SUMMARY -->
+  <section id="screen-drill-session-summary" class="hidden cq-screen-panel cq-screen-compact space-y-3 max-w-xl mx-auto w-full">
+    <div class="text-center py-2">
+      <p class="text-xs uppercase tracking-wider text-cyan-400/80">Session Complete</p>
+      <h2 id="drill-summary-title" class="text-2xl font-bold text-amber-400 mt-1">Training Summary</h2>
+      <p id="drill-summary-subtitle" class="text-emerald-300/80 text-sm mt-1"></p>
+    </div>
+    <div id="drill-summary-body" class="felt rounded-2xl p-5 space-y-4"></div>
+    <div id="drill-summary-chart" class="hidden felt rounded-xl p-4"></div>
+    <div class="flex flex-col gap-2">
+      <button id="btn-drill-summary-retry" type="button" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 text-stone-900 font-bold">Try Again</button>
+      <button id="btn-drill-summary-back" type="button" class="w-full py-3 rounded-xl bg-white/10 hover:bg-white/15 text-sm">← Back</button>
+    </div>
+  </section>
+
+  <!-- TABLE LOBBY -->
+  <section id="screen-table-lobby" class="hidden cq-screen-panel cq-screen-compact space-y-3 max-w-2xl mx-auto w-full">
+    <div class="text-center py-2">
+      <h2 class="text-2xl font-bold text-amber-400">Table Lobby</h2>
+      <p class="text-emerald-300/80 text-xs mt-0.5">2× pot · win <strong class="text-gold">1.8×</strong></p>
+    </div>
+    <div id="lobby-currency-hint" class="felt rounded-xl px-3 py-2 text-sm text-emerald-200/90 text-center border border-white/10"></div>
+    <div id="table-tier-list" class="grid gap-2"></div>
+    <button id="btn-table-lobby-back" type="button" class="w-full py-3 rounded-xl bg-white/10 hover:bg-white/15 text-sm">← Main Menu</button>
+  </section>
+
+  <!-- TOURNAMENT BRACKETS -->
+  <section id="screen-tournament" class="hidden cq-screen-panel space-y-3 max-w-3xl mx-auto w-full">
+    <div class="text-center py-2">
+      <h2 class="text-2xl font-bold text-amber-400">🏆 Pro Tournament</h2>
+      <p id="tournament-subtitle" class="text-emerald-300/80 text-sm mt-0.5">8-player bracket</p>
+    </div>
+    <div id="tournament-entry-panel" class="felt rounded-xl p-4 border border-amber-700/30 space-y-3"></div>
+    <div id="tournament-bracket-panel" class="hidden space-y-3">
+      <div id="tournament-status-bar" class="felt rounded-xl px-4 py-3 border border-cyan-800/25 text-sm text-emerald-200/90"></div>
+      <div id="tournament-bracket-tree" class="tournament-bracket-tree felt rounded-xl p-4 border border-white/10 overflow-x-auto"></div>
+      <div id="tournament-match-panel" class="felt rounded-xl p-4 border border-amber-600/30 space-y-2"></div>
+    </div>
+    <button id="btn-tournament-back" type="button" class="w-full py-3 rounded-xl bg-white/10 hover:bg-white/15 text-sm">← Main Menu</button>
+  </section>
+
+  <!-- SPECIAL EVENT (rotating weekly tables) -->
+  <section id="screen-special-event" class="hidden cq-screen-panel space-y-3 max-w-2xl mx-auto w-full">
+    <div class="text-center py-2">
+      <h2 class="text-2xl font-bold text-amber-400">✨ Special Event</h2>
+      <p id="special-event-subtitle" class="text-emerald-300/80 text-sm mt-0.5">Weekly boosted tables</p>
+    </div>
+    <div id="special-event-hero" class="felt rounded-xl p-4 border border-violet-700/30 space-y-3"></div>
+    <div id="special-event-daily-panel" class="felt rounded-xl p-4 border border-amber-700/25 space-y-2"></div>
+    <div id="special-event-stats" class="felt rounded-xl p-4 border border-cyan-800/25 text-xs text-emerald-300/80"></div>
+    <button id="btn-special-event-back" type="button" class=

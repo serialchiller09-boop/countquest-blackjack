@@ -1,0 +1,259 @@
+e="5">5 problems</option>
+          <option value="10" selected>10 problems</option>
+          <option value="15">15 problems</option>
+        </select>
+      </label>
+      <button id="btn-tc-drill-start" type="button" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 text-stone-900 font-bold">Start Round</button>
+    </div>
+    <div id="tc-drill-active" class="hidden space-y-3">
+      <p id="tc-drill-progress" class="text-center text-sm font-mono text-emerald-300"></p>
+      <div class="felt rounded-2xl p-6 space-y-4 text-center shadow-inner">
+        <p class="text-xs uppercase tracking-wider text-emerald-400/60">True count = running count ÷ decks remaining</p>
+        <div class="grid grid-cols-2 gap-3 text-sm">
+          <div class="rounded-xl bg-black/30 p-4 border border-emerald-700/25">
+            <div class="text-emerald-400/70 text-xs">Running Count</div>
+            <div id="tc-drill-rc" class="font-mono text-2xl font-bold text-emerald-200 mt-1">—</div>
+          </div>
+          <div class="rounded-xl bg-black/30 p-4 border border-emerald-700/25">
+            <div class="text-emerald-400/70 text-xs">Decks Remaining</div>
+            <div id="tc-drill-decks" class="font-mono text-2xl font-bold text-emerald-200 mt-1">—</div>
+          </div>
+        </div>
+        <p id="tc-drill-formula" class="font-mono text-lg text-amber-200/90"></p>
+      </div>
+      <div id="tc-drill-feedback" class="hidden rounded-xl px-4 py-3 text-sm text-center font-medium"></div>
+      <div class="flex gap-2 items-center justify-center">
+        <input id="tc-drill-guess" type="text" inputmode="decimal" class="w-28 px-3 py-2.5 rounded-lg bg-black/30 text-white text-center font-mono text-lg border border-white/10" placeholder="?" aria-label="Your true count answer" />
+        <button id="btn-tc-drill-submit" type="button" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 text-stone-900 font-bold">Check</button>
+      </div>
+    </div>
+    <div id="tc-drill-summary" class="hidden felt rounded-2xl p-6 space-y-3 text-center text-sm"></div>
+    <div id="tc-drill-stats" class="rounded-xl bg-black/25 border border-white/10 p-4 text-sm text-emerald-200/90"></div>
+    <button id="btn-tc-drill-quit" type="button" class="w-full py-2 text-sm text-emerald-400/60 hover:text-emerald-300">← Back to drills</button>
+  </section>
+
+  <!-- DRILL: CARD BURST -->
+  <section id="screen-drill-card-burst" class="hidden cq-screen-panel cq-screen-compact space-y-3 max-w-lg mx-auto w-full">
+    <div class="text-center">
+      <span class="drill-badge uppercase text-cyan-400/80">Card Burst Drill</span>
+      <p class="text-emerald-200/80 text-sm mt-2">Count rapid bursts of cards — quiz after each group</p>
+    </div>
+    <div id="burst-drill-setup" class="space-y-4 rounded-xl border border-emerald-700/30 bg-emerald-950/40 p-4">
+      <h3 class="text-sm font-semibold text-gold">Drill settings</h3>
+      <label class="block text-sm">
+        <span class="text-emerald-300/80">Cards per burst</span>
+        <select id="burst-drill-size" class="mt-1 w-full rounded-lg bg-black/30 border border-white/10 px-3 py-2 text-white">
+          <option value="3">3 cards</option>
+          <option value="4" selected>4 cards</option>
+          <option value="5">5 cards</option>
+        </select>
+      </label>
+      <label class="block text-sm">
+        <span class="text-emerald-300/80">Bursts per round</span>
+        <select id="burst-drill-rounds" class="mt-1 w-full rounded-lg bg-black/30 border border-white/10 px-3 py-2 text-white">
+          <option value="5">5 bursts</option>
+          <option value="8" selected>8 bursts</option>
+          <option value="10">10 bursts</option>
+        </select>
+      </label>
+      <label class="block text-sm">
+        <span class="text-emerald-300/80">Burst speed</span>
+        <select id="burst-drill-speed" class="mt-1 w-full rounded-lg bg-black/30 border border-white/10 px-3 py-2 text-white">
+          <option value="slow">Slow (~0.5s per card)</option>
+          <option value="normal" selected>Normal (~0.3s per card)</option>
+          <option value="fast">Fast (~0.15s per card)</option>
+        </select>
+      </label>
+      <button id="btn-burst-drill-start" type="button" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 text-stone-900 font-bold">Start Round</button>
+    </div>
+    <div id="burst-drill-active" class="hidden space-y-3">
+      <p id="burst-drill-progress" class="text-center text-sm font-mono text-emerald-300"></p>
+      <div id="burst-drill-card-area" class="felt rounded-2xl p-6 min-h-[10rem] flex flex-wrap justify-center gap-1 items-center"></div>
+      <p id="burst-drill-prompt" class="text-center text-sm text-amber-200/90 hidden">Running count after this burst?</p>
+      <div id="burst-drill-quiz" class="hidden flex gap-2 items-center justify-center">
+        <input id="burst-drill-guess" type="number" class="w-28 px-3 py-2 rounded-lg bg-black/30 text-white text-center font-mono text-lg" aria-label="Running count guess" />
+        <button id="btn-burst-drill-submit" type="button" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 text-stone-900 font-bold">Check</button>
+      </div>
+      <div id="burst-drill-feedback" class="hidden rounded-xl px-4 py-3 text-sm text-center font-medium"></div>
+    </div>
+    <div id="burst-drill-stats" class="rounded-xl bg-black/25 border border-white/10 p-4 text-sm text-emerald-200/90"></div>
+    <button id="btn-burst-drill-quit" type="button" class="w-full py-2 text-sm text-emerald-400/60 hover:text-emerald-300">← Back to drills</button>
+  </section>
+
+  <!-- DRILL: DECKS REMAINING -->
+  <section id="screen-drill-decks-left" class="hidden cq-screen-panel cq-screen-compact space-y-3 max-w-lg mx-auto w-full">
+    <div class="text-center">
+      <span class="drill-badge uppercase text-cyan-400/80">Decks Remaining Quiz</span>
+      <p class="text-emerald-200/80 text-sm mt-2">Cards dealt + running count → estimate decks left</p>
+    </div>
+    <div id="decks-drill-setup" class="space-y-4 rounded-xl border border-emerald-700/30 bg-emerald-950/40 p-4">
+      <h3 class="text-sm font-semibold text-gold">Drill settings</h3>
+      <label class="block text-sm">
+        <span class="text-emerald-300/80">Shoe size</span>
+        <select id="decks-drill-shoe" class="mt-1 w-full rounded-lg bg-black/30 border border-white/10 px-3 py-2 text-white">
+          <option value="6" selected>6 decks</option>
+          <option value="8">8 decks</option>
+        </select>
+      </label>
+      <label class="block text-sm">
+        <span class="text-emerald-300/80">Problems per round</span>
+        <select id="decks-drill-rounds" class="mt-1 w-full rounded-lg bg-black/30 border border-white/10 px-3 py-2 text-white">
+          <option value="8" selected>8 problems</option>
+          <option value="10">10 problems</option>
+          <option value="12">12 problems</option>
+        </select>
+      </label>
+      <label class="block text-sm">
+        <span class="text-emerald-300/80">Tolerance</span>
+        <select id="decks-drill-tolerance" class="mt-1 w-full rounded-lg bg-black/30 border border-white/10 px-3 py-2 text-white">
+          <option value="0.25" selected>±0.25 decks</option>
+          <option value="0.5">±0.5 decks</option>
+        </select>
+      </label>
+      <button id="btn-decks-drill-start" type="button" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 text-stone-900 font-bold">Start Round</button>
+    </div>
+    <div id="decks-drill-active" class="hidden space-y-3">
+      <p id="decks-drill-progress" class="text-center text-sm font-mono text-emerald-300"></p>
+      <div class="felt rounded-2xl p-6 space-y-3 text-center shadow-inner">
+        <p class="text-xs uppercase tracking-wider text-emerald-400/60">Decks left ≈ cards remaining ÷ 52</p>
+        <div class="grid grid-cols-2 gap-3 text-sm">
+          <div class="rounded-xl bg-black/30 p-4 border border-emerald-700/25">
+            <div class="text-emerald-400/70 text-xs">Cards Dealt</div>
+            <div id="decks-drill-dealt" class="font-mono text-2xl font-bold text-emerald-200 mt-1">—</div>
+          </div>
+          <div class="rounded-xl bg-black/30 p-4 border border-emerald-700/25">
+            <div class="text-emerald-400/70 text-xs">Running Count</div>
+            <div id="decks-drill-rc" class="font-mono text-2xl font-bold text-emerald-200 mt-1">—</div>
+          </div>
+        </div>
+        <p id="decks-drill-shoe-label" class="text-xs text-cyan-300/80 font-mono"></p>
+      </div>
+      <div id="decks-drill-feedback" class="hidden rounded-xl px-4 py-3 text-sm text-center font-medium"></div>
+      <div class="flex gap-2 items-center justify-center">
+        <input id="decks-drill-guess" type="text" inputmode="decimal" class="w-28 px-3 py-2.5 rounded-lg bg-black/30 text-white text-center font-mono text-lg border border-white/10" placeholder="?" aria-label="Decks remaining guess" />
+        <button id="btn-decks-drill-submit" type="button" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 text-stone-900 font-bold">Check</button>
+      </div>
+    </div>
+    <div id="decks-drill-stats" class="rounded-xl bg-black/25 border border-white/10 p-4 text-sm text-emerald-200/90"></div>
+    <button id="btn-decks-drill-quit" type="button" class="w-full py-2 text-sm text-emerald-400/60 hover:text-emerald-300">← Back to drills</button>
+  </section>
+
+  <!-- DRILL: INDEX PLAYS (STRATEGY DEVIATIONS) -->
+  <section id="screen-drill-index" class="hidden cq-screen-panel cq-screen-compact space-y-3 max-w-lg mx-auto w-full">
+    <div class="text-center">
+      <span class="drill-badge uppercase text-cyan-400/80">Index Play Drill</span>
+      <p id="index-drill-tagline" class="text-emerald-200/80 text-sm mt-2">Hi-Lo deviations — correct play at each true count</p>
+    </div>
+    <div id="index-drill-setup" class="space-y-4 rounded-xl border border-emerald-700/30 bg-emerald-950/40 p-4">
+      <h3 class="text-sm font-semibold text-gold">Drill settings</h3>
+      <label class="block text-sm">
+        <span class="text-emerald-300/80">Practice mode</span>
+        <select id="index-drill-mode" class="mt-1 w-full rounded-lg bg-black/30 border border-white/10 px-3 py-2 text-white">
+          <option value="random" selected>Random Mix — all index plays</option>
+          <option value="insurance">Insurance Only — true count +3 index</option>
+          <option value="stand">Stand Deviations — stiff hands vs 10</option>
+          <option value="double">Double Deviations — aggressive doubles</option>
+        </select>
+      </label>
+      <label class="block text-sm">
+        <span class="text-emerald-300/80">Problems per round</span>
+        <select id="index-drill-rounds" class="mt-1 w-full rounded-lg bg-black/30 border border-white/10 px-3 py-2 text-white">
+          <option value="8">8 problems</option>
+          <option value="10" selected>10 problems</option>
+          <option value="12">12 problems</option>
+        </select>
+      </label>
+      <details class="text-xs text-emerald-300/70 rounded-lg bg-black/20 p-3 border border-white/5">
+        <summary class="cursor-pointer font-semibold text-emerald-200/90">What are index plays?</summary>
+        <p class="mt-2 leading-relaxed">Basic strategy assumes an average deck. When the true count is high (or low), the deck has extra tens or lows — so the mathematically best play changes. Each index tells you the true count where you switch plays.</p>
+      </details>
+      <button id="btn-index-drill-start" type="button" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 text-stone-900 font-bold">Start Round</button>
+    </div>
+    <div id="index-drill-active" class="hidden space-y-3">
+      <p id="index-drill-progress" class="text-center text-sm font-mono text-emerald-300"></p>
+      <div class="felt rounded-2xl p-6 space-y-4 shadow-inner">
+        <div class="text-center">
+          <p id="index-drill-scenario" class="text-xs uppercase tracking-wider text-emerald-400/60 mb-2"></p>
+          <div id="index-drill-hand" class="flex justify-center gap-2 flex-wrap min-h-[4.5rem] items-center"></div>
+          <p id="index-drill-vs" class="text-sm text-emerald-300/80 mt-2">vs dealer</p>
+          <div id="index-drill-dealer" class="flex justify-center mt-2"></div>
+        </div>
+        <div class="rounded-xl bg-black/30 p-4 border border-amber-700/30 text-center">
+          <div class="text-emerald-400/70 text-xs uppercase tracking-wider">True Count (Hi-Lo)</div>
+          <div id="index-drill-tc" class="font-mono text-3xl font-bold text-amber-200 mt-1">—</div>
+        </div>
+        <p id="index-drill-prompt" class="text-center text-sm text-emerald-200/90 font-medium">What is the correct play?</p>
+      </div>
+      <div id="index-drill-actions" class="flex flex-wrap justify-center gap-2"></div>
+      <div id="index-drill-feedback" class="hidden rounded-xl px-4 py-3 text-sm"></div>
+    </div>
+    <div id="index-drill-summary" class="hidden felt rounded-2xl p-6 space-y-3 text-center text-sm"></div>
+    <div id="index-drill-stats" class="rounded-xl bg-black/25 border border-white/10 p-4 text-sm text-emerald-200/90"></div>
+    <button id="btn-index-drill-quit" type="button" class="w-full py-2 text-sm text-emerald-400/60 hover:text-emerald-300">← Back to drills</button>
+  </section>
+
+  <!-- DRILL: BET SPREAD PRACTICE -->
+  <section id="screen-drill-bet-spread" class="hidden cq-screen-panel cq-screen-compact space-y-3 max-w-lg mx-auto w-full">
+    <div class="text-center">
+      <span class="drill-badge uppercase text-cyan-400/80">Bet Spread Practice</span>
+      <p id="bet-spread-tagline" class="text-emerald-200/80 text-sm mt-2">Match your wager to the true count — ramp up when the edge is high</p>
+    </div>
+    <div id="bet-spread-setup" class="space-y-4 rounded-xl border border-emerald-700/30 bg-emerald-950/40 p-4">
+      <h3 class="text-sm font-semibold text-gold">Spread settings</h3>
+      <label class="block text-sm">
+        <span class="text-emerald-300/80">Counting system</span>
+        <select id="bet-spread-system" class="mt-1 w-full rounded-lg bg-black/30 border border-white/10 px-3 py-2 text-white">
+          <option value="hi-lo" selected>Hi-Lo — true count spread</option>
+          <option value="ko">KO — key count vs pivot</option>
+        </select>
+      </label>
+      <label class="block text-sm">
+        <span class="text-emerald-300/80">Bet spread</span>
+        <select id="bet-spread-preset" class="mt-1 w-full rounded-lg bg-black/30 border border-white/10 px-3 py-2 text-white">
+          <option value="standard" selected>Standard — 1 to 6 units</option>
+          <option value="wide">Wide — 1 to 12 units</option>
+          <option value="custom">Custom — set your own min/max</option>
+        </select>
+      </label>
+      <div id="bet-spread-custom-range" class="hidden grid grid-cols-2 gap-2 text-sm">
+        <label><span class="text-emerald-300/80 text-xs">Min units</span>
+          <input id="bet-spread-min-units" type="number" min="1" max="12" value="1" class="mt-1 w-full rounded-lg bg-black/30 border border-white/10 px-3 py-2 text-white" /></label>
+        <label><span class="text-emerald-300/80 text-xs">Max units</span>
+          <input id="bet-spread-max-units" type="number" min="1" max="20" value="8" class="mt-1 w-full rounded-lg bg-black/30 border border-white/10 px-3 py-2 text-white" /></label>
+      </div>
+      <label class="block text-sm">
+        <span class="text-emerald-300/80">Scenario focus</span>
+        <select id="bet-spread-scenario" class="mt-1 w-full rounded-lg bg-black/30 border border-white/10 px-3 py-2 text-white">
+          <option value="mixed" selected>Mixed — low, neutral &amp; high counts</option>
+          <option value="low">Low count — true count −4 to −1</option>
+          <option value="neutral">Neutral — true count −1 to +1</option>
+          <option value="high">High count — true count +3 to +8</option>
+        </select>
+      </label>
+      <label class="block text-sm">
+        <span class="text-emerald-300/80">Rounds per session</span>
+        <select id="bet-spread-rounds" class="mt-1 w-full rounded-lg bg-black/30 border border-white/10 px-3 py-2 text-white">
+          <option value="8">8 rounds</option>
+          <option value="10" selected>10 rounds</option>
+          <option value="12">12 rounds</option>
+        </select>
+      </label>
+      <label class="block text-sm">
+        <span class="text-emerald-300/80">Practice bankroll</span>
+        <input id="bet-spread-bankroll" type="number" min="100" step="100" value="1000" class="mt-1 w-full rounded-lg bg-black/30 border border-white/10 px-3 py-2 text-white font-mono" />
+      </label>
+      <div class="space-y-2 text-sm">
+        <label class="flex items-center justify-between p-3 rounded-xl bg-black/25 border border-white/10 cursor-pointer">
+          <span>Show ½-Kelly reference <span class="text-emerald-500/60 text-xs">(educational overlay)</span></span>
+          <input id="bet-spread-show-kelly" type="checkbox" class="w-5 h-5 accent-amber-500" checked />
+        </label>
+        <label class="flex items-center justify-between p-3 rounded-xl bg-black/25 border border-white/10 cursor-pointer">
+          <span>Heat simulation <span class="text-emerald-500/60 text-xs">(penalize 4+ unit jumps)</span></span>
+          <input id="bet-spread-heat-sim" type="checkbox" class="w-5 h-5 accent-amber-500" checked />
+        </label>
+        <label class="flex items-center justify-between p-3 rounded-xl bg-black/25 border border-white/10 cursor-pointer">
+          <span>Timed rounds <span class="text-emerald-500/60 text-xs">(5 seconds per bet)</span></span>
+          <input id="bet-spread-timed" type="checkbox" class="w-5 h-5 accent-amber-500" />
+        </label>
+      </div>
+     

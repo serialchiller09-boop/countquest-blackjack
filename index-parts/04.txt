@@ -1,0 +1,242 @@
+ <details class="text-xs text-emerald-300/70 rounded-lg bg-black/20 p-3 border border-white/5">
+        <summary class="cursor-pointer font-semibold text-emerald-200/90">How the spread works</summary>
+        <p class="mt-2 leading-relaxed">True count ≤ 0 → bet <strong>1 unit</strong> (minimum). Each full +1 true count adds <strong>1 unit</strong> until you hit the spread cap. Keep any single bet under <strong>2% of bankroll</strong> to limit risk of ruin. Smooth ramps avoid pit heat.</p>
+      </details>
+      <button id="btn-bet-spread-start" type="button" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 text-stone-900 font-bold">Start Session</button>
+    </div>
+    <div id="bet-spread-active" class="hidden space-y-3">
+      <div class="flex items-center justify-between gap-2">
+        <p id="bet-spread-progress" class="text-center text-sm font-mono text-emerald-300 flex-1"></p>
+        <div id="bet-spread-timer" class="hidden shrink-0 font-mono text-sm px-3 py-1 rounded-full bg-red-950/50 border border-red-700/40 text-red-200">5.0s</div>
+      </div>
+      <div class="felt rounded-2xl p-6 space-y-4 shadow-inner text-center">
+        <span id="bet-spread-scenario-badge" class="inline-block text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-black/30 border border-white/10 text-cyan-300/90"></span>
+        <div class="grid grid-cols-2 gap-3 text-sm">
+          <div class="rounded-xl bg-black/30 p-3 border border-emerald-700/25">
+            <div class="text-emerald-400/70 text-xs">Running Count</div>
+            <div id="bet-spread-rc" class="font-mono text-xl font-bold text-emerald-200 mt-1">—</div>
+          </div>
+          <div class="rounded-xl bg-black/30 p-3 border border-emerald-700/25">
+            <div class="text-emerald-400/70 text-xs">Decks Left</div>
+            <div id="bet-spread-decks" class="font-mono text-xl font-bold text-emerald-200 mt-1">—</div>
+          </div>
+        </div>
+        <div class="rounded-xl bg-amber-950/40 p-4 border border-amber-600/30">
+          <div id="bet-spread-count-label" class="text-amber-300/70 text-xs uppercase tracking-wider">True Count</div>
+          <div id="bet-spread-tc" class="font-mono text-4xl font-bold text-amber-200 mt-1">—</div>
+          <p id="bet-spread-ko-pivot" class="hidden text-xs text-emerald-400/70 mt-1"></p>
+        </div>
+        <div id="bet-spread-kelly-overlay" class="hidden rounded-lg bg-purple-950/40 border border-purple-600/30 px-3 py-2 text-xs text-purple-200/90"></div>
+        <div id="bet-spread-bankroll-warn" class="hidden rounded-lg bg-amber-950/50 border border-amber-600/40 px-3 py-2 text-xs text-amber-200"></div>
+        <p id="bet-spread-prompt" class="text-sm text-emerald-200/90">How many units should you bet?</p>
+        <p id="bet-spread-unit-hint" class="text-xs text-emerald-400/60">$10 per unit · bankroll $1,000</p>
+        <p id="bet-spread-heat-hint" class="hidden text-xs text-orange-300/80"></p>
+      </div>
+      <div id="bet-spread-unit-buttons" class="flex flex-wrap justify-center gap-2"></div>
+      <div id="bet-spread-feedback" class="hidden rounded-xl px-4 py-3 text-sm"></div>
+    </div>
+    <div id="bet-spread-summary" class="hidden felt rounded-2xl p-6 space-y-3 text-center text-sm"></div>
+    <div id="bet-spread-chart-wrap" class="hidden rounded-xl bg-black/25 border border-white/10 p-4">
+      <p class="text-xs uppercase tracking-wider text-cyan-400/80 text-center mb-2">Session graph — chosen vs optimal units</p>
+      <div id="bet-spread-chart"></div>
+      <p class="text-[10px] text-emerald-500/50 text-center mt-2"><span class="text-cyan-300">━</span> chosen · <span class="text-amber-300/80">┅</span> optimal</p>
+    </div>
+    <div id="bet-spread-stats" class="rounded-xl bg-black/25 border border-white/10 p-4 text-sm text-emerald-200/90"></div>
+    <button id="btn-bet-spread-quit" type="button" class="w-full py-2 text-sm text-emerald-400/60 hover:text-emerald-300">← Back to drills</button>
+  </section>
+
+  <button id="btn-table-options" type="button" class="cq-table-options-btn hidden" aria-label="Table options" title="Options">☰</button>
+
+  <!-- UNIFIED CASINO TABLE (bet + playing — scroll-free) -->
+  <section id="screen-casino-play" class="hidden casino-play-shell" aria-label="Blackjack table">
+    <div id="screen-table" class="game-screen max-w-6xl mx-auto w-full h-full casino-table-viewport">
+      <div class="casino-table-topbar cq-dealer-clipboard">
+        <div id="how-to-count-bet" class="text-xs text-center text-emerald-300/70 max-w-3xl mx-auto"></div>
+        <div id="count-hud-bet" class="count-box grid grid-cols-2 sm:grid-cols-4 gap-1.5 max-w-4xl mx-auto transition-all duration-300"></div>
+        <div id="count-hud" class="count-box grid grid-cols-2 sm:grid-cols-4 gap-1.5 max-w-4xl mx-auto transition-all duration-300"></div>
+        <div id="shoe-status" class="text-center text-[10px] text-emerald-400/55 font-mono max-w-4xl mx-auto px-2"></div>
+      </div>
+      <div class="game-table-wrap casino-table-surface casino-felt felt cq-authentic-felt flex-1 min-h-0">
+        <div class="cq-felt-svg-wrap" aria-hidden="true">
+          <svg id="cq-felt-markings" viewBox="0 0 1200 680" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="cqFeltGrad" cx="50%" cy="22%" r="105%">
+                <stop offset="0%" stop-color="#1f7a55"/>
+                <stop offset="42%" stop-color="#145c3f"/>
+                <stop offset="100%" stop-color="#082a1e"/>
+              </radialGradient>
+              <pattern id="cqFeltWeave" width="14" height="14" patternUnits="userSpaceOnUse">
+                <circle cx="2" cy="2" r="0.65" fill="#ffffff" opacity="0.04"/>
+                <circle cx="9" cy="9" r="0.65" fill="#ffffff" opacity="0.03"/>
+              </pattern>
+            </defs>
+            <rect width="1200" height="680" fill="url(#cqFeltGrad)"/>
+            <rect width="1200" height="680" fill="url(#cqFeltWeave)"/>
+            <path class="cq-felt-rail-outer" d="M 48 548 Q 600 648 1152 548" fill="none" stroke="#d4c878" stroke-width="5" stroke-linecap="round"/>
+            <path class="cq-felt-rail-inner" d="M 128 562 Q 600 638 1072 562" fill="none" stroke="rgba(248,246,240,0.5)" stroke-width="2.5" stroke-linecap="round"/>
+            <g class="cq-felt-seat-circles" fill="rgba(0,0,0,0.14)" stroke="#f5f2e8" stroke-width="3">
+              <circle class="cq-felt-seat-circle" cx="118" cy="556" r="34"/>
+              <circle class="cq-felt-seat-circle" cx="276" cy="590" r="34"/>
+              <circle class="cq-felt-seat-circle" cx="428" cy="620" r="34"/>
+              <circle class="cq-felt-seat-circle cq-felt-seat-circle--human" cx="600" cy="648" r="42"/>
+              <circle class="cq-felt-seat-circle" cx="772" cy="620" r="34"/>
+              <circle class="cq-felt-seat-circle" cx="924" cy="590" r="34"/>
+              <circle class="cq-felt-seat-circle" cx="1082" cy="556" r="34"/>
+            </g>
+          </svg>
+        </div>
+        <div class="cq-chip-rack" aria-hidden="true">
+          <span class="cq-rack-chip cq-rack-chip--red"></span>
+          <span class="cq-rack-chip cq-rack-chip--green"></span>
+          <span class="cq-rack-chip cq-rack-chip--yellow"></span>
+          <span class="cq-rack-chip cq-rack-chip--black"></span>
+          <span class="cq-rack-chip cq-rack-chip--green"></span>
+          <span class="cq-rack-chip cq-rack-chip--red"></span>
+          <span class="cq-rack-chip cq-rack-chip--yellow"></span>
+          <span class="cq-rack-chip cq-rack-chip--black"></span>
+        </div>
+        <div class="cq-table-play-layer">
+        <div class="casino-dealer-zone">
+          <div id="franchise-dealer-hud" class="franchise-dealer-hud hidden" aria-live="polite">
+            <div class="franchise-dealer-portrait" aria-hidden="true">🎴</div>
+            <div class="franchise-dealer-meta">
+              <div id="franchise-dealer-name" class="franchise-dealer-name">Margaret "Mags" Hawthorne</div>
+              <div id="franchise-dealer-venue" class="franchise-dealer-venue">Grosvenor Victoria</div>
+              <span id="franchise-dealer-mood" class="franchise-dealer-mood mood-neutral">Neutral</span>
+            </div>
+            <div id="franchise-dealer-bubble" class="franchise-dealer-bubble">…</div>
+            <div class="franchise-dealer-rel-wrap">
+              <div class="franchise-dealer-rel-bar"><div id="franchise-dealer-rel-fill" class="franchise-dealer-rel-fill"></div></div>
+              <span id="franchise-dealer-tier" class="franchise-dealer-tier">Stranger</span>
+            </div>
+          </div>
+          <p class="sr-only">Dealer</p>
+          <p id="dealer-total" class="cq-hand-total cq-hand-total--dealer text-center font-mono"></p>
+          <div id="dealer-cards" class="flex justify-center gap-1.5 flex-wrap min-h-[3.5rem]"></div>
+        </div>
+        <div id="casino-player-rail" class="casino-player-rail" aria-label="Your cards">
+          <div id="player-hands" class="casino-seat-cards-wrap"></div>
+        </div>
+        <div id="casino-seat-grid" class="casino-seat-grid" data-seat-count="1">
+          <div class="casino-seat casino-seat-human" data-seat="1" id="casino-seat-human">
+            <div class="casino-seat-spot casino-seat-cards-mount">
+              <div id="casino-seat-bet-indicator" class="casino-seat-bet-indicator hidden" aria-hidden="true">
+                <span id="casino-seat-bet-chip-visual" class="casino-seat-bet-chip"></span>
+                <span id="bet-placed-amount" class="sr-only">0</span>
+              </div>
+            </div>
+            <span class="casino-seat-label"><span class="casino-seat-num">You</span><span class="casino-seat-status">Your seat</span></span>
+          </div>
+        </div>
+        </div>
+      </div>
+      <div id="result-toast" class="hidden text-center text-sm font-bold max-w-3xl mx-auto mt-1"></div>
+    </div>
+  </section>
+
+  <!-- DEALER MODE (player as dealer) -->
+  <section id="screen-dealer-mode" class="hidden cq-screen-panel space-y-2 w-full mx-auto">
+    <div id="dealer-mode-intro" class="space-y-2 max-w-2xl mx-auto">
+      <div class="text-center py-2">
+        <h2 class="text-2xl font-bold text-amber-400">🎰 Dealer Mode</h2>
+        <p class="text-emerald-300/80 text-sm mt-0.5">Pay players · dealer rules · count checks</p>
+      </div>
+      <div class="felt rounded-xl p-3 border border-amber-700/30 text-xs text-emerald-300/85">
+        <p>3–5 AI players · you resolve payouts, insurance, and hit/stand under the clock.</p>
+        <p id="dealer-mode-intro-meta" class="text-[10px] text-cyan-300/70 font-mono mt-1">House bank · timer</p>
+      </div>
+      <button id="btn-dealer-mode-start" type="button" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 text-stone-900 font-bold">Start Dealer Shift</button>
+      <div id="dealer-mode-career-stats" class="felt rounded-xl p-4 border border-cyan-800/25 text-xs text-emerald-300/80"></div>
+      <button id="btn-dealer-mode-back" type="button" class="w-full py-3 rounded-xl bg-white/10 hover:bg-white/15 text-sm">← Training Mode</button>
+    </div>
+    <div id="dealer-mode-active" class="hidden space-y-2">
+      <div id="dealer-bank-bar" class="dealer-bank-bar"></div>
+      <div id="dealer-count-hud" class="count-box grid grid-cols-2 sm:grid-cols-4 gap-2"></div>
+      <div class="dealer-table-felt">
+        <div class="text-center">
+          <p class="text-[10px] uppercase tracking-wider text-emerald-300/60 mb-1">Dealer Hand</p>
+          <div id="dealer-mode-dealer-cards" class="flex justify-center gap-1 flex-wrap min-h-[3rem]"></div>
+          <p id="dealer-mode-dealer-total" class="text-xs text-emerald-200/80 mt-1 font-mono"></p>
+        </div>
+        <div id="dealer-seat-grid" class="dealer-seat-grid"></div>
+      </div>
+      <div id="dealer-timer-wrap" class="hidden">
+        <div class="flex justify-between text-xs text-amber-300/90 font-mono">
+          <span id="dealer-timer-label">Time left</span>
+          <span id="dealer-timer-seconds">—</span>
+        </div>
+        <div class="dealer-timer-bar"><div id="dealer-timer-fill" class="dealer-timer-fill" style="width:100%"></div></div>
+      </div>
+      <div id="dealer-action-panel" class="dealer-action-panel"></div>
+      <div id="dealer-round-log" class="text-xs text-emerald-500/60 text-center font-mono"></div>
+      <button id="btn-dealer-quit" type="button" class="w-full py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-sm">End Shift Early</button>
+    </div>
+    <div id="dealer-mode-summary" class="hidden space-y-2 max-w-xl mx-auto">
+      <div class="text-center py-2">
+        <p class="text-xs uppercase tracking-wider text-cyan-400/80">Shift Complete</p>
+        <h2 class="text-2xl font-bold text-amber-400 mt-1">Dealer Report Card</h2>
+      </div>
+      <div id="dealer-summary-body" class="felt rounded-xl p-4 border border-emerald-700/30 space-y-3"></div>
+      <button id="btn-dealer-summary-again" type="button" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 text-stone-900 font-bold">Another Shift</button>
+      <button id="btn-dealer-summary-back" type="button" class="w-full py-3 rounded-xl bg-white/10 hover:bg-white/15 text-sm">← Training Mode</button>
+    </div>
+  </section>
+
+  <!-- HAND END (compact dock overlay during play — no scroll) -->
+  <section id="screen-handend" class="hidden game-screen max-w-4xl mx-auto w-full">
+    <div class="felt handend-panel text-center shadow-inner">
+      <div class="handend-compact-grid">
+        <div id="handend-summary" class="text-gold"></div>
+        <div id="handend-count" class="hidden font-mono text-cyan-300"></div>
+        <div id="handend-review" class="hidden text-emerald-100/90"></div>
+        <div id="handend-feedback" class="text-emerald-200/80"></div>
+        <div class="handend-actions">
+          <button id="btn-next-hand" class="rounded-lg bg-gradient-to-r from-amber-500 to-amber-400 text-stone-900 font-bold shadow-lg">Next Hand</button>
+          <button id="btn-handend-count-quiz" type="button" class="hidden rounded-lg bg-cyan-900/50 border border-cyan-600/40 text-cyan-100 font-medium">Count Check</button>
+          <button id="btn-end-session" class="rounded-lg bg-white/10 hover:bg-white/20 border border-white/10">End</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div id="casino-bottom-dock" class="casino-bottom-dock hidden" aria-label="Bet and strategy controls">
+  <div id="bet-advice" class="casino-bottom-advice text-center text-amber-200/90 text-xs px-2 hidden w-full max-w-full min-w-0 mx-auto"></div>
+  <div id="strategy-hint" class="hidden strategy-hint-bar casino-bottom-advice text-center max-w-4xl mx-auto"></div>
+  <div id="casino-felt-bet-rail" class="casino-felt-bet-rail hidden" aria-label="Place your bet">
+    <div id="screen-bet" class="casino-felt-bet-panel">
+      <div id="bet-chip-display" class="hidden" aria-hidden="true"><span id="bet-placed-amount-legacy">0</span></div>
+      <div class="felt-bet-chip-row" id="chip-buttons"></div>
+      <div class="felt-bet-controls">
+        <div class="flex items-center gap-1 bg-black/30 rounded-lg px-2 py-1 border border-white/10">
+          <span class="text-emerald-300/70 text-xs">$</span>
+          <input id="bet-input" type="number" min="10" class="w-14 bg-transparent text-white text-center text-sm font-mono outline-none" aria-label="Bet amount" />
+        </div>
+        <button id="btn-deal" type="button" class="casino-deal-btn px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-stone-900 font-bold text-sm shadow-lg transition active:scale-95">Deal</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<nav id="action-bar" class="hidden fixed bottom-0 inset-x-0 z-30 bg-[#0a1612]/95 backdrop-blur border-t border-emerald-800/40 px-4 sm:px-6 py-4 w-full" aria-label="Hand actions">
+  <div class="app-main flex justify-center gap-3 flex-wrap" id="action-buttons"></div>
+</nav>
+
+<dialog id="modal-table-options" class="rounded-2xl bg-[#0f1f18] text-white p-5 max-w-sm w-[92vw] border border-emerald-700/30">
+  <h3 class="font-bold text-xl text-gold mb-1">Table Options</h3>
+  <p class="text-sm text-emerald-300/70 mb-4">Settings, stats, or leave the table.</p>
+  <div class="space-y-2">
+    <button type="button" id="btn-options-settings" class="w-full py-3 px-4 rounded-xl bg-amber-500/20 border border-amber-500/35 text-amber-100 font-semibold text-left">⚙ Settings &amp; Help Level</button>
+    <button type="button" id="btn-options-chart" class="w-full py-3 px-4 rounded-xl bg-white/10 border border-white/10 text-emerald-100 font-medium text-left">📊 Strategy Chart</button>
+    <button type="button" id="btn-options-stats" class="w-full py-3 px-4 rounded-xl bg-white/10 border border-white/10 text-emerald-100 font-medium text-left">📈 Your Progress</button>
+    <button type="button" id="btn-options-sound" class="w-full py-3 px-4 rounded-xl bg-white/10 border border-white/10 text-emerald-100 font-medium text-left">🔊 Sound: On</button>
+    <button type="button" id="btn-options-quit" class="w-full py-3 px-4 rounded-xl bg-red-900/45 border border-red-700/40 text-red-100 font-semibold text-left">🚪 Leave Table</button>
+  </div>
+  <button type="button" id="btn-options-close" class="mt-4 w-full py-3 rounded-xl bg-emerald-800/50 hover:bg-emerald-700/50 font-semibold">Resume Playing</button>
+</dialog>
+
+<dialog id="modal-settings" class="rounded-2xl bg-[#0f1f18] text-white p-6 max-w-md w-[92vw] border border-emerald-700/30 max-h-[90vh] overflow-y-auto">
+  <h3 class="font-bold text-xl text-gold mb-1">Settings</h3>
+  <p class="text-sm text-emerald-300/70 mb-4">Counting system, help level, rules, and sound. Rule changes may invalidate the basic strategy chart.</p>
+  <h4 class="text-sm font-semibold text-amber-300/90 mb

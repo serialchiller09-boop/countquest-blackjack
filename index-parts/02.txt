@@ -1,0 +1,260 @@
+"w-full py-3 rounded-xl bg-white/10 hover:bg-white/15 text-sm">← Main Menu</button>
+  </section>
+
+  <!-- COUNTING CREWS (CLUBS) -->
+  <section id="screen-clubs" class="hidden cq-screen-panel cq-screen-compact space-y-3 max-w-2xl mx-auto w-full">
+    <div class="text-center py-2">
+      <h2 class="text-2xl font-bold text-amber-400">Counting Crews</h2>
+      <p class="text-emerald-300/80 text-sm mt-0.5">Clubs · max 50</p>
+    </div>
+    <div id="clubs-main-view" class="space-y-4">
+      <div id="clubs-hub-view" class="hidden space-y-3">
+        <div id="club-hub-header" class="felt rounded-xl p-4 border border-amber-700/30"></div>
+        <div id="club-hub-invite" class="felt rounded-xl p-4 border border-violet-700/25"></div>
+        <div id="club-hub-bankroll" class="felt rounded-xl p-4 border border-amber-600/25"></div>
+        <div id="club-hub-weekly" class="felt rounded-xl p-4 border border-cyan-800/25"></div>
+        <div id="club-hub-weekly-payouts" class="felt rounded-xl p-4 border border-emerald-700/25"></div>
+        <div id="club-hub-announcements" class="felt rounded-xl p-4 border border-violet-800/25"></div>
+        <div id="club-hub-leaderboard" class="felt rounded-xl p-4 border border-emerald-800/25"></div>
+        <div id="club-hub-chat" class="felt rounded-xl p-4 border border-white/10"></div>
+        <div id="club-hub-members" class="felt rounded-xl p-4 border border-white/10"></div>
+        <button id="btn-club-leave" type="button" class="w-full py-2.5 rounded-xl bg-red-950/40 hover:bg-red-900/50 border border-red-700/30 text-sm text-red-200">Leave Crew</button>
+      </div>
+      <div id="clubs-browse-panel" class="space-y-3"></div>
+    </div>
+    <div id="clubs-edit-view" class="hidden felt rounded-xl p-4 border border-amber-800/30 space-y-3">
+      <h3 class="font-bold text-gold text-lg">Edit Crew</h3>
+      <label class="block text-sm">
+        <span class="text-emerald-300/80">Crew name</span>
+        <input id="club-edit-name" type="text" maxlength="24"
+          class="mt-1 w-full px-3 py-2 rounded-lg bg-black/30 border border-white/10 text-white" />
+      </label>
+      <label class="block text-sm">
+        <span class="text-emerald-300/80">Description</span>
+        <textarea id="club-edit-desc" rows="3" maxlength="120"
+          class="mt-1 w-full px-3 py-2 rounded-lg bg-black/30 border border-white/10 text-white resize-none"></textarea>
+      </label>
+      <fieldset class="text-sm space-y-2">
+        <legend class="text-emerald-300/80 mb-1">Visibility</legend>
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input type="radio" name="club-edit-visibility" value="public" class="accent-emerald-500" />
+          <span><strong class="text-emerald-200">Public</strong></span>
+        </label>
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input type="radio" name="club-edit-visibility" value="private" class="accent-violet-500" />
+          <span><strong class="text-violet-200">Private</strong></span>
+        </label>
+      </fieldset>
+      <label class="block text-sm">
+        <span class="text-emerald-300/80">Weekly challenge</span>
+        <input id="club-edit-goal" type="text" maxlength="80" placeholder="e.g. Stack 500 crew points from play &amp; drills"
+          class="mt-1 w-full px-3 py-2 rounded-lg bg-black/30 border border-white/10 text-white" />
+      </label>
+      <label class="block text-sm">
+        <span class="text-emerald-300/80">Weekly point target</span>
+        <input id="club-edit-weekly-target" type="number" min="100" max="5000" step="50" placeholder="500"
+          class="mt-1 w-full px-3 py-2 rounded-lg bg-black/30 border border-white/10 text-white" />
+      </label>
+      <p id="club-edit-error" class="hidden text-sm text-red-300"></p>
+      <div class="flex flex-col gap-2">
+        <button id="btn-club-edit-save" type="button" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 text-stone-900 font-bold">Save Changes</button>
+        <button id="btn-club-edit-cancel" type="button" class="w-full py-3 rounded-xl bg-white/10 hover:bg-white/15 text-sm">Cancel</button>
+      </div>
+    </div>
+    <div id="clubs-create-view" class="hidden felt rounded-xl p-4 border border-cyan-800/30 space-y-3">
+      <h3 class="font-bold text-gold text-lg">Create a Crew</h3>
+      <label class="block text-sm">
+        <span class="text-emerald-300/80">Crew name</span>
+        <input id="club-create-name" type="text" maxlength="24" placeholder="e.g. Ace Trackers"
+          class="mt-1 w-full px-3 py-2 rounded-lg bg-black/30 border border-white/10 text-white" />
+      </label>
+      <label class="block text-sm">
+        <span class="text-emerald-300/80">Description</span>
+        <textarea id="club-create-desc" rows="3" maxlength="120" placeholder="What does your crew focus on?"
+          class="mt-1 w-full px-3 py-2 rounded-lg bg-black/30 border border-white/10 text-white resize-none"></textarea>
+      </label>
+      <fieldset class="text-sm space-y-2">
+        <legend class="text-emerald-300/80 mb-1">Visibility</legend>
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input type="radio" name="club-visibility" value="public" checked class="accent-emerald-500" />
+          <span><strong class="text-emerald-200">Public</strong> — appears in search</span>
+        </label>
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input type="radio" name="club-visibility" value="private" class="accent-violet-500" />
+          <span><strong class="text-violet-200">Private</strong> — hidden from search · join via invite code</span>
+        </label>
+      </fieldset>
+      <p id="club-create-error" class="hidden text-sm text-red-300"></p>
+      <div class="flex flex-col gap-2">
+        <button id="btn-club-create-submit" type="button" class="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-600 to-cyan-500 text-stone-900 font-bold">Create Crew</button>
+        <button id="btn-club-create-cancel" type="button" class="w-full py-3 rounded-xl bg-white/10 hover:bg-white/15 text-sm">Cancel</button>
+      </div>
+    </div>
+    <button id="btn-clubs-back" type="button" class="w-full py-3 rounded-xl bg-white/10 hover:bg-white/15 text-sm">← Main Menu</button>
+  </section>
+
+  <!-- PRACTICE RANGE -->
+  <section id="screen-practice-range" class="hidden cq-screen-panel cq-screen-compact space-y-3 max-w-lg mx-auto">
+    <div class="text-center py-2">
+      <h2 class="text-2xl font-bold text-amber-400">Practice Range</h2>
+    </div>
+    <div id="practice-range-drills" class="grid gap-3"></div>
+    <button id="btn-practice-back" class="w-full py-3 rounded-xl bg-white/10 hover:bg-white/15 text-sm">← Main Menu</button>
+  </section>
+
+  <!-- TUTORIAL -->
+  <section id="screen-tutorial" class="hidden cq-screen-panel cq-screen-compact space-y-3 max-w-lg mx-auto" aria-labelledby="tutorial-title">
+    <div id="tutorial-panel" class="felt rounded-2xl p-6 tutorial-step">
+      <div class="flex items-center justify-between mb-3">
+        <span id="tutorial-step-label" class="text-xs uppercase tracking-wider text-amber-400/80"></span>
+        <span id="tutorial-progress" class="text-xs text-emerald-400/60" aria-live="polite"></span>
+      </div>
+      <h2 id="tutorial-title" class="text-xl font-bold text-gold mb-2" tabindex="-1"></h2>
+      <p id="tutorial-body" class="text-emerald-100/90 text-sm leading-relaxed"></p>
+      <div id="tutorial-count-explanation" class="hidden text-emerald-100/90 text-sm leading-relaxed">
+        <p id="count-explain-text"></p>
+      </div>
+      <div id="tutorial-demo" class="mt-4 hidden rounded-xl bg-black/25 p-4 text-sm font-mono text-cyan-200"></div>
+    </div>
+    <nav class="flex gap-3" aria-label="Tutorial navigation">
+      <button id="btn-tutorial-back" type="button" class="flex-1 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-sm">← Main Menu</button>
+      <button id="btn-tutorial-next" type="button" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 text-stone-900 font-bold">Next</button>
+    </nav>
+    <button id="btn-tutorial-skip" type="button" class="w-full py-2 rounded-xl text-emerald-400/60 text-xs hover:text-emerald-300">Skip Tutorial → Full Campaign</button>
+  </section>
+
+  <!-- CAMPAIGN MAP -->
+  <section id="screen-campaign" class="hidden cq-screen-panel cq-screen-compact space-y-3 max-w-lg mx-auto">
+    <div class="text-center py-2">
+      <h2 class="text-2xl font-bold text-amber-400">Campaign</h2>
+    </div>
+    <div id="campaign-chapters" class="space-y-3"></div>
+    <button id="btn-campaign-back" class="w-full py-3 rounded-xl bg-white/10 hover:bg-white/15 text-sm">← Main Menu</button>
+  </section>
+
+  <!-- DAILY CHALLENGE -->
+  <section id="screen-daily" class="hidden cq-screen-panel cq-screen-compact space-y-3 max-w-lg mx-auto">
+    <div class="felt rounded-2xl p-6 text-center space-y-3">
+      <p class="text-xs uppercase tracking-wider text-amber-400/80">Daily Challenge</p>
+      <h2 id="daily-title" class="text-xl font-bold text-gold"></h2>
+      <p id="daily-desc" class="text-emerald-100/90 text-sm"></p>
+      <div id="daily-progress" class="text-sm text-cyan-300 font-mono"></div>
+      <button id="btn-daily-start" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 text-stone-900 font-bold mt-2">Start Challenge</button>
+    </div>
+    <div id="daily-training-panel" class="felt rounded-2xl p-6 space-y-3 border border-cyan-800/25">
+      <div class="flex items-center justify-between gap-2">
+        <p class="text-xs uppercase tracking-wider text-cyan-400/80">Daily Training Goal</p>
+        <span id="daily-training-streak" class="text-xs font-mono text-amber-300/90"></span>
+      </div>
+      <h3 id="daily-training-title" class="text-lg font-bold text-gold text-center"></h3>
+      <p id="daily-training-desc" class="text-emerald-100/90 text-sm text-center"></p>
+      <div id="daily-training-progress-wrap" class="space-y-1">
+        <div class="h-2 rounded-full bg-black/30 overflow-hidden border border-white/5">
+          <div id="daily-training-progress-bar" class="h-full bg-gradient-to-r from-cyan-600 to-cyan-400 transition-all duration-300" style="width:0%"></div>
+        </div>
+        <p id="daily-training-progress-text" class="text-xs text-cyan-300/90 font-mono text-center"></p>
+      </div>
+      <p id="daily-training-reward" class="text-xs text-emerald-400/70 text-center"></p>
+      <button id="btn-daily-training-start" type="button" class="w-full py-3 rounded-xl bg-cyan-950/50 hover:bg-cyan-950/70 border border-cyan-600/40 text-cyan-100 font-semibold text-sm">Start Training Drill</button>
+    </div>
+    <div id="daily-login-reward-panel" class="felt rounded-2xl p-6 space-y-3 border border-amber-700/30"></div>
+    <button id="btn-daily-back" class="w-full py-3 rounded-xl bg-white/10 hover:bg-white/15 text-sm">← Main Menu</button>
+  </section>
+
+  <!-- DAILY LOGIN REWARDS -->
+  <section id="screen-daily-rewards" class="hidden cq-screen-panel cq-screen-compact space-y-3 max-w-lg mx-auto w-full">
+    <div class="text-center py-2">
+      <h2 class="text-2xl font-bold text-amber-400">Daily Rewards</h2>
+    </div>
+    <div id="daily-rewards-streak-card" class="felt rounded-2xl p-6 space-y-4 border border-amber-700/30"></div>
+    <div id="daily-rewards-calendar" class="felt rounded-xl p-4 border border-cyan-800/25"></div>
+    <div id="daily-rewards-social" class="felt rounded-xl p-4 border border-violet-800/25 space-y-3"></div>
+    <div id="daily-rewards-vip" class="felt rounded-xl p-4 border border-purple-700/30 space-y-3"></div>
+    <button id="btn-daily-rewards-back" type="button" class="w-full py-3 rounded-xl bg-white/10 hover:bg-white/15 text-sm">← Main Menu</button>
+  </section>
+
+  <!-- DRILL: COUNT SHOE -->
+  <section id="screen-drill-count" class="hidden cq-screen-panel cq-screen-compact space-y-3 max-w-lg mx-auto">
+    <div class="text-center">
+      <span class="drill-badge uppercase text-cyan-400/80">Count This Shoe</span>
+      <p id="drill-count-status" class="text-emerald-200/80 text-sm mt-2"></p>
+    </div>
+    <div id="drill-count-cards" class="felt rounded-2xl p-6 min-h-[8rem] flex flex-wrap justify-center gap-2 items-center"></div>
+    <div id="drill-count-hud" class="grid grid-cols-2 gap-2 max-w-xs mx-auto"></div>
+    <div class="flex gap-3 justify-center">
+      <button id="btn-drill-count-deal" class="px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 text-stone-900 font-bold">Deal Next Card</button>
+      <button id="btn-drill-count-finish" class="px-6 py-3 rounded-xl bg-white/10 hover:bg-white/15">End Shoe & Quiz</button>
+    </div>
+    <button id="btn-drill-count-quit" class="w-full py-2 text-sm text-emerald-400/60">Quit drill</button>
+  </section>
+
+  <!-- DRILL: RUNNING COUNT SPEED -->
+  <section id="screen-drill-speed" class="hidden cq-screen-panel cq-screen-compact space-y-3 max-w-lg mx-auto w-full">
+    <div class="text-center">
+      <span class="drill-badge uppercase text-cyan-400/80">Running Count Speed Drill</span>
+      <p id="speed-drill-tagline" class="text-emerald-200/80 text-sm mt-2">Keep the Hi-Lo running count as cards fly by</p>
+    </div>
+    <div id="speed-drill-setup" class="space-y-4 rounded-xl border border-emerald-700/30 bg-emerald-950/40 p-4">
+      <h3 class="text-sm font-semibold text-gold">Drill settings</h3>
+      <label class="block text-sm">
+        <span class="text-emerald-300/80">Cards to count</span>
+        <select id="speed-drill-cards" class="mt-1 w-full rounded-lg bg-black/30 border border-white/10 px-3 py-2 text-white">
+          <option value="20">20 cards</option>
+          <option value="40">40 cards</option>
+          <option value="60">60 cards</option>
+        </select>
+      </label>
+      <label class="block text-sm">
+        <span class="text-emerald-300/80">Deal speed</span>
+        <select id="speed-drill-speed" class="mt-1 w-full rounded-lg bg-black/30 border border-white/10 px-3 py-2 text-white">
+          <option value="slow">Slow (~1.2s per card)</option>
+          <option value="normal" selected>Normal (~0.7s per card)</option>
+          <option value="fast">Fast (~0.35s per card)</option>
+        </select>
+      </label>
+      <label class="flex items-center justify-between p-3 rounded-xl bg-black/25 border border-white/10 cursor-pointer text-sm">
+        <span>Show running count during drill <span class="text-emerald-500/60 text-xs">(training wheels)</span></span>
+        <input id="speed-drill-show-count" type="checkbox" class="w-5 h-5 accent-amber-500" />
+      </label>
+      <button id="btn-speed-drill-start" type="button" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 text-stone-900 font-bold">Start Drill</button>
+    </div>
+    <div id="speed-drill-active" class="hidden space-y-3">
+      <p id="speed-drill-progress" class="text-center text-sm font-mono text-emerald-300"></p>
+      <div id="speed-drill-card-area" class="felt rounded-2xl p-6 min-h-[11rem] flex flex-col items-center justify-center gap-2"></div>
+      <div id="speed-drill-live-hud" class="hidden text-center py-2 rounded-xl bg-black/30 border border-cyan-700/30 font-mono text-cyan-200"></div>
+      <div class="flex gap-2">
+        <button id="btn-speed-drill-pause" type="button" class="flex-1 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-sm">Pause</button>
+        <button id="btn-speed-drill-skip-quiz" type="button" class="flex-1 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-sm">Skip to quiz</button>
+      </div>
+    </div>
+    <div id="speed-drill-quiz" class="hidden felt rounded-2xl p-6 space-y-4 text-center">
+      <h3 class="font-bold text-gold text-lg">Round complete!</h3>
+      <p class="text-sm text-emerald-200/80">What is your final <strong>Hi-Lo running count</strong>?</p>
+      <input id="speed-drill-guess" type="number" class="w-28 mx-auto block px-3 py-2 rounded-lg bg-black/30 text-white text-center font-mono text-lg" aria-label="Your running count guess" />
+      <button id="btn-speed-drill-submit" type="button" class="px-8 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 text-stone-900 font-bold">Check My Count</button>
+    </div>
+    <div id="speed-drill-result" class="hidden felt rounded-2xl p-6 space-y-3 text-center text-sm"></div>
+    <div id="speed-drill-stats" class="rounded-xl bg-black/25 border border-white/10 p-4 text-sm text-emerald-200/90"></div>
+    <button id="btn-speed-drill-quit" type="button" class="w-full py-2 text-sm text-emerald-400/60 hover:text-emerald-300">← Back to drills</button>
+  </section>
+
+  <!-- DRILL: TRUE COUNT CONVERSION -->
+  <section id="screen-drill-true-count" class="hidden cq-screen-panel cq-screen-compact space-y-3 max-w-lg mx-auto w-full">
+    <div class="text-center">
+      <span class="drill-badge uppercase text-cyan-400/80">True Count Conversion Drill</span>
+      <p id="tc-drill-tagline" class="text-emerald-200/80 text-sm mt-2">Running count ÷ decks left — fast mental math</p>
+    </div>
+    <div id="tc-drill-setup" class="space-y-4 rounded-xl border border-emerald-700/30 bg-emerald-950/40 p-4">
+      <h3 class="text-sm font-semibold text-gold">Drill settings</h3>
+      <label class="block text-sm">
+        <span class="text-emerald-300/80">Difficulty</span>
+        <select id="tc-drill-difficulty" class="mt-1 w-full rounded-lg bg-black/30 border border-white/10 px-3 py-2 text-white">
+          <option value="whole">Whole Numbers — integer answers</option>
+          <option value="decimal" selected>One Decimal — round to 0.1</option>
+          <option value="precise">Precise — round to 0.01</option>
+        </select>
+      </label>
+      <label class="block text-sm">
+        <span class="text-emerald-300/80">Problems per round</span>
+        <select id="tc-drill-rounds" class="mt-1 w-full rounded-lg bg-black/30 border border-white/10 px-3 py-2 text-white">
+          <option valu

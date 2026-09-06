@@ -1,22 +1,3 @@
-ail-stack-back" aria-hidden="true"></div>';
-      }
-    });
-  }
-
-  function cardsThisRound(app) {
-    app = app || window.app;
-    if (!app || !app.rail || !app.rail.dealt) return [];
-    return app.rail.dealt.map(function (d) { return d.card; });
-  }
-
-  function runningCountContribution(app) {
-    app = app || window.app;
-    if (!app || !app.rail || !app.rail.dealt) return 0;
-    return app.rail.dealt.reduce(function (s, d) { return s + (d.tag || 0); }, 0);
-  }
-
-  function noteDealt(app, card, tag, handId) {
-    ensureAppRail(app, app.rail && app.rail.density);
     app.rail.dealt.push({ card: card, tag: tag, handId: handId, ms: Date.now() });
   }
 
@@ -48,9 +29,38 @@ ail-stack-back" aria-hidden="true"></div>';
     return card;
   }
 
-  async function dealInitialWithRail() {
+  function clearDealLocks(self) {
+    self.dealing = false;
+    self._betSubmitting = false;
+    if (typeof self.unlockDealButton === 'function') self.unlockDealButton();
+  }
+
+  function refundToBet(self) {
+    self.phase = 'bet';
+    if (self.playerHands[0]) {
+      self.bankroll += self.playerHands[0].bet;
+      if (self.session) self.session.wagered = Math.max(0, self.session.wagered - self.playerHands[0].bet);
+    }
+    if (typeof self.render === 'function') self.render();
+  }
+
+  async function dealInitialWithRail(origDeal) {
     var self = this;
     self.dealing = true;
+    var finished = false;
+    var timedOut = false;
+    var abortTimer = setTimeout(function () {
+      if (finished) return;
+      timedOut = true;
+      finished = true;
+      console.error('CountQuest: dealInitial (rail) timed out after 20s');
+      clearDealLocks(self);
+      if (typeof self.toast === 'function') {
+        self.toast('Deal timed out — back to betting. Try again.', 'error', 4000);
+      }
+      refundToBet(self);
+    }, 20000);
+
     try {
       self.dealAnimIndex = 0;
       self.hideHole = false;
@@ -73,9 +83,3 @@ ail-stack-back" aria-hidden="true"></div>';
         await self.dealCardAnimated(self.playerHands[0].hand, 'player');
         await self.dealCardAnimated(self.dealer, 'dealer up');
         for (i = 0; i < ids.length; i++) await self.dealRailCard(ids[i]);
-        await self.dealCardAnimated(self.playerHands[0].hand, 'player');
-        self.hideHole = true;
-        await self.dealCardAnimated(self.dealer, 'dealer hole', true);
-      }
-
-      var up = self.dealer.cards[0] && self.dealer.cards[0]

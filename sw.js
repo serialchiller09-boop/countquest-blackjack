@@ -1,5 +1,5 @@
 /* CountQuest PWA service worker — cache app shell for offline repeat visits. */
-const CACHE_VERSION = 'cq-pwa-v42';
+const CACHE_VERSION = 'cq-pwa-v43';
 const SHELL_ASSETS = [
   './',
   './index.html',

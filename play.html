@@ -41,6 +41,11 @@
           html = html.replace('</body>', '<script src="js/28-click-unstick.js?v=53"><\\/script></body>');
           html = html.replace('<\\/script>', '<' + '/script>');
         }
+        // Ensure relative script/CSS resolve to Pages app root (not about:blank)
+        var baseHref = location.href.replace(/[^\\/]*$/, '');
+        if (html.indexOf('<base ') === -1) {
+          html = html.replace(/<head([^>]*)>/i, '<head$1><base href="' + baseHref + '">');
+        }
         clearTimeout(watchdog);
         var boot = document.getElementById('cq-boot');
         if (boot) boot.remove();

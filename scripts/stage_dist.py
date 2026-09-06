@@ -18,7 +18,7 @@ ASSETS = (
     ".nojekyll",
     "shift.html",
 )
-DIRS = ("css", "js", "icons", "pitboss", "shift")
+DIRS = ("css", "js", "icons", "pitboss", "shift", "index-parts")
 
 
 def run(cmd: list[str]) -> None:

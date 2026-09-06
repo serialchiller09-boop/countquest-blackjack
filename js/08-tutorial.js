@@ -7,7 +7,7 @@ function updateTutorialCountExplanation() {
   function inject(name) {
     if (document.querySelector('script[src*="' + name + '"]')) return;
     const s = document.createElement('script');
-    s.src = 'js/' + name + '?v=49';
+    s.src = 'js/' + name + '?v=50';
     document.head.appendChild(s);
   }
   function injectAll() {
@@ -27,6 +27,8 @@ function updateTutorialCountExplanation() {
     inject('24-stats-sheet.js');
     inject('25-dice-minigame.js');
     inject('26-honor-path.js');
+    inject('27-rail-count.js');
+    inject('27-rail-tests.js');
   }
   if (document.readyState === 'complete') injectAll();
   else window.addEventListener('load', injectAll);

@@ -1,1 +1,102 @@
-@/workspace/agent-tools/READY_css_content.txt
+/* CountQuest cq-modern emergency restore + Shift-dark lobby contrast */
+:root {
+  --cq-felt: #12944a; --cq-felt-mid: #0e7d3e; --cq-felt-deep: #0a5c2e; --cq-felt-hi: #1db954;
+  --cq-wood: #8d5528; --cq-wood-hi: #c48a4a; --cq-wood-deep: #5a3214;
+  --cq-gold: #f3d36a; --cq-gold-hi: #ffe9a3; --cq-cream: #fff8ea; --cq-ink: #1a140c;
+  --cq-stand: #ff8c1a; --cq-split: #c026d3; --cq-double: #22d3ee; --cq-hit: #22c55e; --cq-card: #fffdf8;
+}
+html, body {
+  background: radial-gradient(ellipse 90% 70% at 50% 28%, #24c45e 0%, #12944a 38%, #0b6b34 72%, #064422 100%) !important;
+  color: #fff8ea !important;
+}
+#app, #app-main, main, .cq-screen-panel { position: relative; z-index: 1; }
+
+/* Shift-dark charcoal menus */
+.cq-screen-panel, #screen-training, #screen-clubs, #screen-tutorial, #screen-campaign,
+#screen-daily, #screen-table-lobby, #screen-practice-range, #how-to-count-menu, .mode-card,
+.cq-screen-panel .felt, #training-daily-goal, #tutorial-panel, #tutorial-panel.tutorial-step {
+  background: linear-gradient(160deg, #161b24 0%, #0e1218 100%) !important;
+  color: #e8ecf2 !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+  border-radius: 1.25rem !important;
+  box-shadow: 0 10px 0 rgba(0,0,0,.28), 0 18px 32px rgba(0,0,0,.35) !important;
+}
+.cq-screen-panel h2, #screen-tutorial h2, #screen-training h2, #screen-clubs h2,
+#screen-campaign h2, #screen-daily h2, #screen-table-lobby h2 { color: #f3d36a !important; }
+.cq-screen-panel p, .cq-screen-panel .text-emerald-300\/80,
+#screen-training .text-emerald-300\/80, #screen-clubs .text-emerald-300\/80 { color: #b8c0d0 !important; }
+
+#screen-menu.lobby-8bp, .lobby-8bp { background: transparent !important; border: 0 !important; box-shadow: none !important; }
+.lobby-profile-name, .lobby-profile-rank, .lobby-dock-label { color: #fff8ea !important; }
+.lobby-currency-pill {
+  background: linear-gradient(180deg, #fff8ea, #f3d36a) !important; color: #1a140c !important;
+  border: 2px solid #fff !important; border-radius: 999px !important; font-weight: 800 !important;
+}
+.lobby-hero-play {
+  background: linear-gradient(165deg, #ffef9a 0%, #f3d36a 40%, #d4a017 100%) !important;
+  color: #1a140c !important; border-radius: 1.2rem !important; font-weight: 800 !important;
+}
+#lobby-bottom-dock.lobby-bottom-dock {
+  background: linear-gradient(180deg, #c48a4a 0%, #8d5528 38%, #5a3214 100%) !important;
+  border-top: 4px solid #e8c9a0 !important;
+}
+
+#training-drill-list button, #training-drill-list .mode-card, [data-training-drill] {
+  background: linear-gradient(160deg, #1a2230 0%, #121820 100%) !important;
+  color: #e8ecf2 !important; border: 1px solid rgba(255,255,255,.12) !important;
+  border-radius: 1.1rem !important; font-weight: 700 !important;
+}
+
+#btn-deal, #btn-lobby-minigame-action, .cq-first-run-primary, #btn-tutorial-next,
+#btn-club-create-submit, #btn-club-edit-save, #btn-continue-session,
+button.bg-gradient-to-r.from-amber-500 {
+  background: linear-gradient(180deg, #ffe9a3, #f3d36a 45%, #d4a017) !important;
+  color: #1a140c !important; border: 2px solid #fff6d0 !important; font-weight: 800 !important;
+  border-radius: 999px !important;
+}
+
+dialog, dialog.dialog-premium, dialog[open],
+#modal-table-options, #modal-lobby-minigame, #modal-lobby-shop, #modal-lobby-leaderboards, #stats-sidebar {
+  background: linear-gradient(160deg, #12161e 0%, #0c1016 100%) !important;
+  color: #e8ecf2 !important; border: 1px solid rgba(201,162,39,.40) !important;
+  border-radius: 1.4rem !important; box-shadow: 0 28px 70px rgba(0,0,0,.55) !important;
+}
+dialog::backdrop, dialog.dialog-premium::backdrop { background: rgba(4,8,12,.78) !important; }
+dialog h2, dialog h3, #lobby-minigame-title, #stats-sidebar h2 { color: #f3d36a !important; }
+
+#modal-lobby-minigame .text-emerald-200\/80, #modal-lobby-minigame .text-emerald-400\/60,
+#modal-lobby-minigame .text-emerald-400\/70, #modal-lobby-minigame .text-emerald-300\/80,
+dialog.dialog-premium .text-emerald-200\/80, dialog.dialog-premium .text-emerald-400\/60,
+dialog.dialog-premium .text-emerald-400\/70, dialog.dialog-premium .text-emerald-300\/80 {
+  color: #a8b0c0 !important;
+}
+#btn-lobby-minigame-close, #btn-lobby-shop-close, #btn-lobby-leaderboards-close {
+  background: rgba(255,255,255,.10) !important; color: #e8ecf2 !important;
+}
+.cq-spin-result { color: #f3d36a !important; }
+.lobby-scratch-tile {
+  background: linear-gradient(145deg, #2a3344, #1a2230) !important; color: #e8ecf2 !important;
+  border: 2px solid rgba(255,255,255,.18) !important; border-radius: .85rem !important;
+  font-size: 1rem !important; font-weight: 800 !important;
+}
+.lobby-scratch-tile.revealed {
+  background: linear-gradient(145deg, #1d4a32, #0f2e1e) !important; color: #f3d36a !important;
+}
+#menu-beginner-hint {
+  background: rgba(18,22,30,.94) !important; color: #e8ecf2 !important;
+  border-color: rgba(201,162,39,.40) !important;
+}
+
+/* Felt table essentials */
+.game-table-wrap .felt, .casino-felt, .cq-authentic-felt.casino-table-surface, .casino-table-surface {
+  background: radial-gradient(ellipse 80% 70% at 50% 42%, #2ad066 0%, #12944a 46%, #0a5c2e 100%) !important;
+  border: 10px solid #8d5528 !important; outline: 4px solid #5a3214;
+}
+.playing-card, body.casino-play-active .playing-card {
+  background: var(--cq-card) !important; color: #161616 !important;
+  border-radius: .55rem !important;
+}
+#action-bar {
+  background: linear-gradient(180deg, #d4a574 0%, #a86b3c 14%, #7a451f 55%, #5a3214 100%) !important;
+  border-top: 5px solid #f0d2a8 !important;
+}

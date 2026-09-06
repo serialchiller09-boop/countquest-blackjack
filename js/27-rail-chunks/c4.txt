@@ -1,0 +1,81 @@
+ail-stack-back" aria-hidden="true"></div>';
+      }
+    });
+  }
+
+  function cardsThisRound(app) {
+    app = app || window.app;
+    if (!app || !app.rail || !app.rail.dealt) return [];
+    return app.rail.dealt.map(function (d) { return d.card; });
+  }
+
+  function runningCountContribution(app) {
+    app = app || window.app;
+    if (!app || !app.rail || !app.rail.dealt) return 0;
+    return app.rail.dealt.reduce(function (s, d) { return s + (d.tag || 0); }, 0);
+  }
+
+  function noteDealt(app, card, tag, handId) {
+    ensureAppRail(app, app.rail && app.rail.density);
+    app.rail.dealt.push({ card: card, tag: tag, handId: handId, ms: Date.now() });
+  }
+
+  async function dealRailCardImpl(railHandId) {
+    if (!this.shoe) {
+      if (typeof this.ensureShoe === 'function') this.ensureShoe();
+      if (!this.shoe) throw new Error('Shoe unavailable');
+    }
+    if (this.shoe.cardsRemaining < 1) {
+      if (typeof this.ensureShoe === 'function') this.ensureShoe();
+      if (this.shoe.cardsRemaining < 1) throw new Error('Shoe empty');
+    }
+    var card = this.shoe.deal();
+    var tag = this.counter.recordCardRemovedFromShoe(card);
+    this.help.recordRunningCountSnapshot(this.counter.runningCount);
+    ensureAppRail(this, densityFor(this));
+    if (!this.rail.hands[railHandId] && typeof Hand !== 'undefined') {
+      this.rail.hands[railHandId] = new Hand();
+    }
+    if (this.rail.hands[railHandId] && typeof this.rail.hands[railHandId].add === 'function') {
+      this.rail.hands[railHandId].add(card);
+    }
+    noteDealt(this, card, tag, railHandId);
+    this.lastHiLoTagDealt = tag;
+    try {
+      if (typeof Sounds !== 'undefined' && Sounds.play) Sounds.play('card');
+    } catch (e) {}
+    await animateCard(card, tag, railHandId, this.help);
+    return card;
+  }
+
+  async function dealInitialWithRail() {
+    var self = this;
+    self.dealing = true;
+    try {
+      self.dealAnimIndex = 0;
+      self.hideHole = false;
+      self.dealer.clear();
+      self.playerHands[0].hand.clear();
+
+      planRound(self);
+      var density = self.rail.density;
+      var ids = handIdsFor(density);
+
+      if (!ids.length) {
+        await self.dealCardAnimated(self.playerHands[0].hand, 'player');
+        await self.dealCardAnimated(self.dealer, 'dealer up');
+        await self.dealCardAnimated(self.playerHands[0].hand, 'player');
+        self.hideHole = true;
+        await self.dealCardAnimated(self.dealer, 'dealer hole', true);
+      } else {
+        var i;
+        for (i = 0; i < ids.length; i++) await self.dealRailCard(ids[i]);
+        await self.dealCardAnimated(self.playerHands[0].hand, 'player');
+        await self.dealCardAnimated(self.dealer, 'dealer up');
+        for (i = 0; i < ids.length; i++) await self.dealRailCard(ids[i]);
+        await self.dealCardAnimated(self.playerHands[0].hand, 'player');
+        self.hideHole = true;
+        await self.dealCardAnimated(self.dealer, 'dealer hole', true);
+      }
+
+      var up = self.dealer.cards[0] && self.dealer.cards[0]

@@ -1,0 +1,64 @@
+.rank;
+      if (!up) throw new Error('Dealer upcard missing');
+      if (up === 'A') {
+        if (typeof self.franchiseDealerEvent === 'function') self.franchiseDealerEvent('deal.upcard.ace');
+        self.dealing = false;
+        if (typeof self.unlockDealButton === 'function') self.unlockDealButton();
+        self.showInsuranceModal();
+        self.render();
+        return;
+      }
+      self.dealing = false;
+      if (typeof self.unlockDealButton === 'function') self.unlockDealButton();
+      await self.afterInsurance();
+    } catch (err) {
+      console.error('CountQuest: dealInitial (rail) failed —', err);
+      if (typeof self.toast === 'function') {
+        self.toast('Could not complete the deal — try placing your bet again', 'error', 4000);
+      }
+      self.dealing = false;
+      self._betSubmitting = false;
+      if (typeof self.unlockDealButton === 'function') self.unlockDealButton();
+      self.phase = 'bet';
+      if (self.playerHands[0]) {
+        self.bankroll += self.playerHands[0].bet;
+        if (self.session) self.session.wagered = Math.max(0, self.session.wagered - self.playerHands[0].bet);
+      }
+      self.render();
+    }
+  }
+
+  function injectSettingsRow(app) {
+    var modal = document.getElementById('modal-settings');
+    if (!modal) return;
+    if (document.getElementById('cq-rail-density-row')) {
+      syncSettingsUI(app);
+      return;
+    }
+    var row = document.createElement('div');
+    row.id = 'cq-rail-density-row';
+    row.className = 'cq-rail-settings-row mt-3 mb-3 p-3 rounded-xl bg-black/25 border border-white/10';
+    row.innerHTML =
+      '<div class="text-sm font-semibold text-amber-300/90">Rail cards</div>' +
+      '<p class="text-xs text-emerald-400/70 mt-0.5 mb-2">Other seats take cards from the same shoe. You still only play your seat.</p>' +
+      '<div class="cq-rail-seg" role="group" aria-label="Rail card density">' +
+      '<button type="button" data-rail-density="off" class="cq-rail-seg-btn">Off</button>' +
+      '<button type="button" data-rail-density="quiet" class="cq-rail-seg-btn">Quiet</button>' +
+      '<button type="button" data-rail-density="busy" class="cq-rail-seg-btn">Busy</button>' +
+      '</div>';
+    var helpCards = document.getElementById('help-level-cards');
+    var soundToggle = document.getElementById('toggle-sound');
+    if (helpCards && helpCards.parentElement) {
+      helpCards.parentElement.insertBefore(row, helpCards);
+    } else if (soundToggle && soundToggle.closest('label')) {
+      soundToggle.closest('label').parentElement.insertBefore(row, soundToggle.closest('label'));
+    } else {
+      modal.appendChild(row);
+    }
+    row.querySelectorAll('[data-rail-density]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        if (!app || !app.save) return;
+        ensureRailSettings(app);
+        app.save.settings.railDensity = btn.getAttribute('data-rail-density');
+        if (typeof app.persist === 'function') app.persist();
+        syncSettin

@@ -92,6 +92,15 @@
       el.remove();
     }
     document.body.classList.remove('cq-first-run-open');
+    // After first-run closes, daily reward may show once if claimable.
+    try {
+      if (window.app) {
+        window.app._dailyRewardModalShown = false;
+        if (typeof window.app.maybeShowDailyRewardModal === 'function') {
+          window.app.maybeShowDailyRewardModal();
+        }
+      }
+    } catch (_) {}
   }
 
   function callApp(name) {

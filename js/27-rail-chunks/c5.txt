@@ -1,30 +1,53 @@
-.rank;
+        await self.dealCardAnimated(self.playerHands[0].hand, 'player');
+        self.hideHole = true;
+        await self.dealCardAnimated(self.dealer, 'dealer hole', true);
+      }
+
+      if (timedOut) return;
+
+      var up = self.dealer.cards[0] && self.dealer.cards[0].rank;
       if (!up) throw new Error('Dealer upcard missing');
       if (up === 'A') {
         if (typeof self.franchiseDealerEvent === 'function') self.franchiseDealerEvent('deal.upcard.ace');
-        self.dealing = false;
-        if (typeof self.unlockDealButton === 'function') self.unlockDealButton();
+        clearDealLocks(self);
         self.showInsuranceModal();
         self.render();
         return;
       }
-      self.dealing = false;
-      if (typeof self.unlockDealButton === 'function') self.unlockDealButton();
+      clearDealLocks(self);
       await self.afterInsurance();
     } catch (err) {
+      if (timedOut) return;
       console.error('CountQuest: dealInitial (rail) failed —', err);
+      clearDealLocks(self);
+
+      // Soft fallback: if nothing meaningful dealt yet, try original dealInitial.
+      var railDealt = (self.rail && self.rail.dealt && self.rail.dealt.length) || 0;
+      var playerSize = (self.playerHands[0] && self.playerHands[0].hand && self.playerHands[0].hand.size) || 0;
+      var dealerSize = (self.dealer && self.dealer.size) || 0;
+      var canFallback = typeof origDeal === 'function' && railDealt === 0 && playerSize === 0 && dealerSize === 0;
+      if (canFallback) {
+        try {
+          return await origDeal.apply(self, []);
+        } catch (e2) {
+          console.error('CountQuest: original dealInitial fallback failed —', e2);
+          clearDealLocks(self);
+        }
+      }
+
       if (typeof self.toast === 'function') {
         self.toast('Could not complete the deal — try placing your bet again', 'error', 4000);
       }
-      self.dealing = false;
-      self._betSubmitting = false;
-      if (typeof self.unlockDealButton === 'function') self.unlockDealButton();
-      self.phase = 'bet';
-      if (self.playerHands[0]) {
-        self.bankroll += self.playerHands[0].bet;
-        if (self.session) self.session.wagered = Math.max(0, self.session.wagered - self.playerHands[0].bet);
+      refundToBet(self);
+    } finally {
+      finished = true;
+      clearTimeout(abortTimer);
+      // Always unlock — even if afterInsurance path already cleared dealing.
+      if (!timedOut) {
+        self.dealing = false;
+        self._betSubmitting = false;
+        if (typeof self.unlockDealButton === 'function') self.unlockDealButton();
       }
-      self.render();
     }
   }
 
@@ -48,17 +71,3 @@
       '</div>';
     var helpCards = document.getElementById('help-level-cards');
     var soundToggle = document.getElementById('toggle-sound');
-    if (helpCards && helpCards.parentElement) {
-      helpCards.parentElement.insertBefore(row, helpCards);
-    } else if (soundToggle && soundToggle.closest('label')) {
-      soundToggle.closest('label').parentElement.insertBefore(row, soundToggle.closest('label'));
-    } else {
-      modal.appendChild(row);
-    }
-    row.querySelectorAll('[data-rail-density]').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        if (!app || !app.save) return;
-        ensureRailSettings(app);
-        app.save.settings.railDensity = btn.getAttribute('data-rail-density');
-        if (typeof app.persist === 'function') app.persist();
-        syncSettin

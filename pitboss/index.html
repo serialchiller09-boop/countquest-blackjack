@@ -45,8 +45,9 @@
         <button type="button" data-speed="2400">2.4s</button>
       </div>
       <div class="controls-row calls">
+        <p class="call-hint" id="callHint">Available after hand 8</p>
         <button type="button" class="danger" id="btnBackOff">BACK OFF selected seat</button>
-        <button type="button" id="btnPass">PASS TABLE</button>
+        <button type="button" id="btnPass" title="Always wrong in Case 01 — exactly one seat is counting">PASS TABLE</button>
       </div>
     </div>
 
@@ -55,7 +56,7 @@
     <section class="dossier hidden" id="dossier" aria-label="Dossier">
       <h2>Dossier</h2>
       <div id="dossierBody"></div>
-      <canvas id="graphCanvas" width="640" height="280"></canvas>
+      <canvas id="graphCanvas" width="640" height="420"></canvas>
       <div class="graph-tip" id="graphTip"></div>
       <div class="dossier-actions">
         <button type="button" id="btnShowMarks">Show my marks</button>

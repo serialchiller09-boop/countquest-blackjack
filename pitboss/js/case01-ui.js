@@ -75,6 +75,7 @@
         btnMark: qs('#btnMark'),
         btnBackOff: qs('#btnBackOff'),
         btnPass: qs('#btnPass'),
+        callHint: qs('#callHint'),
         speedBtns: qsa('[data-speed]'),
         debug: qs('#debug'),
         peekModal: qs('#peekModal'),
@@ -176,7 +177,7 @@
       const e = this.engine;
       this.el.briefingBody.innerHTML =
         `<p>Keep the count. Watch the spreads. One of them is working the shoe.</p>` +
-        `<p>You get one hover and one shuffle. After eight hands you can point.</p>` +
+        `<p>You get one hover and one shuffle. Tap a seat to select, then BACK OFF after hand 8.</p>` +
         `<p>If you wait for the cut card, they already got paid.</p>`;
       const whale = e.getWhaleSeat();
       if (whale) {
@@ -335,6 +336,25 @@
       this.el.btnPeek.disabled = snap.peekUsed || snap.called;
       this.el.btnBackOff.disabled = !snap.canCall || !snap.selectedSeatId || snap.called;
       this.el.btnPass.disabled = !snap.canCall || snap.called;
+      if (this.el.callHint) {
+        if (snap.called) {
+          this.el.callHint.textContent = '';
+          this.el.callHint.classList.add('hidden');
+          this.el.callHint.classList.remove('ready');
+        } else if (!snap.canCall) {
+          this.el.callHint.textContent = 'Available after hand 8';
+          this.el.callHint.classList.remove('hidden', 'ready');
+        } else if (!snap.selectedSeatId) {
+          this.el.callHint.textContent = 'Tap a seat to select, then BACK OFF';
+          this.el.callHint.classList.remove('hidden');
+          this.el.callHint.classList.add('ready');
+        } else {
+          this.el.callHint.textContent = 'Call unlocked';
+          this.el.callHint.classList.remove('hidden');
+          this.el.callHint.classList.add('ready');
+        }
+      }
+      this.el.btnPass.title = 'Always wrong in Case 01 — exactly one seat is counting';
       this.el.btnPause.textContent = snap.paused ? 'Resume' : 'Pause';
       this.el.btnPause.classList.toggle('active', snap.paused);
 

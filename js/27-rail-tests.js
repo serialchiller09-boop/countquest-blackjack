@@ -1,4 +1,5 @@
 // S27 Rail Count tests — §11 key cases (loads after CQRail)
+// IMPORTANT: never auto-run or rethrow inside setInterval (tab freeze risk).
 (function () {
   'use strict';
 
@@ -117,6 +118,7 @@
     check(CQRail.dwellMs(new HelpSystem(4)) >= 350, 'dwell floor 350');
   }
 
+  /** Install wrapper so rail assertions run only when runTests() is explicitly invoked. */
   function install() {
     if (typeof runTests !== 'function') return false;
     if (runTests.__cqRail27Tests) return true;
@@ -132,44 +134,28 @@
       var check = function (cond, msg) { railAssert(cond, msg); extra++; };
       var eq = function (a, b, msg) { railAssert(a === b, msg + ': expected ' + b + ', got ' + a); extra++; };
       runRailSection(check, eq);
-      console.log('✓ Rail Count tests passed (+' + extra + ' assertions)');
+      console.log('\u2713 Rail Count tests passed (+' + extra + ' assertions)');
       return base + extra;
     };
     window.runTests.__cqRail27Tests = true;
     return true;
   }
 
-  function maybeLate() {
-    if (!install() && window.__runTestsDone && typeof CQRail !== 'undefined') {
-      var extra = 0;
-      var check = function (cond, msg) { railAssert(cond, msg); extra++; };
-      var eq = function (a, b, msg) { railAssert(a === b, msg + ': expected ' + b + ', got ' + a); extra++; };
-      try {
-        runRailSection(check, eq);
-        console.log('✓ Rail Count late tests passed (' + extra + ' assertions)');
-        var banner = document.getElementById('test-banner');
-        if (banner && /passed/i.test(banner.textContent || '')) {
-          banner.textContent += ' · rail +' + extra;
-        }
-      } catch (e) {
-        console.error(e);
-        var b = document.getElementById('test-banner');
-        if (b) {
-          b.classList.remove('bg-green-600');
-          b.classList.add('bg-red-700');
-          b.textContent = '✗ Rail tests failed: ' + e.message;
-        }
-        throw e;
-      }
-    }
-  }
-
+  // Poll only to attach the runTests wrapper — NEVER auto-run tests, NEVER rethrow here.
   var n = 0;
   var t = setInterval(function () {
-    install();
-    maybeLate();
+    try {
+      install();
+    } catch (e) {
+      console.error('CountQuest rail test install:', e);
+    }
     if (++n > 100) clearInterval(t);
   }, 20);
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { install(); maybeLate(); });
-  else { install(); maybeLate(); }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () {
+      try { install(); } catch (e) { console.error('CountQuest rail test install:', e); }
+    });
+  } else {
+    try { install(); } catch (e) { console.error('CountQuest rail test install:', e); }
+  }
 })();

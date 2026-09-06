@@ -128,7 +128,26 @@
     return true;
   }
 
+
+  function applyTitles() {
+    try {
+      document.title = 'Pit Boss';
+      var apple = document.querySelector('meta[name="apple-mobile-web-app-title"]');
+      if (apple) apple.setAttribute('content', 'Pit Boss');
+      var appTitle = document.getElementById('app-title');
+      if (appTitle) appTitle.textContent = 'Pit Boss';
+      var menuTitle = document.getElementById('menu-app-title');
+      if (menuTitle) menuTitle.textContent = 'Pit Boss';
+      var logo = document.getElementById('logo');
+      if (logo) logo.setAttribute('aria-label', 'Pit Boss');
+      document.querySelectorAll('.lobby-pass-banner .font-bold, #lobby-pass-banner .font-bold').forEach(function (el) {
+        if (/CountQuest Pass/i.test(el.textContent || '')) el.textContent = 'Pit Boss Pass';
+      });
+    } catch (e) {}
+  }
+
   function boot() {
+    applyTitles();
     if (apply()) return;
     let n = 0;
     const t = setInterval(function () {
@@ -137,4 +156,7 @@
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();
+  // Re-apply titles after late lobby paints
+  setTimeout(applyTitles, 0);
+  setTimeout(applyTitles, 500);
 })();

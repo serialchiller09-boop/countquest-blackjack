@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'index-parts-staging/**'
+      - '.github/workflows/assemble-index-parts.yml'
 permissions:
   contents: write
 jobs:
@@ -11,6 +12,35 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Fix known staging-04 transcription typo if present
+        run: |
+          python3 <<'EOF'
+          from pathlib import Path
+          p = Path('index-parts-staging/04.txt.zlib.b64')
+          if p.exists():
+              t = p.read_text()
+              fixed = t.replace('PfDtanewaXsb', 'PfDtak+XaXkb')
+              if fixed != t:
+                  p.write_text(fixed)
+                  print('fixed staging 04 typo')
+              else:
+                  print('staging 04 already correct or different')
+          EOF
+      - name: Reassemble chunked zlib.b64 if present
+        run: |
+          python3 <<'EOF'
+          from pathlib import Path
+          staging = Path('index-parts-staging')
+          for n in ['01','02','03','04','05']:
+              cdir = staging / f'{n}.txt.zlib.b64.chunks'
+              if cdir.is_dir():
+                  parts = sorted(cdir.glob('*'))
+                  data = ''.join(p.read_text() for p in parts)
+                  if not data.endswith('\n'):
+                      data += '\n'
+                  (staging / f'{n}.txt.zlib.b64').write_text(data)
+                  print('reassembled', n, 'from', len(parts), 'chunks', 'len', len(data))
+          EOF
       - name: Decode staging zlib.b64 into index-parts
         run: |
           python3 <<'EOF'
@@ -41,7 +71,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add index-parts/01.txt index-parts/02.txt index-parts/03.txt index-parts/04.txt index-parts/05.txt
+          git add index-parts/01.txt index-parts/02.txt index-parts/03.txt index-parts/04.txt index-parts/05.txt index-parts-staging/04.txt.zlib.b64 || true
           if git diff --cached --quiet; then
             echo "No changes"
           else

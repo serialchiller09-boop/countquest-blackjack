@@ -3,6 +3,38 @@ function updateTutorialCountExplanation() {
   window.app?.updateTutorialCountExplanation();
 }
 
+// Sync gate (runs immediately after 07): block daily reward while first-run pending/open.
+// Full helper also in js/29-first-run-daily-gate.js (late inject + dismiss hook backup).
+(function cqGateDailyBehindFirstRun() {
+  if (window.__CQ_FR_DAILY_SYNC) return;
+  window.__CQ_FR_DAILY_SYNC = true;
+  var KEY = 'cq.firstRunV1';
+  function blocked() {
+    try { if (localStorage.getItem(KEY) !== '1') return true; } catch (_) { return true; }
+    var el = document.getElementById('cq-first-run');
+    return !!(el && (el.open || el.hasAttribute('open')));
+  }
+  function patch() {
+    var P = window.CountQuestApp && window.CountQuestApp.prototype;
+    if (!P || typeof P.maybeShowDailyRewardModal !== 'function') return false;
+    if (P.maybeShowDailyRewardModal.__cqFirstRunGated) return true;
+    var orig = P.maybeShowDailyRewardModal;
+    function gated() {
+      if (blocked()) return; // do NOT set _dailyRewardModalShown
+      return orig.apply(this, arguments);
+    }
+    gated.__cqFirstRunGated = true;
+    P.maybeShowDailyRewardModal = gated;
+    if (window.app) {
+      window.app.maybeShowDailyRewardModal = function () { return gated.apply(window.app, arguments); };
+      window.app.maybeShowDailyRewardModal.__cqFirstRunGated = true;
+    }
+    return true;
+  }
+  patch();
+  var n = 0, t = setInterval(function () { if (patch() || ++n > 40) clearInterval(t); }, 25);
+})();
+
 (function loadFirstRunModule() {
   function inject(name) {
     if (document.querySelector('script[src*="' + name + '"]')) return;

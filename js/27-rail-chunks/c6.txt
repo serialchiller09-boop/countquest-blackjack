@@ -1,0 +1,91 @@
+gsUI(app);
+        updateStripVisibility(app);
+        if (typeof app.toast === 'function') {
+          app.toast('Rail cards: ' + app.save.settings.railDensity + ' (next deal)', 'info', 2200);
+        }
+      });
+    });
+    syncSettingsUI(app);
+  }
+
+  function syncSettingsUI(app) {
+    ensureRailSettings(app);
+    var d = (app && app.save && app.save.settings && app.save.settings.railDensity) || 'off';
+    document.querySelectorAll('#cq-rail-density-row [data-rail-density]').forEach(function (btn) {
+      btn.classList.toggle('selected', btn.getAttribute('data-rail-density') === d);
+    });
+  }
+
+  function wrapOpenSettings(proto) {
+    if (!proto.openSettings || proto.openSettings.__cqRail27) return;
+    var orig = proto.openSettings;
+    var wrapped = function () {
+      var out = orig.apply(this, arguments);
+      try {
+        injectSettingsRow(this);
+      } catch (e) {}
+      return out;
+    };
+    wrapped.__cqRail27 = true;
+    proto.openSettings = wrapped;
+  }
+
+  function wrapOpenCountQuiz(proto) {
+    if (!proto.openCountQuizModal || proto.openCountQuizModal.__cqRail27) return;
+    var orig = proto.openCountQuizModal;
+    var wrapped = function (focusInput) {
+      var out = orig.apply(this, arguments);
+      try {
+        if (this.help && this.help.postHandQuiz && this.help.postHandQuiz()) {
+          var p = document.querySelector('#modal-count-quiz > p');
+          if (p) {
+            var density = densityFor(this);
+            var railCards = (this.rail && this.rail.dealt && this.rail.dealt.length) || 0;
+            if (density !== 'off' || railCards > 0) {
+              p.textContent =
+                'Running count after this hand (including the rail). A guess within \u00b11 of the actual count counts as correct.';
+            }
+          }
+        }
+      } catch (e) {}
+      return out;
+    };
+    wrapped.__cqRail27 = true;
+    proto.openCountQuizModal = wrapped;
+  }
+
+  function wrapBeginBetPhase(proto) {
+    if (!proto.beginBetPhase || proto.beginBetPhase.__cqRail27) return;
+    var orig = proto.beginBetPhase;
+    var wrapped = function () {
+      if (featureOn()) {
+        try {
+          ensureRailSettings(this);
+          resetRound(this);
+        } catch (e) {}
+      }
+      return orig.apply(this, arguments);
+    };
+    wrapped.__cqRail27 = true;
+    proto.beginBetPhase = wrapped;
+  }
+
+  function wrapDealInitial(proto) {
+    if (!proto.dealInitial || proto.dealInitial.__cqRail27) return;
+    var orig = proto.dealInitial;
+    var wrapped = async function () {
+      if (!featureOn()) return orig.apply(this, arguments);
+      ensureRailSettings(this);
+      var density = densityFor(this);
+      if (density === 'off') {
+        planRound(this);
+        return orig.apply(this, arguments);
+      }
+      return dealInitialWithRail.apply(this, arguments);
+    };
+    wrapped.__cqRail27 = true;
+    proto.dealInitial = wrapped;
+  }
+
+  function wrapSyncLayout(proto) {
+    if (!proto.syncCasinoSeatLayout || proto.syncCasinoSeatLayout.

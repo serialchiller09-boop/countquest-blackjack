@@ -1,0 +1,92 @@
+__cqRail27) return;
+    var orig = proto.syncCasinoSeatLayout;
+    var wrapped = function () {
+      var out = orig.apply(this, arguments);
+      try {
+        updateStripVisibility(this);
+        // Never revive 7-seat
+        document.body.classList.add('casino-table-solo');
+        document.body.classList.remove('casino-table-full');
+      } catch (e) {}
+      return out;
+    };
+    wrapped.__cqRail27 = true;
+    proto.syncCasinoSeatLayout = wrapped;
+  }
+
+  function wrapMigrateSave() {
+    if (typeof migrateSave !== 'function' || migrateSave.__cqRail27) return;
+    var orig = migrateSave;
+    var wrapped = function (raw) {
+      var s = orig(raw);
+      if (!s) return s;
+      s.settings = s.settings || {};
+      s.flags = s.flags || {};
+      if (s.settings.railDensity === undefined) {
+        var hp = (s.stats && s.stats.handsPlayed) || 0;
+        s.settings.railDensity = hp >= 12 ? 'quiet' : 'off';
+      }
+      return s;
+    };
+    wrapped.__cqRail27 = true;
+    window.migrateSave = wrapped;
+    try { migrateSave = wrapped; } catch (e) {}
+  }
+
+  function attach(app) {
+    ensureCss();
+    patchHelpSystem();
+    wrapMigrateSave();
+    if (typeof CountQuestApp === 'undefined') return false;
+    var proto = CountQuestApp.prototype;
+    if (!proto.dealRailCard || !proto.dealRailCard.__cqRail27) {
+      proto.dealRailCard = dealRailCardImpl;
+      proto.dealRailCard.__cqRail27 = true;
+    }
+    wrapDealInitial(proto);
+    wrapBeginBetPhase(proto);
+    wrapOpenSettings(proto);
+    wrapOpenCountQuiz(proto);
+    wrapSyncLayout(proto);
+    if (app) {
+      ensureRailSettings(app);
+      ensureAppRail(app, densityFor(app));
+      updateStripVisibility(app);
+    }
+    proto.__cqRail27 = true;
+    return true;
+  }
+
+  window.CQRail = {
+    attach: attach,
+    densityFor: densityFor,
+    handCount: handCount,
+    planRound: planRound,
+    resetRound: resetRound,
+    mountStrip: mountStrip,
+    animateCard: animateCard,
+    dwellMs: dwellMs,
+    shouldFlashTag: shouldFlashTag,
+    shouldShowFacesAfterTuck: shouldShowFacesAfterTuck,
+    cardsThisRound: function () { return cardsThisRound(window.app); },
+    runningCountContribution: function () { return runningCountContribution(window.app); },
+    noteDealt: noteDealt,
+    updateStripVisibility: updateStripVisibility,
+  };
+
+  function boot() {
+    ensureCss();
+    patchHelpSystem();
+    attach(window.app);
+    var n = 0;
+    var t = setInterval(function () {
+      patchHelpSystem();
+      attach(window.app);
+      if (window.app) updateStripVisibility(window.app);
+      if (++n > 80) clearInterval(t);
+    }, 50);
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+})();

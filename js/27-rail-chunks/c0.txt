@@ -17,7 +17,7 @@
     var link = document.createElement('link');
     link.id = 'cq-rail-count-css';
     link.rel = 'stylesheet';
-    link.href = 'css/cq-rail-count.css?v=39';
+    link.href = 'css/cq-rail-count.css?v=40';
     document.head.appendChild(link);
   }
 
@@ -49,8 +49,8 @@
     app.save.settings = app.save.settings || {};
     app.save.flags = app.save.flags || {};
     if (app.save.settings.railDensity === undefined) {
-      var hp = (app.save.stats && app.save.stats.handsPlayed) || 0;
-      app.save.settings.railDensity = hp >= 12 ? 'quiet' : 'off';
+      // Never auto-enable Quiet — freeze risk if rail deal path hangs. Opt-in only.
+      app.save.settings.railDensity = 'off';
     }
   }
 
@@ -85,6 +85,3 @@
     ) {
       return 'off';
     }
-    var raw = (app.save && app.save.settings && app.save.settings.railDensity) || 'off';
-    if (raw !== 'off' && raw !== 'quiet' && raw !== 'busy') raw = 'off';
-    if (raw === 'busy' && typeof

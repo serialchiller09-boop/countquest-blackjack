@@ -17,7 +17,7 @@ ASSETS = (
     "sw.js",
     ".nojekyll",
 )
-DIRS = ("css", "js", "icons")
+DIRS = ("css", "js", "icons", "pitboss")
 
 
 def run(cmd: list[str]) -> None:

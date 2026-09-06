@@ -1,5 +1,5 @@
 /* CountQuest PWA service worker — cache app shell for offline repeat visits. */
-const CACHE_VERSION = 'cq-pwa-v32';
+const CACHE_VERSION = 'cq-pwa-v33';
 const SHELL_ASSETS = [
   './',
   './index.html',
@@ -15,6 +15,7 @@ const SHELL_ASSETS = [
   './css/cq-v63-play.css',
   './css/cq-v64-play.css',
   './css/cq-v65-play.css',
+  './css/cq-jeff-23.css',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/apple-touch-icon.png',
@@ -40,6 +41,8 @@ const SHELL_ASSETS = [
   './js/18-soft-total.js',
   './js/20-pitboss-entry.js',
   './js/21-lobby-catchup.js',
+  './js/22-dealer-catchup.js',
+  './js/23-jeff-patches.js',
 ];
 
 self.addEventListener('install', (event) => {

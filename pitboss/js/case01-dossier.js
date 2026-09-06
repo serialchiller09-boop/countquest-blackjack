@@ -212,9 +212,11 @@
     ctx.clearRect(0, 0, cssW, cssH);
 
     const pad = 8;
-    const cols = 5;
+    const stacked = cssW < 500;
+    const cols = stacked ? 1 : 5;
+    const rows = stacked ? 5 : 1;
     const panelW = (cssW - pad * 2) / cols;
-    const panelH = cssH - 36;
+    const panelH = (cssH - 36) / rows;
     const xMin = -6;
     const xMax = 8;
     const yMin = 0;
@@ -231,8 +233,10 @@
     ctx.fillRect(0, 0, cssW, cssH);
 
     dossier.seats.forEach((seat, i) => {
-      const left = pad + i * panelW;
-      const top = 4;
+      const col = stacked ? 0 : i;
+      const row = stacked ? i : 0;
+      const left = pad + col * panelW;
+      const top = 4 + row * panelH;
       const corr = dossier.correlations[i];
       const hist = corr.history || [];
       const isAccused = dossier.accusedId === seat.id;
@@ -315,7 +319,7 @@
     ctx.fillText('Same shoe. Same true count. Only one seat paid for tens.', pad, cssH - 10);
 
     // store hit regions for hover tooltips
-    canvas._dossierHit = { dossier, panelW, pad, panelH, xMin, xMax, yMin, yMax, xMap, yMap };
+    canvas._dossierHit = { dossier, panelW, pad, panelH, xMin, xMax, yMin, yMax, xMap, yMap, stacked };
   }
 
   function graphTooltipAt(canvas, clientX, clientY) {
@@ -324,12 +328,18 @@
     const rect = canvas.getBoundingClientRect();
     const x = clientX - rect.left;
     const y = clientY - rect.top;
-    const i = Math.floor((x - hit.pad) / hit.panelW);
+    const stacked = !!hit.stacked;
+    let i;
+    if (stacked) {
+      i = Math.floor((y - 4) / hit.panelH);
+    } else {
+      i = Math.floor((x - hit.pad) / hit.panelW);
+    }
     if (i < 0 || i > 4) return null;
     const seat = hit.dossier.seats[i];
     const corr = hit.dossier.correlations[i];
-    const left = hit.pad + i * hit.panelW;
-    const top = 4;
+    const left = hit.pad + (stacked ? 0 : i) * hit.panelW;
+    const top = 4 + (stacked ? i : 0) * hit.panelH;
     let best = null;
     let bestD = 12;
     for (const h of corr.history || []) {

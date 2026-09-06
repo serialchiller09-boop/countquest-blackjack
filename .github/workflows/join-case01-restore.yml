@@ -1,0 +1,36 @@
+name: Join Case01 restore parts
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'pitboss/js/.restore-parts/**'
+      - '.github/workflows/join-case01-restore.yml'
+jobs:
+  join:
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Concatenate and commit full case01-ui.js
+        run: |
+          set -euo pipefail
+          test -f pitboss/js/.restore-parts/part0.txt
+          test -f pitboss/js/.restore-parts/part4.txt
+          cat pitboss/js/.restore-parts/part0.txt \
+              pitboss/js/.restore-parts/part1.txt \
+              pitboss/js/.restore-parts/part2.txt \
+              pitboss/js/.restore-parts/part3.txt \
+              pitboss/js/.restore-parts/part4.txt > pitboss/js/case01-ui.js
+          head -c 40 pitboss/js/case01-ui.js | grep -vq LOADING_FROM_DISK
+          grep -q _openSeatSheet pitboss/js/case01-ui.js
+          grep -q _onPrimary pitboss/js/case01-ui.js
+          grep -q 'Tap Next hand to deal' pitboss/js/case01-ui.js
+          wc -c pitboss/js/case01-ui.js
+          rm -rf pitboss/js/.restore-parts
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Restore Case 01 UI handlers (Next hand + seat sheet)" || exit 0
+          git push

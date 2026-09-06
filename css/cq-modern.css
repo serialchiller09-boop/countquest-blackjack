@@ -100,3 +100,49 @@ dialog.dialog-premium .text-emerald-400\/70, dialog.dialog-premium .text-emerald
   background: linear-gradient(180deg, #d4a574 0%, #a86b3c 14%, #7a451f 55%, #5a3214 100%) !important;
   border-top: 5px solid #f0d2a8 !important;
 }
+
+/* Card pips / face marks — restored from casino-theme-v57 (dressCard in 16-casino-theme.js) */
+.playing-card {
+  position: relative;
+  overflow: hidden;
+}
+.playing-card .corner {
+  font-weight: 800 !important;
+  font-family: "Times New Roman", Palatino, serif !important;
+  font-size: 1.05rem !important;
+  letter-spacing: -0.02em;
+  z-index: 3;
+}
+.playing-card.rank-10 .corner { font-size: .88rem !important; }
+.playing-card .center-suit {
+  font-size: 2.6rem !important;
+  z-index: 2;
+}
+.playing-card.cq-pipped .center-suit { opacity: 0 !important; }
+
+.playing-card .cq-pip-field {
+  position: absolute;
+  inset: 16% 18% 16% 18%;
+  pointer-events: none;
+  z-index: 2;
+}
+.playing-card .cq-pip {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-style: normal;
+  font-size: 1.05rem;
+  line-height: 1;
+  font-family: "Times New Roman", Palatino, serif;
+}
+.playing-card .cq-pip.is-flip { transform: translate(-50%, -50%) rotate(180deg); }
+.playing-card.cq-face .cq-face-mark {
+  position: absolute;
+  left: 50%; top: 52%;
+  transform: translate(-50%, -50%);
+  font-size: 2.4rem;
+  font-weight: 800;
+  font-family: Palatino, Georgia, serif;
+  opacity: .92;
+  z-index: 2;
+  line-height: 1;
+}

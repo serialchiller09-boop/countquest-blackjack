@@ -1,9 +1,15 @@
 /* CountQuest PWA service worker — cache app shell for offline repeat visits. */
-const CACHE_VERSION = 'cq-pwa-v34';
+const CACHE_VERSION = 'cq-pwa-v35';
 const SHELL_ASSETS = [
   './',
   './index.html',
   './manifest.webmanifest',
+  './index-parts/manifest.json',
+  './index-parts/01.txt',
+  './index-parts/02.txt',
+  './index-parts/03.txt',
+  './index-parts/04.txt',
+  './index-parts/05.txt',
   './css/tailwind.css',
   './css/app.css',
   './css/casino-felt-table.css',
@@ -70,7 +76,10 @@ self.addEventListener('fetch', (event) => {
 
   const isAppShell = /\.(html|js|css)$/.test(url.pathname) || url.pathname.endsWith('/');
   event.respondWith(
-    (isAppShell ? fetch(request) : caches.match(request))
+    (isAppShell || url.pathname.includes('/index-parts/')
+      ? fetch(request)
+      : caches.match(request).then((c) => c || fetch(request))
+    )
       .then((response) => {
         if (response && response.status === 200) {
           const copy = response.clone();

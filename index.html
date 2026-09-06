@@ -9,10 +9,11 @@
   <script>
     (async function () {
       try {
-        var man = await (await fetch('index-parts/manifest.json', { cache: 'no-store' })).json();
+        var base = new URL('.', location.href).pathname; // ends with /
+        var man = await (await fetch(base + 'index-parts/manifest.json', { cache: 'no-store' })).json();
         var chunks = [];
         for (var i = 0; i < man.parts.length; i++) {
-          var t = await (await fetch('index-parts/' + man.parts[i], { cache: 'no-store' })).text();
+          var t = await (await fetch(base + 'index-parts/' + man.parts[i], { cache: 'no-store' })).text();
           chunks.push(t);
         }
         var html = chunks.join('');
@@ -22,7 +23,7 @@
         document.close();
       } catch (e) {
         document.body.innerHTML = '<p style="font-family:system-ui;padding:2rem;color:#f3d36a">Could not load Pit Boss shell. Hard-refresh. ' +
-          (e && e.message ? e.message : e) + '</p>';
+          String(e) + '</p>';
       }
     })();
   </script>

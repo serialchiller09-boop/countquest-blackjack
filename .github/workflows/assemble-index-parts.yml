@@ -1,0 +1,50 @@
+name: assemble-index-parts
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'index-parts-staging/**'
+permissions:
+  contents: write
+jobs:
+  assemble:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Decode staging zlib.b64 into index-parts
+        run: |
+          python3 <<'EOF'
+          import base64, zlib, hashlib
+          from pathlib import Path
+          staging = Path('index-parts-staging')
+          out = Path('index-parts')
+          out.mkdir(exist_ok=True)
+          expected = {
+            '01': '193a94626bcef19b9f72788464d09b00b34336c5',
+            '02': '97d9fe5d4e9bfd9203ad9f1a75278cf406c50964',
+            '03': '2b82e3e7ed59457b8f19cfb3f62c6c28af210cb1',
+            '04': '4d3e7f6b6fd20e1f3efd52ee04dedafaa973cf8d',
+            '05': '82c97c46d8abfbb09bdb5993214d9f6cc0bcfde0',
+          }
+          for n, exp in expected.items():
+              b64 = (staging / f'{n}.txt.zlib.b64').read_text().strip()
+              raw = zlib.decompress(base64.b64decode(b64))
+              sha = hashlib.sha1(raw).hexdigest()
+              assert sha == exp, (n, sha, exp)
+              assert b'PLACEHOLDER' not in raw
+              (out / f'{n}.txt').write_bytes(raw)
+              print(n, 'ok', sha, len(raw))
+          joined = b''.join((out / f'{n}.txt').read_bytes() for n in expected)
+          print('joined', len(joined), hashlib.sha1(joined).hexdigest())
+          EOF
+      - name: Commit and push assembled parts
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index-parts/01.txt index-parts/02.txt index-parts/03.txt index-parts/04.txt index-parts/05.txt
+          if git diff --cached --quiet; then
+            echo "No changes"
+          else
+            git commit -m "fix: restore index-parts/01..05.txt exact bytes from staging zlib.b64"
+            git push
+          fi

@@ -1,0 +1,33 @@
+// §8 TUTORIAL HELPERS (global — callable when counting system changes)
+function updateTutorialCountExplanation() {
+  window.app?.updateTutorialCountExplanation();
+}
+
+(function loadFirstRunModule() {
+  function inject(name) {
+    if (document.querySelector('script[src*="' + name + '"]')) return;
+    const s = document.createElement('script');
+    s.src = 'js/' + name + '?v=49';
+    document.head.appendChild(s);
+  }
+  function injectAll() {
+    inject('11-first-run.js');
+    inject('12-tester-qa.js');
+    inject('13-new-player-lobby.js');
+    inject('14-clubs-spin-ui.js');
+    inject('15-visual.js');
+    inject('16-casino-theme.js');
+    inject('17-result-toast.js');
+    inject('18-soft-total.js');
+    inject('20-pitboss-entry.js');
+    inject('21-lobby-catchup.js');
+    inject('22-dealer-catchup.js');
+    inject('23a-bet-ranks.js');
+    inject('23b-count-dealer.js');
+    inject('24-stats-sheet.js');
+    inject('25-dice-minigame.js');
+    inject('26-honor-path.js');
+  }
+  if (document.readyState === 'complete') injectAll();
+  else window.addEventListener('load', injectAll);
+})();

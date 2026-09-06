@@ -85,3 +85,9 @@
     ) {
       return 'off';
     }
+    var raw = (app.save && app.save.settings && app.save.settings.railDensity) || 'off';
+    if (raw !== 'off' && raw !== 'quiet' && raw !== 'busy') raw = 'off';
+    if (raw === 'busy' && typeof window !== 'undefined' && window.innerHeight && window.innerHeight < 400) {
+      raw = 'quiet';
+    }
+    if (mp === 'drill-combined' || mp === 'drill-betting') {

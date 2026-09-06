@@ -4,12 +4,22 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#0a1612" />
-  <meta name="apple-mobile-web-app-title" content="Pit Boss" />
-  <title>Pit Boss</title>
+  <meta name="apple-mobile-web-app-title" content="CountQuest" />
+  <title>CountQuest Blackjack</title>
   <script>
     (async function () {
+      function failBox(err) {
+        document.body.innerHTML =
+          '<div style="font-family:system-ui,sans-serif;padding:2rem;color:#f3d36a;max-width:28rem">' +
+          '<h1 style="color:#d4af37;font-size:1.35rem">CountQuest did not finish loading</h1>' +
+          '<p style="color:#d1fae5;line-height:1.45">Hard-refresh. If it stays stuck, unregister the service worker (browser Application tab) and reload.</p>' +
+          '<p style="color:#86efac;font-size:.85rem">' + String(err || 'timeout') + '</p>' +
+          '<p><button type="button" onclick="location.reload()" style="padding:.75rem 1.15rem;font-weight:800;border-radius:.65rem;background:#d4af37;color:#111;border:0">Reload</button></p>' +
+          '</div>';
+      }
+      var watchdog = setTimeout(function () { failBox('Load timed out after 10s'); }, 10000);
       try {
-        var base = new URL('.', location.href).pathname; // ends with /
+        var base = new URL('.', location.href).pathname;
         var man = await (await fetch(base + 'index-parts/manifest.json', { cache: 'no-store' })).json();
         var chunks = [];
         for (var i = 0; i < man.parts.length; i++) {
@@ -18,15 +28,22 @@
         }
         var html = chunks.join('');
         if (!html || html.indexOf('chip-buttons') === -1) throw new Error('shell incomplete');
+        html = html.replace('<title>Pit Boss</title>', '<title>CountQuest Blackjack</title>');
+        html = html.replace('content="Pit Boss"', 'content="CountQuest"');
+        if (html.indexOf('28-click-unstick.js') === -1) {
+          html = html.replace('</body>', '  <script src="js/28-click-unstick.js?v=52"><\\/script>\n</body>');
+          html = html.replace('<\\/script>', '<' + '/script>');
+        }
+        clearTimeout(watchdog);
         document.open();
         document.write(html);
         document.close();
       } catch (e) {
-        document.body.innerHTML = '<p style="font-family:system-ui;padding:2rem;color:#f3d36a">Could not load Pit Boss shell. Hard-refresh. ' +
-          String(e) + '</p>';
+        clearTimeout(watchdog);
+        failBox(e);
       }
     })();
   </script>
 </head>
-<body style="background:#0a1612;color:#d4af37;font-family:system-ui,sans-serif;padding:2rem">Loading Pit Boss…</body>
+<body style="background:#0a1612;color:#d4af37;font-family:system-ui,sans-serif;padding:2rem">Loading CountQuest…</body>
 </html>

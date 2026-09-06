@@ -1,5 +1,5 @@
 /* CountQuest PWA service worker — cache app shell for offline repeat visits. */
-const CACHE_VERSION = 'cq-pwa-v40';
+const CACHE_VERSION = 'cq-pwa-v41';
 const SHELL_ASSETS = [
   './',
   './index.html',
@@ -68,6 +68,7 @@ const SHELL_ASSETS = [
   './js/27-rail-chunks/c7.txt',
   './js/27-rail-tests.js',
   './css/cq-rail-count.css',
+  './js/28-click-unstick.js',
 ];
 
 self.addEventListener('install', (event) => {

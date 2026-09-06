@@ -1,0 +1,130 @@
+/* §23 Jeff — dealer simpler faces + deck backs + minus-btn + bet tray */
+#screen-dealer-mode .playing-card.cq-pipped .cq-pip-field {
+  display: none !important;
+}
+#screen-dealer-mode .playing-card.cq-pipped .center-suit,
+#screen-dealer-mode .playing-card .center-suit {
+  opacity: 1 !important;
+}
+
+/* Deck back patterns — applied on .playing-card.back via cq-deck-* class */
+.playing-card.back.cq-deck-red .card-inner,
+.playing-card.back.cq-deck-blue .card-inner,
+.playing-card.back.cq-deck-charcoal .card-inner,
+.playing-card.back.cq-deck-green .card-inner {
+  border-radius: inherit;
+  position: relative;
+  overflow: hidden;
+}
+.playing-card.back.cq-deck-red .card-inner {
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.12) 25%, transparent 25%) -8px 0 / 16px 16px,
+    linear-gradient(225deg, rgba(255,255,255,.12) 25%, transparent 25%) -8px 0 / 16px 16px,
+    linear-gradient(315deg, rgba(255,255,255,.12) 25%, transparent 25%) 0 0 / 16px 16px,
+    linear-gradient(45deg, rgba(255,255,255,.12) 25%, transparent 25%) 0 0 / 16px 16px,
+    radial-gradient(circle at 50% 50%, #c62828 0%, #8b0000 70%, #5c0000 100%);
+  box-shadow: inset 0 0 0 3px #f5e6c8, inset 0 0 0 5px #8b0000;
+}
+.playing-card.back.cq-deck-blue .card-inner {
+  background:
+    repeating-linear-gradient(45deg, rgba(255,255,255,.14) 0 2px, transparent 2px 6px),
+    repeating-linear-gradient(-45deg, rgba(255,255,255,.1) 0 2px, transparent 2px 6px),
+    radial-gradient(circle at 50% 35%, #3b82f6, #1e3a8a 70%, #0f172a 100%);
+  box-shadow: inset 0 0 0 3px #e2e8f0, inset 0 0 0 5px #1e40af;
+}
+.playing-card.back.cq-deck-charcoal .card-inner {
+  background:
+    radial-gradient(circle at 50% 50%, transparent 28%, rgba(212,175,55,.35) 29% 32%, transparent 33%),
+    linear-gradient(160deg, #2a2a2e, #111114 55%, #0a0a0c);
+  box-shadow: inset 0 0 0 3px #d4af37, inset 0 0 0 5px #1a1a1a;
+}
+.playing-card.back.cq-deck-green .card-inner {
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255,255,255,.08), transparent 40%),
+    repeating-linear-gradient(0deg, rgba(0,0,0,.08) 0 1px, transparent 1px 4px),
+    linear-gradient(145deg, #1b7a45, #0d3d24 60%, #062816);
+  box-shadow: inset 0 0 0 3px #c8e6c9, inset 0 0 0 5px #14532d;
+}
+
+.cq-minus-btn {
+  flex: 0 0 auto;
+  min-width: 2.5rem;
+  padding: 0.45rem 0.65rem;
+  border-radius: 0.6rem;
+  background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.18);
+  color: #fbbf24;
+  font-weight: 800;
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.cq-minus-btn:active { transform: scale(0.96); }
+.cq-count-guess-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 0.75rem;
+}
+.cq-count-guess-row input {
+  flex: 1 1 auto;
+  margin-bottom: 0 !important;
+}
+
+.dealer-deck-picker {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin: 0.75rem 0 0.25rem;
+}
+.dealer-deck-picker-label {
+  grid-column: 1 / -1;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(103, 232, 249, 0.75);
+  font-weight: 700;
+}
+.dealer-deck-opt {
+  appearance: none;
+  border: 2px solid rgba(255,255,255,.15);
+  border-radius: 0.65rem;
+  padding: 0;
+  height: 3.25rem;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.dealer-deck-opt.is-selected {
+  border-color: #f3d36a;
+  box-shadow: 0 0 0 1px rgba(243,211,106,.45);
+}
+.dealer-deck-opt .swatch {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.dealer-deck-opt[data-deck="red"] .swatch {
+  background: radial-gradient(circle at 50% 50%, #c62828, #8b0000);
+}
+.dealer-deck-opt[data-deck="blue"] .swatch {
+  background: radial-gradient(circle at 50% 35%, #3b82f6, #1e3a8a);
+}
+.dealer-deck-opt[data-deck="charcoal"] .swatch {
+  background: linear-gradient(160deg, #2a2a2e, #111114);
+  box-shadow: inset 0 0 0 2px #d4af37;
+}
+.dealer-deck-opt[data-deck="green"] .swatch {
+  background: linear-gradient(145deg, #1b7a45, #0d3d24);
+}
+
+#chip-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.45rem;
+}
+#chip-buttons .bet-chip {
+  min-width: 3.1rem;
+}

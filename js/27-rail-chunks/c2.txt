@@ -1,9 +1,3 @@
-document.getElementById('casino-seat-grid');
-    var play = document.getElementById('screen-casino-play');
-
-    if (layer && dealerZone && dealerZone.parentElement === layer) {
-      if (dealerZone.nextSibling) layer.insertBefore(strip, dealerZone.nextSibling);
-      else layer.appendChild(strip);
     } else if (seatGrid && seatGrid.parentElement) {
       seatGrid.parentElement.insertBefore(strip, seatGrid);
     } else if (play) {
@@ -78,4 +72,17 @@ document.getElementById('casino-seat-grid');
   }
 
   function shouldShowFacesAfterTuck(help) {
-    if (help && typeof help.railKeepFaces === 'function') return !!help.railKeepFace
+    if (help && typeof help.railKeepFaces === 'function') return !!help.railKeepFaces();
+    return !!(help && help.level <= 1);
+  }
+
+  function cardLabel(card) {
+    if (typeof formatCardLabel === 'function') return formatCardLabel(card);
+    var suitMap = { S: '\u2660', H: '\u2665', D: '\u2666', C: '\u2663' };
+    return String(card.rank || '') + (suitMap[card.suit] || card.suit || '');
+  }
+
+  function prefersReducedMotion() {
+    try {
+      return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    } catch (e) {

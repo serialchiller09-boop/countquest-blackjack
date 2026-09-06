@@ -1,0 +1,90 @@
+// S27 Rail Count Increment 1 — other seats pass through the count (no 7-seat restore)
+(function () {
+  'use strict';
+
+  if (typeof window.__CQ_RAIL === 'undefined') window.__CQ_RAIL = true;
+
+  var DWELL = [900, 700, 550, 450, 350];
+  var HAND_IDS_QUIET = ['A', 'B'];
+  var HAND_IDS_BUSY = ['A', 'B', 'C'];
+
+  function featureOn() {
+    return window.__CQ_RAIL !== false;
+  }
+
+  function ensureCss() {
+    if (document.getElementById('cq-rail-count-css')) return;
+    var link = document.createElement('link');
+    link.id = 'cq-rail-count-css';
+    link.rel = 'stylesheet';
+    link.href = 'css/cq-rail-count.css?v=39';
+    document.head.appendChild(link);
+  }
+
+  function patchHelpSystem() {
+    if (typeof HelpSystem === 'undefined') return false;
+    var p = HelpSystem.prototype;
+    if (p.railDwellMs && p.__cqRailHelp27) return true;
+    p.railDwellMs = function () {
+      return DWELL[this.level] || 350;
+    };
+    p.railShowTagLabel = function () {
+      return this.level === 0 || this.modeProfile === 'tutorial';
+    };
+    p.railShowTagPip = function () {
+      return this.level <= 1;
+    };
+    p.railKeepFaces = function () {
+      return this.level <= 1;
+    };
+    p.railWhisper = function () {
+      return this.level === 0;
+    };
+    p.__cqRailHelp27 = true;
+    return true;
+  }
+
+  function ensureRailSettings(app) {
+    if (!app || !app.save) return;
+    app.save.settings = app.save.settings || {};
+    app.save.flags = app.save.flags || {};
+    if (app.save.settings.railDensity === undefined) {
+      var hp = (app.save.stats && app.save.stats.handsPlayed) || 0;
+      app.save.settings.railDensity = hp >= 12 ? 'quiet' : 'off';
+    }
+  }
+
+  function isDealerShiftContext(app) {
+    if (!app) return false;
+    if (app.dealerSession) return true;
+    if (app.save && app.save.sessionDrill === 'dealer-mode') return true;
+    if (typeof app.phase === 'string' && app.phase.indexOf('dealer') === 0) return true;
+    var scr = document.getElementById('screen-dealer-mode');
+    if (scr && !scr.classList.contains('hidden')) return true;
+    return false;
+  }
+
+  function densityFor(app) {
+    if (!featureOn()) return 'off';
+    if (!app) return 'off';
+    if (isDealerShiftContext(app)) return 'off';
+    ensureRailSettings(app);
+    var mp = (app.help && app.help.modeProfile) || 'normal';
+    if (mp === 'tutorial') {
+      var shoeDone = !!(app.save && app.save.flags && app.save.flags.railAfterFirstShoe);
+      if (!shoeDone && !(app.save && app.save.tutorial && app.save.tutorial.completed)) return 'off';
+    }
+    if (
+      mp === 'drill-count' ||
+      mp === 'drill-speed' ||
+      mp === 'drill-true-count' ||
+      mp === 'card-burst' ||
+      mp === 'drill-decisions' ||
+      mp === 'drill-index' ||
+      mp === 'drill-bet-spread'
+    ) {
+      return 'off';
+    }
+    var raw = (app.save && app.save.settings && app.save.settings.railDensity) || 'off';
+    if (raw !== 'off' && raw !== 'quiet' && raw !== 'busy') raw = 'off';
+    if (raw === 'busy' && typeof

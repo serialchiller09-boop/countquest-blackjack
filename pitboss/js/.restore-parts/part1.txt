@@ -1,0 +1,117 @@
+is._toast(res.message);
+      });
+      this.el.btnBackOff.addEventListener('click', () => {
+        if (!this.engine.selectedSeatId) {
+          this._toast('Select a seat to back off.');
+          return;
+        }
+        const r = this.engine.backOff(this.engine.selectedSeatId);
+        if (r.ok) this.showDossier();
+        else if (r.reason === 'too_early') this._toast('Watch at least eight hands.');
+      });
+      this.el.btnPass.addEventListener('click', () => {
+        const r = this.engine.passTable();
+        if (r.ok) this.showDossier();
+        else if (r.reason === 'too_early') this._toast('Watch at least eight hands.');
+      });
+      this.el.btnShowMarks.addEventListener('click', () => {
+        this.showMarksOnGraph = !this.showMarksOnGraph;
+        this.el.btnShowMarks.textContent = this.showMarksOnGraph ? 'Hide my marks' : 'Show my marks';
+        this.el.btnShowMarks.classList.toggle('active', this.showMarksOnGraph);
+        if (this._lastDossier) {
+          Case01Dossier.drawBetVsTcGraph(this.el.graphCanvas, this._lastDossier, {
+            showMarks: this.showMarksOnGraph,
+          });
+        }
+        this._toast(this.showMarksOnGraph ? 'Your warm/cold pins are on the graph.' : 'Marks hidden.');
+      });
+      this.el.btnExportSeed.addEventListener('click', () => {
+        const text = `seed=${this.engine.seed}`;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(() => this._toast('Seed copied.'));
+        } else {
+          this._toast(text);
+        }
+      });
+      this.el.btnReplay.addEventListener('click', () => {
+        location.search = `?seed=${this.engine.seed}&help=${this.helpLevel}${this.debug ? '&debug=1' : ''}`;
+      });
+      this.el.graphCanvas.addEventListener('mousemove', (e) => {
+        const tip = Case01Dossier.graphTooltipAt(this.el.graphCanvas, e.clientX, e.clientY);
+        this.el.graphTip.textContent = tip || '';
+      });
+
+      if (this.el.btnPrimary) {
+        this.el.btnPrimary.addEventListener('click', () => this._onPrimary());
+      }
+      if (this.el.btnPassLite) {
+        this.el.btnPassLite.addEventListener('click', () => {
+          const r = this.engine.passTable();
+          if (r.ok) this.showDossier();
+          else if (r.reason === 'too_early') this._toast('Watch at least eight hands first.');
+        });
+      }
+      if (this.el.btnMoreToggle) {
+        this.el.btnMoreToggle.addEventListener('click', () => {
+          const hidden = this.el.moreTools.classList.toggle('hidden');
+          this.el.btnMoreToggle.textContent = hidden ? 'More tools' : 'Hide tools';
+        });
+      }
+      if (this.el.sheetClose) {
+        this.el.sheetClose.addEventListener('click', () => this._closeSeatSheet());
+      }
+      if (this.el.seatSheet) {
+        this.el.seatSheet.addEventListener('click', (e) => {
+          if (e.target === this.el.seatSheet) this._closeSeatSheet();
+        });
+      }
+      if (this.el.sheetMark) {
+        this.el.sheetMark.addEventListener('click', () => {
+          if (!this.engine.selectedSeatId) return;
+          this.engine.markSeat(this.engine.selectedSeatId, 'cycle');
+          this._toast('Marked. Tap the seat again to flip warm/cold.');
+          this._closeSeatSheet();
+        });
+      }
+      if (this.el.sheetHover) {
+        this.el.sheetHover.addEventListener('click', () => {
+          if (!this.engine.selectedSeatId) return;
+          this.engine.requestHover(this.engine.selectedSeatId);
+          this._closeSeatSheet();
+        });
+      }
+      if (this.el.sheetAccuse) {
+        this.el.sheetAccuse.addEventListener('click', () => {
+          if (!this.engine.selectedSeatId) return;
+          const r = this.engine.backOff(this.engine.selectedSeatId);
+          this._closeSeatSheet();
+          if (r.ok) this.showDossier();
+          else if (r.reason === 'too_early') this._toast('Watch at least eight hands first.');
+        });
+      }
+    }
+
+    _toast(msg) {
+      this.el.flavor.textContent = msg;
+    }
+
+    showBriefing() {
+      const e = this.engine;
+      this.el.briefingBody.innerHTML =
+        `<p><strong>One of these five is counting.</strong> They bet more when the shoe gets good.</p>` +
+        `<p><strong>Do this:</strong> tap Next hand, watch bets, keep the simple count in your notebook (+1 small cards, −1 tens/aces).</p>` +
+        `<p><strong>Tap a player</strong> to mark them, stand behind them, or remove them after hand 8.</p>`;
+      const whale = e.getWhaleSeat();
+      if (whale) {
+        this.el.briefingWarn.textContent =
+          `Seat ${whale.id} bought in heavy. If you back off the wrong high-action guest, the shift manager will hear about it.`;
+        this.el.briefingWarn.classList.remove('hidden');
+      } else {
+        this.el.briefingWarn.textContent = '';
+        this.el.briefingWarn.classList.add('hidden');
+      }
+      this.el.briefing.classList.remove('hidden');
+      this.render(e.snapshot());
+    }
+
+ 

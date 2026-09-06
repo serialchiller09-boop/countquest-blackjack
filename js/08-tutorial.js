@@ -20,6 +20,7 @@ function updateTutorialCountExplanation() {
     inject('17-result-toast.js');
     inject('18-soft-total.js');
     inject('20-pitboss-entry.js');
+    inject('21-lobby-catchup.js');
   }
   if (document.readyState === 'complete') injectAll();
   else window.addEventListener('load', injectAll);

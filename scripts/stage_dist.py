@@ -12,6 +12,7 @@ DIST = ROOT / "dist"
 
 ASSETS = (
     "index.html",
+    "play.html",
     "privacy.html",
     "manifest.webmanifest",
     "sw.js",

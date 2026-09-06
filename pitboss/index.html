@@ -31,23 +31,25 @@
     <div class="notebook" id="notebook" aria-label="Notebook"></div>
 
     <div class="controls">
+      <div class="coach" id="coach" aria-label="Coach tips"></div>
       <div class="controls-row">
-        <button type="button" id="btnMark" title="Toggle warm/cold pin">Mark</button>
-        <button type="button" id="btnHover">Hover</button>
-        <button type="button" id="btnShuffle">Shuffle</button>
-        <button type="button" id="btnPeek">Peek count</button>
+        <button type="button" id="btnMark" title="Pin a seat as warm or cold — free, unlimited">Mark seat</button>
+        <button type="button" id="btnHover" title="Stand behind one player for 3 hands. Counters often shrink their bets.">Stand behind</button>
+        <button type="button" id="btnShuffle" title="Force a new shuffle. Counters hate losing a good shoe.">Force shuffle</button>
+        <button type="button" id="btnPeek" title="Check your running count (costs score)">Check my count</button>
       </div>
       <div class="controls-row">
         <button type="button" id="btnPause">Pause</button>
-        <button type="button" id="btnStep">Step</button>
-        <button type="button" data-speed="800">0.8s</button>
-        <button type="button" data-speed="1600" class="active">1.6s</button>
-        <button type="button" data-speed="2400">2.4s</button>
+        <button type="button" id="btnStep">Next hand</button>
+        <button type="button" data-speed="800">Fast</button>
+        <button type="button" data-speed="1600">Normal</button>
+        <button type="button" data-speed="2400" class="active">Slow</button>
+        <button type="button" data-speed="3600">Crawl</button>
       </div>
       <div class="controls-row calls">
         <p class="call-hint" id="callHint">Available after hand 8</p>
-        <button type="button" class="danger" id="btnBackOff">BACK OFF selected seat</button>
-        <button type="button" id="btnPass" title="Always wrong in Case 01 — exactly one seat is counting">PASS TABLE</button>
+        <button type="button" class="danger" id="btnBackOff">Remove that player (Back Off)</button>
+        <button type="button" id="btnPass" title="Always wrong in Case 01 — exactly one seat is counting">Nobody is counting (Pass)</button>
       </div>
     </div>
 
@@ -81,7 +83,7 @@
   <div class="overlay hidden" id="peekModal">
     <div class="modal">
       <h1>Check my count</h1>
-      <p>Enter your running count. One peek per case. Costs score either way.</p>
+      <p>Type the number you think the shoe is at (running count). One check per case. Costs points either way.</p>
       <div class="peek-form">
         <input id="peekInput" type="number" inputmode="numeric" placeholder="RC" />
         <button type="button" class="primary" id="peekSubmit">Check</button>

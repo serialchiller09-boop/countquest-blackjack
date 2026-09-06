@@ -34,9 +34,9 @@
     maxRerolls: 8,
     correlationMinHands: 6,
 
-    speedsMs: [800, 1600, 2400],
-    defaultSpeedIndex: 1,
-    betHoldMs: 600,
+    speedsMs: [800, 1600, 2400, 3600],
+    defaultSpeedIndex: 2,
+    betHoldMs: 1100,
 
     seatCount: 5,
 

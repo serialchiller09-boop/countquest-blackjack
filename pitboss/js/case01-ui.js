@@ -146,11 +146,14 @@
       });
       this.el.btnShowMarks.addEventListener('click', () => {
         this.showMarksOnGraph = !this.showMarksOnGraph;
+        this.el.btnShowMarks.textContent = this.showMarksOnGraph ? 'Hide my marks' : 'Show my marks';
+        this.el.btnShowMarks.classList.toggle('active', this.showMarksOnGraph);
         if (this._lastDossier) {
           Case01Dossier.drawBetVsTcGraph(this.el.graphCanvas, this._lastDossier, {
             showMarks: this.showMarksOnGraph,
           });
         }
+        this._toast(this.showMarksOnGraph ? 'Your warm/cold pins are on the graph.' : 'Marks hidden.');
       });
       this.el.btnExportSeed.addEventListener('click', () => {
         const text = `seed=${this.engine.seed}`;

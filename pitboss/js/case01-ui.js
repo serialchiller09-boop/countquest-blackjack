@@ -17,6 +17,7 @@
       const n = parseInt(q.get('help'), 10);
       if (n >= 0 && n <= 4) return n;
     }
+    // Beginners: Novice by default (plain labels + fact chips).
     return 0;
   }
 
@@ -269,6 +270,7 @@
         });
       }
       this.engine.beginBettingWindow();
+      // Novice: start paused so the big button is literally "Next hand".
       if (this.helpLevel === 0) {
         this.engine.paused = true;
         this._toast('Tap Next hand to deal.');
@@ -300,6 +302,7 @@
       clearTimeout(this.timer);
       if (this.engine.called) return;
       if (this.engine.paused) return;
+      // Novice: pause after each resolved hand so they can catch up.
       if (this.helpLevel === 0) {
         this.engine.paused = true;
         this._toast('Paused — tap Next hand when you have the count.');
@@ -326,16 +329,19 @@
       if (this.engine.paused && !isStep) return;
       this.engine.resolveHand();
       this.render(this.engine.snapshot());
+
       if (this.engine.forceCallPending && !this.engine.called) {
         this._toast('Cut card. Make the call.');
         this.engine.paused = true;
         this.render(this.engine.snapshot());
         return;
       }
+
       if (this.engine.called) {
         this.showDossier();
         return;
       }
+
       if (isStep) return;
       this._scheduleNextHand();
     }
@@ -358,6 +364,7 @@
       const decks = snap.decksRemaining;
       this.el.clock.textContent = `Hand ${snap.handIndex} · Cut in ~${decks.toFixed(1)} decks`;
       this.el.meta.textContent = `Mags · ${CASE01.pitName} · seed ${snap.seed}`;
+
       this.el.seats.innerHTML = '';
       snap.seats.forEach((s) => {
         const div = document.createElement('div');
@@ -392,6 +399,7 @@
         div.addEventListener('click', () => this._openSeatSheet(s.id));
         this.el.seats.appendChild(div);
       });
+
       const anyHands = this.engine.seats.some((s) => s.hands && s.hands[0] && s.hands[0].cards.length);
       const dCards = this.engine.seats[0] && this.engine.seats[0].dealerCards;
       this.el.dealerCards.textContent = dCards
@@ -401,12 +409,15 @@
           : '-';
       this.el.shoeInfo.textContent = `Shoe · ${snap.cardsLeft} left`;
       this.el.discardInfo.textContent = `Discard`;
+
       if (snap.flavorLog && snap.flavorLog.length) {
         this.el.flavor.textContent = snap.flavorLog[snap.flavorLog.length - 1];
       }
+
       this._renderNotebook(snap);
       this._renderCoach(snap);
       this._renderPrimary(snap);
+
       this.el.btnHover.disabled = snap.hoverUsed || snap.called;
       this.el.btnShuffle.disabled = snap.shuffleUsed || snap.called;
       this.el.btnPeek.disabled = snap.peekUsed || snap.called;
@@ -433,10 +444,12 @@
       this.el.btnPass.title = 'Always wrong in Case 01 — exactly one seat is counting';
       this.el.btnPause.textContent = snap.paused ? 'Resume' : 'Pause';
       this.el.btnPause.classList.toggle('active', snap.paused);
+
       this.el.btnHover.title =
         this.helpLevel <= 1 ? 'Stand behind a seat for 3 hands. Counters often flatten.' : 'Hover';
       this.el.btnShuffle.title =
         this.helpLevel <= 1 ? 'Force a shuffle. Advantage players hate giving up a plus count.' : 'Shuffle Test';
+
       if (this.debug) {
         this.el.debug.classList.remove('hidden');
         const lines = snap.seats.map((s) => {
@@ -454,6 +467,7 @@
         this.el.debug.classList.add('hidden');
       }
     }
+
 
     _openSeatSheet(seatId) {
       this.engine.selectSeat(seatId);
@@ -486,6 +500,7 @@
         this._toast('Tap the seat you want to remove.');
         return;
       }
+      // Always advance one hand from the big button (novice-friendly).
       clearTimeout(this.timer);
       this.engine.paused = false;
       if (this.engine.phase === 'betting') {
@@ -535,6 +550,7 @@
         if (pass) pass.disabled = true;
       }
     }
+
 
     _renderCoach(snap) {
       if (!this.el.coach) return;

@@ -31,6 +31,7 @@ body {
   max-width: 720px;
   margin: 0 auto;
   padding: 0 0 96px;
+  overflow-x: hidden;
 }
 
 button {
@@ -372,13 +373,14 @@ button.active {
   margin-top: 0.75rem;
 }
 
-@media (max-width: 420px) {
-  .seat-name { font-size: 0.58rem; }
-  .chips { width: 1.7rem; height: 1.7rem; font-size: 0.55rem; }
+@media (max-width: 480px) {
+  .seats { grid-template-columns: repeat(3, 1fr); }
+  .seat-name { font-size: 0.7rem; }
+  .chips { width: 2rem; height: 2rem; font-size: 0.65rem; }
   .controls button { min-width: 4.8rem; font-size: 0.8rem; }
-  .seat { min-height: 102px; padding: 0.3rem 0.15rem 0.4rem; }
-  .pit { min-height: 280px; padding: 0.55rem 0.35rem 0.75rem; }
-  #graphCanvas { height: 360px; }
+  .seat { min-height: 110px; padding: 0.4rem 0.2rem 0.45rem; }
+  .pit { min-height: 280px; padding: 0.55rem 0.35rem 0.75rem; overflow: hidden; }
+  #graphCanvas { height: 820px; }
   .topbar { flex-wrap: wrap; gap: 0.25rem 0.5rem; }
   .call-hint { font-size: 0.7rem; }
 }

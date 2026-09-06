@@ -1,4 +1,28 @@
-__cqRail27) return;
+    var wrapped = async function () {
+      if (!featureOn()) return orig.apply(this, arguments);
+      ensureRailSettings(this);
+      var density = densityFor(this);
+      if (density === 'off') {
+        planRound(this);
+        return orig.apply(this, arguments);
+      }
+      // Quiet/Busy need animated deal + live shoe/counter — else soft back to original.
+      if (
+        typeof this.dealCardAnimated !== 'function' ||
+        !this.shoe ||
+        !this.counter
+      ) {
+        planRound(this);
+        return orig.apply(this, arguments);
+      }
+      return dealInitialWithRail.call(this, orig);
+    };
+    wrapped.__cqRail27 = true;
+    proto.dealInitial = wrapped;
+  }
+
+  function wrapSyncLayout(proto) {
+    if (!proto.syncCasinoSeatLayout || proto.syncCasinoSeatLayout.__cqRail27) return;
     var orig = proto.syncCasinoSeatLayout;
     var wrapped = function () {
       var out = orig.apply(this, arguments);
@@ -23,8 +47,7 @@ __cqRail27) return;
       s.settings = s.settings || {};
       s.flags = s.flags || {};
       if (s.settings.railDensity === undefined) {
-        var hp = (s.stats && s.stats.handsPlayed) || 0;
-        s.settings.railDensity = hp >= 12 ? 'quiet' : 'off';
+        s.settings.railDensity = 'off';
       }
       return s;
     };

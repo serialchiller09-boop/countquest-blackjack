@@ -22,6 +22,7 @@ const SHELL_ASSETS = [
   './css/cq-v64-play.css',
   './css/cq-v65-play.css',
   './css/cq-jeff-23.css',
+  './css/cq-jeff-23-stats.css',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/apple-touch-icon.png',

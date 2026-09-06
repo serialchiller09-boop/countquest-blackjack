@@ -34,15 +34,28 @@
         html = html.replace('<title>Pit Boss</title>', '<title>CountQuest Blackjack</title>');
         html = html.replace('content="Pit Boss"', 'content="CountQuest"');
         if (html.indexOf('__CQ_RAIL') === -1) {
-          html = html.replace('</head>', '<script>window.__CQ_RAIL=false;<\\/script></head>');
-          html = html.replace('<\\/script>', '<' + '/script>');
+          html = html.replace('</head>', '<script>window.__CQ_RAIL=false;<\/script></head>');
+          html = html.replace('<\/script>', '<' + '/script>');
         }
         if (html.indexOf('28-click-unstick.js') === -1) {
-          html = html.replace('</body>', '<script src="js/28-click-unstick.js?v=53"><\\/script></body>');
+          html = html.replace('</body>', '<script src="js/28-click-unstick.js?v=53"><\/script></body>');
+          html = html.replace('<\/script>', '<' + '/script>');
+        }
+        // Sounds guard: ensure 06c runs after 06b / before 07 (iframe localStorage SecurityError hardening)
+        if (html.indexOf('06c-sounds-guard.js') === -1) {
+          html = html.replace(
+            /(<script src="js\/06b-validation\.js[^"]*"><\/script>)/,
+            '$1\n  <script src="js/06c-sounds-guard.js?v=50"><\\/script>'
+          );
           html = html.replace('<\\/script>', '<' + '/script>');
         }
+        // Cache-bust critical boot scripts after Sounds fix
+        html = html.replace(/js\/06b-validation\.js\?v=\d+/g, 'js/06b-validation.js?v=50');
+        html = html.replace(/js\/06c-sounds-guard\.js\?v=\d+/g, 'js/06c-sounds-guard.js?v=50');
+        html = html.replace(/js\/07-game-engine\.js\?v=\d+/g, 'js/07-game-engine.js?v=50');
+        html = html.replace(/js\/09-tests\.js\?v=\d+/g, 'js/09-tests.js?v=50');
         // Ensure relative script/CSS resolve to Pages app root (not about:blank)
-        var baseHref = location.href.replace(/[^\\/]*$/, '');
+        var baseHref = location.href.replace(/[^\/]*$/, '');
         if (html.indexOf('<base ') === -1) {
           html = html.replace(/<head([^>]*)>/i, '<head$1><base href="' + baseHref + '">');
         }

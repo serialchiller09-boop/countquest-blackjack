@@ -224,6 +224,21 @@ button.active {
   font-size: 0.75rem;
 }
 
+
+.coach {
+  margin: 0.35rem 0.75rem 0.15rem;
+  padding: 0.55rem 0.7rem;
+  background: #1a2230;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--gold);
+  border-radius: 0 10px 10px 0;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: #d5d0c8;
+}
+.coach strong { color: var(--gold); }
+.coach.hidden { display: none; }
+
 .controls {
   margin: 0.5rem 0.75rem;
   display: grid;

@@ -1,5 +1,5 @@
 /* CountQuest PWA service worker — cache app shell for offline repeat visits. */
-const CACHE_VERSION = 'cq-pwa-v44';
+const CACHE_VERSION = 'cq-pwa-v45';
 const SHELL_ASSETS = [
   './',
   './index.html',
@@ -10,7 +10,10 @@ const SHELL_ASSETS = [
   './index-parts/02.txt',
   './index-parts/03.txt',
   './index-parts/04.txt',
-  './index-parts/05.txt',
+  './index-parts/05.part0.txt',
+  './index-parts/05.part1.txt',
+  './index-parts/05.part2.txt',
+  './index-parts/05.part3.txt',
   './css/tailwind.css',
   './css/app.css',
   './css/casino-felt-table.css',

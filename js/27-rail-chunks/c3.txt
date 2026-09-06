@@ -1,0 +1,74 @@
+s();
+    return !!(help && help.level <= 1);
+  }
+
+  function cardLabel(card) {
+    if (typeof formatCardLabel === 'function') return formatCardLabel(card);
+    var suitMap = { S: '\u2660', H: '\u2665', D: '\u2666', C: '\u2663' };
+    return String(card.rank || '') + (suitMap[card.suit] || card.suit || '');
+  }
+
+  function prefersReducedMotion() {
+    try {
+      return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function wait(ms) {
+    if (typeof sleep === 'function') return sleep(ms);
+    return new Promise(function (r) { setTimeout(r, ms); });
+  }
+
+  function animateCard(card, tag, handId, help) {
+    var app = window.app;
+    var strip = mountStrip(app);
+    var flyLayer = strip.querySelector('.cq-rail-fly-layer');
+    var stack = strip.querySelector('.cq-rail-stack');
+    var flashMode = shouldFlashTag(help);
+    var keepFaces = shouldShowFacesAfterTuck(help);
+    var ms = dwellMs(help);
+    var reduced = prefersReducedMotion();
+
+    var fly = document.createElement('div');
+    fly.className = 'cq-rail-fly' + (reduced ? ' cq-rail-fly--snap' : '');
+    fly.dataset.hand = handId;
+    var lvl = help && help.level != null ? help.level : 2;
+    if (lvl <= 0) fly.classList.add('cq-rail-fly--l0');
+    else if (lvl === 1) fly.classList.add('cq-rail-fly--l1');
+    else if (lvl === 2) fly.classList.add('cq-rail-fly--l2');
+    else if (lvl === 3) fly.classList.add('cq-rail-fly--l3');
+    else fly.classList.add('cq-rail-fly--l4');
+
+    fly.innerHTML = '<span class="cq-rail-rank">' + cardLabel(card) + '</span>';
+    if (flashMode === 'label' && tag !== 0) {
+      var tagEl = document.createElement('span');
+      tagEl.className = 'cq-rail-tag ' + (tag > 0 ? 'cq-rail-tag--plus' : 'cq-rail-tag--minus');
+      tagEl.textContent = tag > 0 ? '+1' : '\u22121';
+      fly.appendChild(tagEl);
+    } else if (flashMode === 'pip') {
+      var pip = document.createElement('span');
+      pip.className = 'cq-rail-tag cq-rail-tag--pip ' + (tag > 0 ? 'cq-rail-tag--plus' : tag < 0 ? 'cq-rail-tag--minus' : 'cq-rail-tag--zero');
+      pip.setAttribute('aria-hidden', 'true');
+      fly.appendChild(pip);
+    }
+
+    if (flyLayer) flyLayer.appendChild(fly);
+    else strip.appendChild(fly);
+
+    return wait(ms).then(function () {
+      if (fly.parentNode) fly.parentNode.removeChild(fly);
+      if (!stack) return;
+      if (keepFaces) {
+        var tuck = document.createElement('div');
+        tuck.className = 'cq-rail-stack-card';
+        tuck.dataset.hand = handId;
+        tuck.textContent = cardLabel(card);
+        stack.appendChild(tuck);
+        while (stack.children.length > 4) stack.removeChild(stack.firstChild);
+      } else {
+        var countEl = strip.querySelector('.cq-rail-seen-count');
+        var n = (app && app.rail && app.rail.dealt && app.rail.dealt.length) || 0;
+        if (countEl) countEl.textContent = n ? n + ' seen' : '';
+        stack.innerHTML = '<div class="cq-r

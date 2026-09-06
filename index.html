@@ -10,10 +10,11 @@
     (async function () {
       try {
         var base = new URL('.', location.href).pathname; // ends with /
-        var man = await (await fetch(base + 'index-parts/manifest.json', { cache: 'no-store' })).json();
+        var bust = 'v=50'; // first-run daily gate ship
+        var man = await (await fetch(base + 'index-parts/manifest.json?' + bust, { cache: 'no-store' })).json();
         var chunks = [];
         for (var i = 0; i < man.parts.length; i++) {
-          var t = await (await fetch(base + 'index-parts/' + man.parts[i], { cache: 'no-store' })).text();
+          var t = await (await fetch(base + 'index-parts/' + man.parts[i] + '?' + bust, { cache: 'no-store' })).text();
           chunks.push(t);
         }
         var html = chunks.join('');

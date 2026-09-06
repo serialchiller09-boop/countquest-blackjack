@@ -54,6 +54,30 @@
         html = html.replace(/js\/06c-sounds-guard\.js\?v=\d+/g, 'js/06c-sounds-guard.js?v=50');
         html = html.replace(/js\/07-game-engine\.js\?v=\d+/g, 'js/07-game-engine.js?v=50');
         html = html.replace(/js\/09-tests\.js\?v=\d+/g, 'js/09-tests.js?v=50');
+        // EMERGENCY: if index-parts/05.txt is broken/PLACEHOLDER, inject boot scripts + close document
+        if (html.indexOf('</html>') === -1 || html.indexOf('06b-validation.js') === -1 || html.indexOf('PLACEHOLDER') !== -1) {
+          html = html.replace(/PLACEHOLDER_WILL_REPLACE/g, '');
+          if (html.indexOf('js/07-game-engine.js') === -1) {
+            html += '<script src="js/00-capacitor-bridge.js?v=50"><\\/script>';
+            html += '<script src="js/01-constants.js?v=50"><\\/script>';
+            html += '<script src="js/02-core-types.js?v=50"><\\/script>';
+            html += '<script src="js/03-counting.js?v=50"><\\/script>';
+            html += '<script src="js/04-strategy.js?v=50"><\\/script>';
+            html += '<script src="js/05-help-system.js?v=50"><\\/script>';
+            html += '<script src="js/06-stats-storage.js?v=50"><\\/script>';
+            html += '<script src="js/06b-validation.js?v=50"><\\/script>';
+            html += '<script src="js/06c-sounds-guard.js?v=50"><\\/script>';
+            html += '<script src="js/07-game-engine.js?v=50"><\\/script>';
+            html += '<script src="js/08-tutorial.js?v=50"><\\/script>';
+            html += '<script src="js/10-dealer-engine.js?v=50"><\\/script>';
+            html += '<script src="js/09-tests.js?v=50"><\\/script>';
+            html += '<script src="js/11-first-run.js?v=50"><\\/script>';
+            html = html.replace(/<\\\/script>/g, '<' + '/script>');
+          }
+          if (html.indexOf('</body>') === -1) html += '</body>';
+          if (html.indexOf('</html>') === -1) html += '</html>';
+        }
+
         // Ensure relative script/CSS resolve to Pages app root (not about:blank)
         var baseHref = location.href.replace(/[^\/]*$/, '');
         if (html.indexOf('<base ') === -1) {

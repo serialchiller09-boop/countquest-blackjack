@@ -1,0 +1,117 @@
+.shoeInfo.textContent = `Shoe · ${snap.cardsLeft} left`;
+      this.el.discardInfo.textContent = `Discard`;
+
+      if (snap.flavorLog && snap.flavorLog.length) {
+        this.el.flavor.textContent = snap.flavorLog[snap.flavorLog.length - 1];
+      }
+
+      this._renderNotebook(snap);
+      this._renderCoach(snap);
+      this._renderPrimary(snap);
+
+      this.el.btnHover.disabled = snap.hoverUsed || snap.called;
+      this.el.btnShuffle.disabled = snap.shuffleUsed || snap.called;
+      this.el.btnPeek.disabled = snap.peekUsed || snap.called;
+      this.el.btnBackOff.disabled = !snap.canCall || !snap.selectedSeatId || snap.called;
+      this.el.btnPass.disabled = !snap.canCall || snap.called;
+      if (this.el.callHint) {
+        if (snap.called) {
+          this.el.callHint.textContent = '';
+          this.el.callHint.classList.add('hidden');
+          this.el.callHint.classList.remove('ready');
+        } else if (!snap.canCall) {
+          this.el.callHint.textContent = 'Watch through hand 8, then you can accuse someone';
+          this.el.callHint.classList.remove('hidden', 'ready');
+        } else if (!snap.selectedSeatId) {
+          this.el.callHint.textContent = 'Tap a seat, then Remove that player';
+          this.el.callHint.classList.remove('hidden');
+          this.el.callHint.classList.add('ready');
+        } else {
+          this.el.callHint.textContent = 'Ready — remove the counter or pass';
+          this.el.callHint.classList.remove('hidden');
+          this.el.callHint.classList.add('ready');
+        }
+      }
+      this.el.btnPass.title = 'Always wrong in Case 01 — exactly one seat is counting';
+      this.el.btnPause.textContent = snap.paused ? 'Resume' : 'Pause';
+      this.el.btnPause.classList.toggle('active', snap.paused);
+
+      this.el.btnHover.title =
+        this.helpLevel <= 1 ? 'Stand behind a seat for 3 hands. Counters often flatten.' : 'Hover';
+      this.el.btnShuffle.title =
+        this.helpLevel <= 1 ? 'Force a shuffle. Advantage players hate giving up a plus count.' : 'Shuffle Test';
+
+      if (this.debug) {
+        this.el.debug.classList.remove('hidden');
+        const lines = snap.seats.map((s) => {
+          const full = this.engine.seats.find((x) => x.id === s.id);
+          const corr = (snap.correlations || []).find((c) => c.seatId === s.id);
+          const r = corr && corr.r != null ? corr.r.toFixed(2) : 'n/a';
+          const want = s.debugWanted != null ? ` want=${s.debugWanted}` : '';
+          return `S${s.id} ${full.archetype} r=${r}${want}`;
+        });
+        this.el.debug.textContent =
+          `DEBUG seed=${snap.seed} RC=${snap.runningCount} TC=${snap.trueCount} rerolls=${snap.rerollsUsed}\n` +
+          `previewCounterR=${snap.counterRPreview != null ? snap.counterRPreview.toFixed(2) : '?'}\n` +
+          lines.join('\n');
+      } else {
+        this.el.debug.classList.add('hidden');
+      }
+    }
+
+
+    _openSeatSheet(seatId) {
+      this.engine.selectSeat(seatId);
+      const seat = this.engine.seats.find((s) => s.id === seatId);
+      if (!seat || !this.el.seatSheet) return;
+      const snap = this.engine.snapshot();
+      this.el.sheetTitle.textContent = 'Seat ' + seat.id + ' · ' + seat.name;
+      this.el.sheetSub.textContent =
+        'Betting ' + seat.betUnits + ' units · stack $' + seat.stackUnits * CASE01.unitCash;
+      this.el.sheetHover.disabled = snap.hoverUsed || snap.called;
+      this.el.sheetAccuse.disabled = !snap.canCall || snap.called;
+      this.el.sheetAccuse.textContent = snap.canCall
+        ? 'Remove this player'
+        : 'Remove this player (after hand 8)';
+      this.el.sheetTip.textContent = snap.canCall
+        ? 'Only remove them if their bets climbed when the count got hot.'
+        : 'You can mark or stand behind now. Accusing unlocks after hand 8.';
+      this.el.seatSheet.classList.remove('hidden');
+      this.render(this.engine.snapshot());
+    }
+
+    _closeSeatSheet() {
+      if (this.el.seatSheet) this.el.seatSheet.classList.add('hidden');
+    }
+
+    _onPrimary() {
+      if (this.engine.called) return;
+      const snap = this.engine.snapshot();
+      if (snap.canCall) {
+        this._toast('Tap the seat you want to remove.');
+        return;
+      }
+      // Always advance one hand from the big button (novice-friendly).
+      clearTimeout(this.timer);
+      this.engine.paused = false;
+      if (this.engine.phase === 'betting') {
+        this._resolveNow(true);
+        if (this.helpLevel === 0 && !this.engine.called) {
+          this.engine.paused = true;
+          this.render(this.engine.snapshot());
+        } else if (!this.engine.called) {
+          this._scheduleNextHand();
+        }
+        return;
+      }
+      this._startNextHand(true);
+      if (this.helpLevel === 0 && !this.engine.called) {
+        this.engine.paused = true;
+        this.render(this.engine.snapshot());
+      }
+    }
+
+    _renderPrimary(snap) {
+      if (!this.el.btnPrimary) return;
+      const btn = this.el.btnPrimary;
+      const pass = this

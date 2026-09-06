@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a1612" />
+  <title>CountQuest Blackjack</title>
+  <style>
+    html, body { margin: 0; height: 100%; background: #0a1612; color: #d4af37; font-family: system-ui, sans-serif; }
+    #cq-boot { padding: 2rem; }
+    #cq-frame { position: fixed; inset: 0; border: 0; width: 100%; height: 100%; background: #0a1612; }
+  </style>
+</head>
+<body>
+  <div id="cq-boot">Opening table…</div>
+  <script>
+    (async function () {
+      function fail(err) {
+        document.getElementById('cq-boot').innerHTML =
+          '<h1 style="color:#d4af37">CountQuest did not finish loading</h1>' +
+          '<p style="color:#d1fae5">Hard-refresh, or unregister the service worker and reload.</p>' +
+          '<p style="color:#86efac;font-size:.85rem">' + String(err || 'timeout') + '</p>' +
+          '<p><button type="button" onclick="location.reload()" style="padding:.75rem 1.15rem;font-weight:800;border-radius:.65rem;background:#d4af37;color:#111;border:0">Reload</button></p>';
+      }
+      var watchdog = setTimeout(function () { fail('Timed out assembling the table'); }, 12000);
+      try {
+        window.__CQ_RAIL = false;
+        var man = await (await fetch('index-parts/manifest.json', { cache: 'no-store' })).json();
+        var html = '';
+        for (var i = 0; i < man.parts.length; i++) {
+          html += await (await fetch('index-parts/' + man.parts[i], { cache: 'no-store' })).text();
+        }
+        if (!html || html.indexOf('chip-buttons') === -1) throw new Error('shell incomplete');
+        html = html.replace('<title>Pit Boss</title>', '<title>CountQuest Blackjack</title>');
+        html = html.replace('content="Pit Boss"', 'content="CountQuest"');
+        if (html.indexOf('__CQ_RAIL') === -1) {
+          html = html.replace('</head>', '<script>window.__CQ_RAIL=false;<\\/script></head>');
+          html = html.replace('<\\/script>', '<' + '/script>');
+        }
+        if (html.indexOf('28-click-unstick.js') === -1) {
+          html = html.replace('</body>', '<script src="js/28-click-unstick.js?v=53"><\\/script></body>');
+          html = html.replace('<\\/script>', '<' + '/script>');
+        }
+        clearTimeout(watchdog);
+        var boot = document.getElementById('cq-boot');
+        if (boot) boot.remove();
+        var frame = document.createElement('iframe');
+        frame.id = 'cq-frame';
+        frame.setAttribute('title', 'CountQuest Blackjack');
+        document.body.appendChild(frame);
+        var doc = frame.contentDocument;
+        doc.open();
+        doc.write(html);
+        doc.close();
+      } catch (e) {
+        clearTimeout(watchdog);
+        fail(e);
+      }
+    })();
+  </script>
+</body>
+</html>

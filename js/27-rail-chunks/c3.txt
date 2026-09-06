@@ -1,23 +1,9 @@
-s();
-    return !!(help && help.level <= 1);
-  }
-
-  function cardLabel(card) {
-    if (typeof formatCardLabel === 'function') return formatCardLabel(card);
-    var suitMap = { S: '\u2660', H: '\u2665', D: '\u2666', C: '\u2663' };
-    return String(card.rank || '') + (suitMap[card.suit] || card.suit || '');
-  }
-
-  function prefersReducedMotion() {
-    try {
-      return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-    } catch (e) {
       return false;
     }
   }
 
   function wait(ms) {
-    if (typeof sleep === 'function') return sleep(ms);
+    // Always local setTimeout — never call global sleep (even if it returns a Promise).
     return new Promise(function (r) { setTimeout(r, ms); });
   }
 
@@ -71,4 +57,22 @@ s();
         var countEl = strip.querySelector('.cq-rail-seen-count');
         var n = (app && app.rail && app.rail.dealt && app.rail.dealt.length) || 0;
         if (countEl) countEl.textContent = n ? n + ' seen' : '';
-        stack.innerHTML = '<div class="cq-r
+        stack.innerHTML = '<div class="cq-rail-stack-back" aria-hidden="true"></div>';
+      }
+    });
+  }
+
+  function cardsThisRound(app) {
+    app = app || window.app;
+    if (!app || !app.rail || !app.rail.dealt) return [];
+    return app.rail.dealt.map(function (d) { return d.card; });
+  }
+
+  function runningCountContribution(app) {
+    app = app || window.app;
+    if (!app || !app.rail || !app.rail.dealt) return 0;
+    return app.rail.dealt.reduce(function (s, d) { return s + (d.tag || 0); }, 0);
+  }
+
+  function noteDealt(app, card, tag, handId) {
+    ensureAppRail(app, app.rail && app.rail.density);

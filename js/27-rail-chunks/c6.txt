@@ -1,4 +1,17 @@
-gsUI(app);
+    if (helpCards && helpCards.parentElement) {
+      helpCards.parentElement.insertBefore(row, helpCards);
+    } else if (soundToggle && soundToggle.closest('label')) {
+      soundToggle.closest('label').parentElement.insertBefore(row, soundToggle.closest('label'));
+    } else {
+      modal.appendChild(row);
+    }
+    row.querySelectorAll('[data-rail-density]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        if (!app || !app.save) return;
+        ensureRailSettings(app);
+        app.save.settings.railDensity = btn.getAttribute('data-rail-density');
+        if (typeof app.persist === 'function') app.persist();
+        syncSettingsUI(app);
         updateStripVisibility(app);
         if (typeof app.toast === 'function') {
           app.toast('Rail cards: ' + app.save.settings.railDensity + ' (next deal)', 'info', 2200);
@@ -73,19 +86,3 @@ gsUI(app);
   function wrapDealInitial(proto) {
     if (!proto.dealInitial || proto.dealInitial.__cqRail27) return;
     var orig = proto.dealInitial;
-    var wrapped = async function () {
-      if (!featureOn()) return orig.apply(this, arguments);
-      ensureRailSettings(this);
-      var density = densityFor(this);
-      if (density === 'off') {
-        planRound(this);
-        return orig.apply(this, arguments);
-      }
-      return dealInitialWithRail.apply(this, arguments);
-    };
-    wrapped.__cqRail27 = true;
-    proto.dealInitial = wrapped;
-  }
-
-  function wrapSyncLayout(proto) {
-    if (!proto.syncCasinoSeatLayout || proto.syncCasinoSeatLayout.

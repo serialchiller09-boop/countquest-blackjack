@@ -129,6 +129,21 @@
   }
 
 
+
+  function ensurePipCss() {
+    try {
+      var links = document.querySelectorAll('link[href*="cq-modern.css"]');
+      if (!links.length) {
+        var l = document.createElement('link');
+        l.rel = 'stylesheet';
+        l.href = 'css/cq-modern.css?v=47';
+        document.head.appendChild(l);
+      } else {
+        links.forEach(function (l) { l.href = 'css/cq-modern.css?v=47'; });
+      }
+    } catch (e) {}
+  }
+
   function applyTitles() {
     try {
       document.title = 'Pit Boss';
@@ -147,6 +162,7 @@
   }
 
   function boot() {
+    ensurePipCss();
     applyTitles();
     if (apply()) return;
     let n = 0;
@@ -159,4 +175,5 @@
   // Re-apply titles after late lobby paints
   setTimeout(applyTitles, 0);
   setTimeout(applyTitles, 500);
+  setTimeout(ensurePipCss, 0);
 })();

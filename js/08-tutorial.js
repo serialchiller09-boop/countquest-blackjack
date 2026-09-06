@@ -7,7 +7,7 @@ function updateTutorialCountExplanation() {
   function inject(name) {
     if (document.querySelector('script[src*="' + name + '"]')) return;
     const s = document.createElement('script');
-    s.src = 'js/' + name + '?v=47';
+    s.src = 'js/' + name + '?v=48';
     document.head.appendChild(s);
   }
   function injectAll() {
@@ -22,6 +22,7 @@ function updateTutorialCountExplanation() {
     inject('20-pitboss-entry.js');
     inject('21-lobby-catchup.js');
     inject('22-dealer-catchup.js');
+    inject('23-jeff-patches.js');
   }
   if (document.readyState === 'complete') injectAll();
   else window.addEventListener('load', injectAll);

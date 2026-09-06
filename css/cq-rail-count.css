@@ -1,1 +1,202 @@
-PLACEHOLDER
+/* Rail Count Increment 1 — THE RAIL strip (solo table preserved) */
+#cq-rail-strip.cq-rail-strip,
+.cq-rail-strip {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 4.5rem;
+  z-index: 6;
+  width: min(92%, 420px);
+  height: 40px;
+  max-height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.2rem 0.55rem;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(8, 28, 22, 0.72), rgba(6, 20, 16, 0.45));
+  border: 1px solid rgba(212, 200, 120, 0.35);
+  border-radius: 10px;
+  box-shadow: 0 1px 0 rgba(0, 240, 255, 0.08);
+  overflow: hidden;
+}
+
+@media (min-width: 768px) {
+  #cq-rail-strip.cq-rail-strip,
+  .cq-rail-strip {
+    height: 52px;
+    max-height: 52px;
+    top: 5.25rem;
+  }
+}
+
+@media (max-height: 640px) and (max-width: 420px) {
+  #cq-rail-strip.cq-rail-strip,
+  .cq-rail-strip {
+    height: 36px;
+    max-height: 36px;
+    top: 3.75rem;
+  }
+}
+
+body.cq-rail-off #cq-rail-strip,
+body.cq-rail-off .cq-rail-strip {
+  display: none !important;
+}
+
+.cq-table-play-layer {
+  position: relative;
+}
+
+.cq-rail-title {
+  flex: 0 0 auto;
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  font-weight: 800;
+  color: #f0d060;
+  border-bottom: 1px solid rgba(240, 208, 96, 0.55);
+  padding-bottom: 1px;
+  white-space: nowrap;
+}
+
+.cq-rail-fly-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.cq-rail-fly {
+  position: absolute;
+  left: 42%;
+  top: 50%;
+  transform: translate(-50%, -120%) scale(0.92);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.12rem 0.35rem;
+  border-radius: 6px;
+  background: #f8f6f0;
+  color: #111;
+  font-weight: 800;
+  font-size: 0.72rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  animation: cq-rail-fly-in 280ms ease-out forwards;
+}
+
+.cq-rail-fly--snap {
+  animation: none;
+  transform: translate(-50%, -50%);
+}
+
+.cq-rail-fly--l0 { min-height: 40px; font-size: 0.85rem; }
+.cq-rail-fly--l1 { min-height: 36px; font-size: 0.78rem; }
+.cq-rail-fly--l2 { min-height: 32px; font-size: 0.72rem; }
+.cq-rail-fly--l3,
+.cq-rail-fly--l4 { min-height: 28px; font-size: 0.68rem; opacity: 0.92; }
+
+.cq-rail-fly--l4 {
+  animation-duration: 160ms;
+}
+
+@keyframes cq-rail-fly-in {
+  from { opacity: 0; transform: translate(-50%, -160%) scale(0.8); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cq-rail-fly {
+    animation: none !important;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.cq-rail-tag {
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 0 0.2rem;
+  border-radius: 4px;
+}
+
+.cq-rail-tag--plus { color: #00f0ff; }
+.cq-rail-tag--minus { color: #f87171; }
+.cq-rail-tag--zero { color: #9ca3af; }
+
+.cq-rail-tag--pip {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  padding: 0;
+  display: inline-block;
+}
+.cq-rail-tag--pip.cq-rail-tag--plus { background: #22c55e; color: transparent; }
+.cq-rail-tag--pip.cq-rail-tag--minus { background: #ef4444; color: transparent; }
+.cq-rail-tag--pip.cq-rail-tag--zero { background: #9ca3af; color: transparent; }
+
+.cq-rail-stack {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  margin-left: auto;
+  min-height: 1.2rem;
+}
+
+.cq-rail-stack-card {
+  font-size: 0.58rem;
+  font-weight: 700;
+  background: rgba(248, 246, 240, 0.92);
+  color: #111;
+  border-radius: 3px;
+  padding: 0.05rem 0.22rem;
+}
+
+.cq-rail-stack-back {
+  width: 1.1rem;
+  height: 1.35rem;
+  border-radius: 3px;
+  background: linear-gradient(145deg, #1e3a8a, #172554);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.cq-rail-seen-count {
+  font-size: 0.58rem;
+  color: #86efac;
+  opacity: 0.85;
+  white-space: nowrap;
+}
+
+.cq-rail-whisper {
+  position: absolute;
+  left: 0.5rem;
+  right: 0.5rem;
+  bottom: -1.15rem;
+  margin: 0;
+  font-size: 0.62rem;
+  color: #67e8f9;
+  text-align: center;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
+}
+
+.cq-rail-whisper.hidden { display: none; }
+
+.cq-rail-settings-row .cq-rail-seg {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.35rem;
+}
+
+.cq-rail-seg-btn {
+  padding: 0.45rem 0.35rem;
+  border-radius: 0.65rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.25);
+  color: #d1fae5;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.cq-rail-seg-btn.selected {
+  border-color: rgba(0, 240, 255, 0.55);
+  background: rgba(0, 80, 70, 0.55);
+  color: #ecfeff;
+  box-shadow: 0 0 0 1px rgba(0, 240, 255, 0.25);
+}

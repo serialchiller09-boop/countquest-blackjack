@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a0c10" />
+  <title>The Shift — CountQuest</title>
+  <link rel="stylesheet" href="css/shift-floor.css" />
+</head>
+<body class="shift-floor">
+  <div id="shift-app" class="shift-app" aria-live="polite">
+    <header class="shift-top">
+      <div class="shift-brand">
+        <span class="shift-brand-mark">♠</span>
+        <div>
+          <strong>The Shift</strong>
+          <span class="shift-brand-sub">one table · mid-shoe</span>
+        </div>
+      </div>
+      <div class="shift-clock" id="shift-clock" title="Time left on this shift">4:00</div>
+      <button type="button" class="shift-glance" id="btn-glance" title="Peek your mental count">Glance</button>
+    </header>
+
+    <div class="shift-glance-flash" id="glance-flash" hidden aria-hidden="true"></div>
+
+    <main class="shift-room">
+      <section class="shift-table" aria-label="Blackjack table">
+        <div class="dealer-rail">
+          <div class="seat seat-dealer" data-seat="dealer">
+            <div class="seat-name">Ray <span class="seat-role">dealer</span></div>
+            <div class="seat-cards" id="dealer-cards"></div>
+            <div class="seat-total" id="dealer-total"></div>
+            <div class="seat-line" id="dealer-line"></div>
+          </div>
+        </div>
+
+        <div class="felt">
+          <div class="felt-label">BLACKJACK PAYS 3 TO 2</div>
+          <div class="seat-row">
+            <div class="seat seat-npc" data-seat="dana" id="seat-dana">
+              <div class="seat-name">Dana</div>
+              <div class="seat-chips" id="chips-dana"></div>
+              <div class="seat-bet" id="bet-dana"></div>
+              <div class="seat-cards" id="cards-dana"></div>
+              <div class="seat-total" id="total-dana"></div>
+              <div class="seat-status" id="status-dana"></div>
+            </div>
+            <div class="seat seat-npc" data-seat="cole" id="seat-cole">
+              <div class="seat-name">Cole</div>
+              <div class="seat-chips" id="chips-cole"></div>
+              <div class="seat-bet" id="bet-cole"></div>
+              <div class="seat-cards" id="cards-cole"></div>
+              <div class="seat-total" id="total-cole"></div>
+              <div class="seat-status" id="status-cole"></div>
+            </div>
+            <div class="seat seat-player" data-seat="you" id="seat-you">
+              <div class="seat-name">You</div>
+              <div class="seat-chips" id="chips-you"></div>
+              <div class="seat-bet" id="bet-you"></div>
+              <div class="seat-cards" id="cards-you"></div>
+              <div class="seat-total" id="total-you"></div>
+              <div class="seat-status" id="status-you"></div>
+            </div>
+            <div class="seat seat-npc" data-seat="irene" id="seat-irene">
+              <div class="seat-name">Irene</div>
+              <div class="seat-chips" id="chips-irene"></div>
+              <div class="seat-bet" id="bet-irene"></div>
+              <div class="seat-cards" id="cards-irene"></div>
+              <div class="seat-total" id="total-irene"></div>
+              <div class="seat-status" id="status-irene"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="shift-side">
+        <div class="talk-log" id="talk-log" aria-label="Table talk"></div>
+        <div class="shift-meta" id="shift-meta">Hand — · Shoe mid</div>
+      </aside>
+    </main>
+
+    <footer class="shift-controls" id="shift-controls">
+      <div class="ctrl-group" id="ctrl-arrive">
+        <p class="ctrl-hint">Table's already running. Sit quiet, or put something down.</p>
+        <button type="button" class="btn btn-ghost" id="btn-watch">Watch</button>
+        <button type="button" class="btn btn-chip" data-bet="10">Bet 10</button>
+        <button type="button" class="btn btn-chip" data-bet="25">Bet 25</button>
+        <button type="button" class="btn btn-chip" data-bet="50">Bet 50</button>
+      </div>
+      <div class="ctrl-group" id="ctrl-waiting" hidden>
+        <p class="ctrl-hint" id="waiting-hint">Watching this hand…</p>
+      </div>
+      <div class="ctrl-group" id="ctrl-play" hidden>
+        <button type="button" class="btn btn-primary" id="btn-hit">Hit</button>
+        <button type="button" class="btn btn-primary" id="btn-stand">Stand</button>
+      </div>
+      <div class="ctrl-group" id="ctrl-between" hidden>
+        <p class="ctrl-hint">Next hand up.</p>
+        <button type="button" class="btn btn-ghost" id="btn-watch-next">Watch</button>
+        <button type="button" class="btn btn-chip" data-bet="10">Bet 10</button>
+        <button type="button" class="btn btn-chip" data-bet="25">Bet 25</button>
+        <button type="button" class="btn btn-chip" data-bet="50">Bet 50</button>
+      </div>
+    </footer>
+
+    <div class="shift-overlay" id="shift-end" hidden>
+      <div class="shift-end-card">
+        <h2>Shift over</h2>
+        <p class="end-recap" id="end-recap"></p>
+        <label class="end-ask" for="rc-guess">What was the running count when the shift ended?</label>
+        <input type="number" id="rc-guess" class="rc-input" inputmode="numeric" placeholder="e.g. +4 or -2" />
+        <button type="button" class="btn btn-primary" id="btn-submit-rc">Check</button>
+        <p class="end-result" id="end-result" hidden></p>
+        <button type="button" class="btn btn-ghost" id="btn-again" hidden>Another shift</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Engine pieces from CountQuest; The Shift does not use the trainer shell. -->
+  <script src="../js/01-constants.js"></script>
+  <script src="../js/02-core-types.js"></script>
+  <script src="../js/03-counting.js"></script>
+  <script src="js/shift-floor.js"></script>
+  <script src="js/shift-play.js"></script>
+
+</body>
+</html>

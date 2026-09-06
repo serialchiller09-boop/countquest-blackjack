@@ -22,7 +22,8 @@ function updateTutorialCountExplanation() {
     inject('20-pitboss-entry.js');
     inject('21-lobby-catchup.js');
     inject('22-dealer-catchup.js');
-    inject('23-jeff-patches.js');
+    inject('23a-bet-ranks.js');
+    inject('23b-count-dealer.js');
   }
   if (document.readyState === 'complete') injectAll();
   else window.addEventListener('load', injectAll);

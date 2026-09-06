@@ -1,0 +1,384 @@
+.back{color:#c9a227;text-decoration:none;font-size:13px;margin-right:10px;white-space:nowrap}
+/* Pit Boss Case 01 — dark casino, mobile-friendly portrait */
+:root {
+  --bg: #0b0f14;
+  --felt: #0f3d2e;
+  --felt-edge: #0a2a1f;
+  --gold: #f0c040;
+  --gold-dim: #b8922e;
+  --text: #e8e6e3;
+  --muted: #9a9590;
+  --danger: #e85d5d;
+  --panel: #151a21;
+  --panel-2: #1c2330;
+  --chip: #c9a227;
+  --border: #2a3340;
+  --warm: #f0c040;
+  --cold: #5b9fd4;
+  --safe: #3dd68c;
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100%;
+}
+body {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 0 96px;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 0.45rem 0.7rem;
+}
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+button.primary {
+  background: linear-gradient(180deg, #3a2e12, #2a210c);
+  border-color: var(--gold-dim);
+  color: var(--gold);
+}
+button.danger {
+  border-color: #7a3030;
+  color: var(--danger);
+}
+button.active {
+  outline: 2px solid var(--gold);
+}
+
+#app { position: relative; }
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 0.85rem;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  font-size: 0.85rem;
+}
+.topbar .clock { color: var(--gold); font-weight: 600; }
+.topbar .meta { color: var(--muted); }
+
+.pit {
+  background: radial-gradient(ellipse at 50% 30%, #145c42 0%, var(--felt) 55%, var(--felt-edge) 100%);
+  margin: 0.5rem;
+  border-radius: 16px;
+  border: 3px solid #1a4d38;
+  padding: 0.75rem 0.5rem 1rem;
+  min-height: 320px;
+}
+
+.seats {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.35rem;
+  margin-bottom: 0.75rem;
+}
+
+.seat {
+  background: rgba(0,0,0,0.28);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 0.4rem 0.25rem 0.5rem;
+  text-align: center;
+  min-height: 118px;
+  position: relative;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.seat.selected {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 1px var(--gold);
+}
+.seat.on-you::after {
+  content: "ON YOU";
+  position: absolute;
+  top: -0.45rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.55rem;
+  letter-spacing: 0.04em;
+  background: var(--gold);
+  color: #1a1408;
+  padding: 0.1rem 0.3rem;
+  border-radius: 4px;
+  font-weight: 700;
+}
+.seat.hover-sil::before {
+  content: "";
+  position: absolute;
+  inset: auto 20% -4px;
+  height: 8px;
+  background: rgba(0,0,0,0.55);
+  border-radius: 50%;
+}
+.seat-name {
+  font-size: 0.68rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.seat-id { font-size: 0.6rem; color: var(--muted); }
+.chips {
+  margin: 0.35rem auto 0.2rem;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ffe08a, var(--chip) 45%, #7a6210);
+  border: 2px dashed rgba(255,255,255,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #1a1408;
+}
+.chips.gold-trim {
+  box-shadow: 0 0 0 2px #ffd700, 0 0 8px rgba(255,215,0,0.45);
+}
+.stack { font-size: 0.6rem; color: var(--muted); }
+.pin {
+  margin-top: 0.25rem;
+  font-size: 0.7rem;
+  min-height: 1rem;
+}
+.pin.warm { color: var(--warm); }
+.pin.cold { color: var(--cold); }
+.fact-chip {
+  margin-top: 0.2rem;
+  font-size: 0.55rem;
+  color: #c8bfa8;
+  background: rgba(0,0,0,0.35);
+  border-radius: 4px;
+  padding: 0.1rem 0.2rem;
+}
+.cards-mini {
+  font-size: 0.55rem;
+  color: #d5d0c8;
+  min-height: 0.9rem;
+  letter-spacing: 0.02em;
+}
+
+.dealer-row {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+}
+.dealer-card, .shoe-card, .discard-card {
+  background: rgba(0,0,0,0.35);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  padding: 0.45rem 0.6rem;
+  text-align: center;
+  min-width: 4.5rem;
+}
+.dealer-card .label { font-size: 0.65rem; color: var(--gold); font-weight: 600; }
+.dealer-card .cards { font-size: 0.75rem; margin-top: 0.2rem; }
+.shoe-card, .discard-card { font-size: 0.65rem; color: var(--muted); }
+
+.flavor {
+  margin: 0.5rem 0.75rem;
+  min-height: 1.4rem;
+  font-size: 0.8rem;
+  color: #cfc8bc;
+  font-style: italic;
+}
+
+.notebook {
+  margin: 0.5rem 0.75rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.55rem 0.7rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  font-size: 0.8rem;
+}
+.notebook .note {
+  width: 100%;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.controls {
+  margin: 0.5rem 0.75rem;
+  display: grid;
+  gap: 0.45rem;
+}
+.controls-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.controls-row.calls {
+  margin-top: 0.25rem;
+}
+.call-hint {
+  width: 100%;
+  margin: 0 0 0.1rem;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+.call-hint.ready { color: var(--gold); }
+.call-hint.hidden { display: none; }
+.controls button { flex: 1 1 auto; min-width: 5.5rem; }
+
+.debug {
+  margin: 0.5rem 0.75rem;
+  background: #1a1020;
+  border: 1px dashed #6b3a7a;
+  border-radius: 8px;
+  padding: 0.5rem;
+  font-size: 0.7rem;
+  color: #d7b6e4;
+  white-space: pre-wrap;
+}
+
+/* Briefing overlay */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5,8,12,0.88);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+.overlay.hidden { display: none; }
+.modal {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  max-width: 420px;
+  width: 100%;
+  padding: 1.25rem;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+}
+.modal h1 {
+  margin: 0 0 0.25rem;
+  font-size: 1.35rem;
+  color: var(--gold);
+}
+.modal .sub {
+  color: var(--muted);
+  font-size: 0.8rem;
+  margin-bottom: 0.85rem;
+}
+.modal p {
+  line-height: 1.45;
+  font-size: 0.92rem;
+  margin: 0 0 0.75rem;
+}
+.modal .warn {
+  color: #f0c8a0;
+  font-size: 0.85rem;
+}
+
+/* Peek dialog */
+.peek-form {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.75rem;
+}
+.peek-form input {
+  flex: 1;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  padding: 0.45rem 0.6rem;
+}
+
+/* Dossier */
+.dossier {
+  margin: 0.5rem 0.75rem 1.5rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem;
+}
+.dossier.hidden { display: none; }
+.dossier h2 {
+  margin: 0 0 0.5rem;
+  color: var(--gold);
+  font-size: 1.15rem;
+}
+.dossier .rank {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+}
+.dossier .manager {
+  color: var(--muted);
+  font-style: italic;
+  margin-bottom: 0.85rem;
+}
+.dossier .row {
+  font-size: 0.85rem;
+  margin: 0.35rem 0;
+  line-height: 1.35;
+}
+.dossier .teachable {
+  margin-top: 0.75rem;
+  padding: 0.6rem 0.7rem;
+  background: var(--panel-2);
+  border-left: 3px solid var(--gold);
+  border-radius: 0 8px 8px 0;
+  font-size: 0.88rem;
+}
+#graphCanvas {
+  width: 100%;
+  height: 420px;
+  margin-top: 0.75rem;
+  background: #0d1117;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  touch-action: none;
+}
+.graph-tip {
+  font-size: 0.75rem;
+  color: var(--muted);
+  min-height: 1.1rem;
+  margin-top: 0.25rem;
+}
+.dossier-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.75rem;
+}
+
+@media (max-width: 420px) {
+  .seat-name { font-size: 0.58rem; }
+  .chips { width: 1.7rem; height: 1.7rem; font-size: 0.55rem; }
+  .controls button { min-width: 4.8rem; font-size: 0.8rem; }
+  .seat { min-height: 102px; padding: 0.3rem 0.15rem 0.4rem; }
+  .pit { min-height: 280px; padding: 0.55rem 0.35rem 0.75rem; }
+  #graphCanvas { height: 360px; }
+  .topbar { flex-wrap: wrap; gap: 0.25rem 0.5rem; }
+  .call-hint { font-size: 0.7rem; }
+}

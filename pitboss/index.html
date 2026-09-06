@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Pit Boss - Five Seats</title>
+  <link rel="stylesheet" href="css/pitboss.css" />
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <a class="back" href="../index.html">← CountQuest</a>
+      <div class="clock" id="clock">Hand 0 · Cut in ~6.0 decks</div>
+      <div class="meta" id="meta">Mags · Grosvenor Victoria</div>
+    </header>
+
+    <section class="pit" aria-label="Pit view">
+      <div class="seats" id="seats"></div>
+      <div class="dealer-row">
+        <div class="dealer-card">
+          <div class="label">Mags</div>
+          <div class="cards" id="dealerCards">-</div>
+        </div>
+        <div class="shoe-card" id="shoeInfo">Shoe</div>
+        <div class="discard-card" id="discardInfo">Discard</div>
+      </div>
+    </section>
+
+    <div class="flavor" id="flavor"></div>
+
+    <div class="notebook" id="notebook" aria-label="Notebook"></div>
+
+    <div class="controls">
+      <div class="controls-row">
+        <button type="button" id="btnMark" title="Toggle warm/cold pin">Mark</button>
+        <button type="button" id="btnHover">Hover</button>
+        <button type="button" id="btnShuffle">Shuffle</button>
+        <button type="button" id="btnPeek">Peek count</button>
+      </div>
+      <div class="controls-row">
+        <button type="button" id="btnPause">Pause</button>
+        <button type="button" id="btnStep">Step</button>
+        <button type="button" data-speed="800">0.8s</button>
+        <button type="button" data-speed="1600" class="active">1.6s</button>
+        <button type="button" data-speed="2400">2.4s</button>
+      </div>
+      <div class="controls-row calls">
+        <p class="call-hint" id="callHint">Available after hand 8</p>
+        <button type="button" class="danger" id="btnBackOff">BACK OFF selected seat</button>
+        <button type="button" id="btnPass" title="Always wrong in Case 01 — exactly one seat is counting">PASS TABLE</button>
+      </div>
+    </div>
+
+    <pre class="debug hidden" id="debug"></pre>
+
+    <section class="dossier hidden" id="dossier" aria-label="Dossier">
+      <h2>Dossier</h2>
+      <div id="dossierBody"></div>
+      <canvas id="graphCanvas" width="640" height="420"></canvas>
+      <div class="graph-tip" id="graphTip"></div>
+      <div class="dossier-actions">
+        <button type="button" id="btnShowMarks">Show my marks</button>
+        <button type="button" id="btnExportSeed">Export case seed</button>
+        <button type="button" class="primary" id="btnReplay">Replay seed</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- Briefing -->
+  <div class="overlay" id="briefing">
+    <div class="modal">
+      <h1>Five Seats</h1>
+      <div class="sub">Dealer: Mags · Pit: Grosvenor Victoria · Swing shift</div>
+      <div id="briefingBody"></div>
+      <p class="warn" id="briefingWarn"></p>
+      <button type="button" class="primary" id="dismissBriefing">Take the rail</button>
+    </div>
+  </div>
+
+  <!-- Peek -->
+  <div class="overlay hidden" id="peekModal">
+    <div class="modal">
+      <h1>Check my count</h1>
+      <p>Enter your running count. One peek per case. Costs score either way.</p>
+      <div class="peek-form">
+        <input id="peekInput" type="number" inputmode="numeric" placeholder="RC" />
+        <button type="button" class="primary" id="peekSubmit">Check</button>
+        <button type="button" id="peekCancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/case01-constants.js"></script>
+  <script src="js/case01-rng.js"></script>
+  <script src="js/case01-archetypes.js"></script>
+  <script src="js/case01-engine.js"></script>
+  <script src="js/case01-dossier.js"></script>
+  <script src="js/case01-ui.js"></script>
+  <script src="js/case01-tests.js"></script>
+</body>
+</html>

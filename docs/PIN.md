@@ -1,42 +1,23 @@
-# Pin: stable/phone-v46
+# Pin: stable/phone-v46 — WRONG ERA FOR THE PHONE
 
-**Purpose:** Frozen Play Store v1 / Android versionCode 46 trainer. Matches the phone badge **v46**.
+The phone APK is **versionName 1.0.26**, not this branch.
 
-**This branch tip:** `9dd8185` (`play-store-v1` last commit — skip first-run overlay under Playwright).
+This branch is Play Store v1 / lobby v46 (`9dd8185` + pin docs). Keep it as a later snapshot. Do not treat it as the working phone twin.
 
-**Merge commit on master that absorbed this work:** [`7ffb177`](https://github.com/serialchiller09-boop/countquest-blackjack/commit/7ffb177fb20b8def26653d730416895f90e658c5) (2 Sep 2026). Same tree for practical purposes.
+## Where 1.0.26 actually sits
 
-## Sister pins
+`1.0.26` was never committed. Committed Android versions:
 
-| Name | Points at | Meaning |
-|---|---|---|
-| `stable/phone-v46` | `9dd8185` | Use this. Phone v46 candidate. |
-| `play-store-v1` | `9dd8185` | Original PR branch. |
-| `snapshot/last-good-table-v65` | `108f2be` | Table chrome after v46 (toasts, soft/hard badges). |
-| `casino-table-v65` | `108f2be` | Same as above. |
-| `archive/sept-experiments` | `7ebf3aa` | Broken 7 Sep shell. Do not play. |
-| `snapshot/broken-shell-2026-09-07` | `7ebf3aa` | Same tip as archive. |
-| `master` | `7ebf3aa` (at pin time) | Left untouched. Still the broken shell. |
+- `1.0` — 8 Jul (`a814672`)
+- **`1.0.27` / versionCode 43** — 25 Jul ([`53ee170`](https://github.com/serialchiller09-boop/countquest-blackjack/commit/53ee1701afb41c0ebbf2d69e640dc1305006bad0)) ← closest
+- `1.0.28` — 11 Aug v44
+- `1.0.29` — 11 Aug v45 and later, including this v46 pack
 
-## What we did not do
-
-- Did not force-push `master`.
-- Did not delete Sept 6–7 commits.
-- Did not rebuild or replace the APK on the phone.
-
-## How to work from here
+Closest tree to the phone:
 
 ```bash
 git fetch origin
-git checkout stable/phone-v46
+git checkout -b stable/phone-1.0.26 53ee1701afb41c0ebbf2d69e640dc1305006bad0
 ```
 
-Play in the browser. Keep the installed phone APK. Do not `cap sync` over it until this branch has been clicked through.
-
-To make Pages match later (only after you confirm this plays):
-
-```bash
-git checkout master
-git reset --hard origin/stable/phone-v46
-git push --force-with-lease origin master
-```
+Last commit before that sync: `8486234` (9 Jul, solo 1-seat toggle; gradle still `1.0`).

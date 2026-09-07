@@ -46,7 +46,7 @@
     }
     var a = document.createElement('a');
     a.id = 'btnPitBoss';
-    a.href = 'pitboss/index.html';
+    a.href = 'https://serialchiller09-boop.github.io/pitboss/';
     a.className = 'btn primary pitboss-entry';
     a.textContent = 'Pit Boss — Five Seats';
     a.setAttribute('aria-label', 'Play Pit Boss Five Seats');

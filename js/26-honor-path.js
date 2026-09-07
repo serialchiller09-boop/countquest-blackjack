@@ -3,7 +3,7 @@
   'use strict';
 
   var CAREER = ['Railbird', 'Dealer', 'Boxman', 'Floor', 'Pit Boss'];
-  var PITBOSS_HREF = 'pitboss/index.html';
+  var PITBOSS_HREF = 'https://serialchiller09-boop.github.io/pitboss/';
   var LEGACY_RANKS = ['Novice', 'Apprentice', 'Journeyman', 'Expert', 'Master'];
 
   function ensureCss() {

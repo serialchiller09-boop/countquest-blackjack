@@ -241,6 +241,9 @@ def main() -> int:
             text=True,
             timeout=180,
         )
+        (ARTIFACTS / "stability-verify.out").write_text(
+            (stab.stdout or "") + "\n--- stderr ---\n" + (stab.stderr or ""), encoding="utf-8"
+        )
         report["stability_exit"] = stab.returncode
         report["checks"]["stability_verify"] = stab.returncode == 0
         if stab.returncode != 0:
@@ -251,6 +254,9 @@ def main() -> int:
             capture_output=True,
             text=True,
             timeout=120,
+        )
+        (ARTIFACTS / "diag-hand2.out").write_text(
+            (hand2.stdout or "") + "\n--- stderr ---\n" + (hand2.stderr or ""), encoding="utf-8"
         )
         report["hand2_exit"] = hand2.returncode
         report["checks"]["diag_hand2"] = hand2.returncode == 0
@@ -263,6 +269,9 @@ def main() -> int:
             text=True,
             timeout=120,
         )
+        (ARTIFACTS / "diag-dealer-mode.out").write_text(
+            (dealer.stdout or "") + "\n--- stderr ---\n" + (dealer.stderr or ""), encoding="utf-8"
+        )
         report["dealer_mode_exit"] = dealer.returncode
         report["checks"]["diag_dealer_mode"] = dealer.returncode == 0
         if dealer.returncode != 0:
@@ -273,8 +282,8 @@ def main() -> int:
 
     out = ARTIFACTS / "table-qa-report.json"
     out.write_text(json.dumps(report, indent=2), encoding="utf-8")
-
     failed = [k for k, v in report["checks"].items() if not v]
+
     print(json.dumps({"pass": report["pass"], "build": report["flows"][0]["snap"].get("build") if report["flows"] else None, "failed": failed}, indent=2))
     print(f"Report: {out}")
     return 0 if report["pass"] else 1

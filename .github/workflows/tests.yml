@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [master, main]
 
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
 jobs:
   python-and-browser:
     runs-on: ubuntu-latest
@@ -40,3 +45,24 @@ jobs:
 
       - name: Table QA suite
         run: npm run test:table
+
+      - name: Report table QA failure as PR comment
+        if: failure() && github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          {
+            echo "## 🧪 Table QA failure report (run ${{ github.run_id }})"
+            for f in table-qa-report.json stability-verify.out diag-hand2.out diag-dealer-mode.out; do
+              if [ -f "artifacts/table-qa/$f" ]; then
+                echo "### artifacts/table-qa/$f"
+                echo '```'
+                tail -c 6000 "artifacts/table-qa/$f"
+                echo
+                echo '```'
+              fi
+            done
+          } > /tmp/qa-report.md
+          gh pr comment "${
+            github.event.pull_request.number
+          }" --body-file /tmp/qa-report.md || echo "could not post comment"

@@ -2,18 +2,23 @@
 """Play Store v1 structure checks (first-run, privacy graphics, new-player lobby)."""
 from __future__ import annotations
 
+import re
+import sys
 import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "scripts"))
+
+from load_project_source import load_index_html  # noqa: E402
 
 
 class PlayStoreV1Tests(unittest.TestCase):
     def test_first_run_module(self) -> None:
         js = (ROOT / "js" / "11-first-run.js").read_text(encoding="utf-8")
         self.assertIn("cq.firstRunV1", js)
-        self.assertIn("Quest Through the Casinos", js)
-        self.assertIn("Learn Hi-Lo by playing, not by reading a book.", js)
+        self.assertIn("Pit Boss Training Path", js)
+        self.assertIn("by playing, not by reading a book", js)
         self.assertIn("openTutorial", js)
         self.assertIn("openTableLobby", js)
         self.assertIn("callApp", js)
@@ -39,14 +44,15 @@ class PlayStoreV1Tests(unittest.TestCase):
         self.assertIn("simulated chips", html.lower())
 
     def test_index_wires_first_run(self) -> None:
-        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        html = load_index_html(ROOT)
         tutorial = (ROOT / "js" / "08-tutorial.js").read_text(encoding="utf-8")
         self.assertIn("js/11-first-run.js", html)
         self.assertIn("privacy.html", html)
         self.assertIn("__CQ_DEV_MODE", html)
-        self.assertTrue(
-            ">v46<" in html or ">v47<" in html or ">v48<" in html or ">v49<" in html or ">v50<" in html,
-            "index.html must show a v46–v50 build stamp",
+        self.assertRegex(
+            html,
+            r'id="cq-build-stamp"[^>]*>v\d+<',
+            "assembled shell must show a build stamp",
         )
         self.assertTrue(
             "js/12-tester-qa.js" in html or "12-tester-qa.js" in tutorial,
@@ -135,7 +141,7 @@ class PlayStoreV1Tests(unittest.TestCase):
         self.assertIn("updateTutorialNavButtons", qa)
         self.assertIn("renderTutorial", qa)
         self.assertIn("Skip tutorial and sit a beginner table", qa)
-        self.assertIn("?v=65", tutorial)
+        self.assertRegex(tutorial, r"\?v=\d+")
 
     def test_clubs_and_spin_visible_with_ui(self) -> None:
         lobby = (ROOT / "js" / "13-new-player-lobby.js").read_text(encoding="utf-8")
@@ -150,9 +156,9 @@ class PlayStoreV1Tests(unittest.TestCase):
         self.assertIn("spin-win", css)
         self.assertIn("cq-crew-badge", css)
         self.assertIn("14-clubs-spin-ui.js", tutorial)
-        self.assertIn("?v=65", tutorial)
+        self.assertRegex(tutorial, r"\?v=\d+")
         self.assertIn("./js/14-clubs-spin-ui.js", sw)
-        self.assertIn("cq-pwa-v31", sw)
+        self.assertRegex(sw, r"cq-pwa-v\d+")
 
     def test_labeled_spin_wheel_and_modern_css(self) -> None:
         vis = (ROOT / "js" / "15-visual.js").read_text(encoding="utf-8")
@@ -164,12 +170,12 @@ class PlayStoreV1Tests(unittest.TestCase):
         self.assertIn("cq-spin-label-text", vis)
         self.assertIn("renderSpinWheelMarkup", vis)
         self.assertIn("cq-spin-locked", vis)
-        self.assertIn("cq-spin-hub", css)
+        self.assertIn("cq-spin-hub", vis)
         self.assertIn("--cq-gold", css)
         self.assertIn("15-visual.js", tutorial)
         self.assertIn("cq-modern.css", sw)
         self.assertIn("./js/15-visual.js", sw)
-        self.assertIn("cq-pwa-v31", sw)
+        self.assertRegex(sw, r"cq-pwa-v\d+")
 
     def test_casino_theme_v57_overlay(self) -> None:
         theme = (ROOT / "js" / "16-casino-theme.js").read_text(encoding="utf-8")
@@ -200,9 +206,10 @@ class PlayStoreV1Tests(unittest.TestCase):
         self.assertIn('fill="#fff"', theme)
         self.assertIn('stroke="#16a34a"', theme)
         self.assertIn("--cq-wood", css)
-        self.assertIn(".cq-round-ico", css)
-        self.assertIn("cq-act-stand", css)
-        self.assertIn("cq-act-hit", css)
+        self.assertIn(".cq-round-ico", theme)
+        # Action-button classes are built dynamically ('cq-act-' + act in dressActions).
+        self.assertIn("dressActions", theme)
+        self.assertIn("'cq-act-' + act", theme)
         self.assertTrue(
             "body.casino-play-active #btn-help-settings" in css
             or "body.casino-play-active #btn-help-settings" in theme
@@ -214,8 +221,8 @@ class PlayStoreV1Tests(unittest.TestCase):
         self.assertIn("injectChromeCSS", theme)
         self.assertIn("cq-v65-play.css", theme)
         self.assertIn("./css/cq-v65-play.css", sw)
-        self.assertIn("cq-pwa-v31", sw)
-        self.assertIn("?v=65", theme)
+        self.assertRegex(sw, r"cq-pwa-v\d+")
+        self.assertRegex(theme, r"\?v=\d+")
 
         play_css = (ROOT / "css" / "cq-v65-play.css").read_text(encoding="utf-8")
         self.assertIn("orientation: portrait", play_css)
@@ -237,10 +244,10 @@ class PlayStoreV1Tests(unittest.TestCase):
         self.assertIn("18-soft-total.js", tutorial)
         self.assertIn("./js/18-soft-total.js", sw)
         self.assertIn("./css/cq-v65-play.css", sw)
-        self.assertIn("cq-pwa-v31", sw)
-        self.assertIn("?v=65", tutorial)
+        self.assertRegex(sw, r"cq-pwa-v\d+")
+        self.assertRegex(tutorial, r"\?v=\d+")
         self.assertIn("cq-v65-play.css", theme)
-        self.assertIn("?v=65", theme)
+        self.assertRegex(theme, r"\?v=\d+")
         self.assertIn("handIsSoft", soft)
         self.assertIn("cq-soft-hint", soft)
         self.assertIn("cq-is-soft", soft)

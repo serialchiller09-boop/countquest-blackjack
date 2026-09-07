@@ -8,6 +8,9 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+from load_project_source import load_index_html  # noqa: E402
 
 
 def read(path: Path) -> str:
@@ -16,7 +19,7 @@ def read(path: Path) -> str:
 
 def main() -> int:
     errors: list[str] = []
-    index = read(ROOT / "index.html")
+    index = load_index_html(ROOT)
     gradle = read(ROOT / "android" / "app" / "build.gradle")
     sw = read(ROOT / "sw.js")
 

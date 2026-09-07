@@ -22,7 +22,22 @@ JS_MODULES = [
 
 
 def load_index_html(root: Path | None = None) -> str:
+    """Assembled app shell.
+
+    The shipped index.html is a tiny loader stub that fetches index-parts/ and
+    document.write()s them at runtime. Tests need the assembled shell the
+    browser actually ends up with, so concatenate the parts listed in the
+    manifest (falling back to a literal index.html when parts are absent,
+    e.g. in dist checkouts).
+    """
     base = root or ROOT
+    parts_dir = base / "index-parts"
+    manifest = parts_dir / "manifest.json"
+    if manifest.is_file():
+        import json
+
+        names = json.loads(manifest.read_text(encoding="utf-8"))["parts"]
+        return "".join((parts_dir / name).read_text(encoding="utf-8") for name in names)
     return (base / "index.html").read_text(encoding="utf-8")
 
 

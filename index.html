@@ -10,7 +10,7 @@
     (async function () {
       try {
         var base = new URL('.', location.href).pathname; // ends with /
-        var bust = 'v=52'; // first-run close paths + daily gate
+        var bust = 'v=53'; // first-run close paths + daily gate
         var man = await (await fetch(base + 'index-parts/manifest.json?' + bust, { cache: 'no-store' })).json();
         var chunks = [];
         for (var i = 0; i < man.parts.length; i++) {

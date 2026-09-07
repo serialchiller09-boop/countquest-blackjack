@@ -9,8 +9,8 @@
   var INJECTED_CSS = [
     '#external-services-panel{display:none!important}',
     'html.cq-dev #external-services-panel{display:block!important}',
-    '#cq-first-run{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;padding:1rem;box-sizing:border-box;background:rgba(6,14,11,.82);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);pointer-events:auto}',
-    '#cq-first-run .cq-first-run-card{width:min(28rem,92vw);border:1px solid rgba(212,175,55,.45);border-radius:1.25rem;padding:1.75rem 1.5rem 1.35rem;text-align:center;background:radial-gradient(ellipse 120% 90% at 50% -10%,#123828 0%,#0a1612 55%,#060e0b 100%);color:#f0fff7;box-shadow:0 24px 64px rgba(0,0,0,.55);pointer-events:auto}',
+    '#cq-first-run{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;padding:1rem;box-sizing:border-box;background:rgba(6,14,11,.82);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}',
+    '#cq-first-run .cq-first-run-card{width:min(28rem,92vw);border:1px solid rgba(212,175,55,.45);border-radius:1.25rem;padding:1.75rem 1.5rem 1.35rem;text-align:center;background:radial-gradient(circle at 30% 20%,rgba(212,175,55,.12),transparent 50%),linear-gradient(135deg,rgba(10,22,18,.95),rgba(6,14,11,.98))}',
     '.cq-first-run-kicker{margin:0 0 .45rem;font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:#d4af37;font-weight:700}',
     '#cq-first-run-title{margin:0 0 .65rem;font-size:1.55rem;line-height:1.2;color:#d4af37;font-weight:800}',
     '#cq-first-run-copy{margin:0 0 .55rem;font-size:.95rem;line-height:1.45;color:rgba(209,250,229,.9)}',
@@ -146,9 +146,12 @@
     if (!el) return;
     el.addEventListener('click', fn);
     el.addEventListener('touchend', function (e) {
-      e.preventDefault();
-      fn(e);
-    }, { passive: false });
+      // Don't preventDefault on touchend—let the browser complete its touch handling.
+      // Wrap callback in setTimeout to allow the event to propagate naturally.
+      // This prevents deadlocking the touch event queue during initial app load,
+      // especially with Capacitor WebView where the touch model is still settling.
+      setTimeout(() => fn(e), 0);
+    }, { passive: true });
   }
 
   function ensureMarkup() {

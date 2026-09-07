@@ -57,7 +57,10 @@ jobs:
               if [ -f "artifacts/table-qa/$f" ]; then
                 echo "### artifacts/table-qa/$f"
                 echo '```'
-                tail -c 6000 "artifacts/table-qa/$f"
+                case "$f" in
+                  *report.json) tail -c 4500 "artifacts/table-qa/$f" ;;
+                  *) head -c 4500 "artifacts/table-qa/$f"; echo; echo "--- error lines ---"; grep -a -m8 -A6 "RESULT\|Traceback\|Error\|assert" "artifacts/table-qa/$f" | head -60 ;;
+                esac
                 echo
                 echo '```'
               fi

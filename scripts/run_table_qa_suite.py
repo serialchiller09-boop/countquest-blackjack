@@ -6,6 +6,7 @@ from __future__ import annotations
 import http.server
 import json
 import os
+import re
 import socket
 import subprocess
 import sys
@@ -144,7 +145,7 @@ def check_flow(snap: dict) -> dict[str, bool]:
         ),
         "chips_hidden": snap.get("chipsHiddenInSolo") is True,
         "rail_visible": True,
-        "build_current": (snap.get("build") or "").startswith("v4"),
+        "build_current": bool(re.fullmatch(r"v\d+", (snap.get("build") or ""))),
     }
 
 

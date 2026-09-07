@@ -80,12 +80,14 @@
         var st = app && app.save && app.save.stats;
         var rankName = careerRankName(st && st.rank);
         var help = (st && st.helpLevel != null) ? st.helpLevel : 0;
-        prank.textContent = rankName + ' \u00B7 Help Level ' + help;
+        var rankLabel = rankName + ' \u00B7 Help Level ' + help;
+        if (prank.textContent !== rankLabel) prank.textContent = rankLabel;
       }
       root.querySelectorAll && root.querySelectorAll('.text-gold.font-bold, #stats-sidebar-body .text-gold').forEach(function (el) {
         var t = el.textContent || '';
         if (LEGACY_RANKS.some(function (r) { return t === r || t.indexOf(r) === 0; })) {
-          el.textContent = mapLegacyRankName(t);
+          var mapped = mapLegacyRankName(t);
+          if (mapped !== t) el.textContent = mapped;
         }
       });
     } catch (e) {}
@@ -107,13 +109,18 @@
     var btn = document.getElementById('btnPitBoss');
     if (!btn) return;
     btn.classList.add('cq-honor-pitboss-primary');
-    btn.textContent = honored ? 'Honored - Play Pit Boss' : 'Pit Boss - Five Seats';
-    btn.setAttribute('aria-label', honored ? 'Honored - Play Pit Boss Five Seats' : 'Play Pit Boss Five Seats');
-    btn.style.cssText =
-      'display:block;margin:12px auto;max-width:320px;text-align:center;text-decoration:none;' +
-      'padding:14px 18px;border-radius:12px;background:linear-gradient(135deg,#f0d060,#c9a227);' +
-      'color:#111;font-weight:800;position:static;z-index:auto;box-shadow:0 0 0 2px rgba(201,162,39,.45),0 8px 24px rgba(0,0,0,.35);' +
-      'letter-spacing:.02em;';
+    var btnLabel = honored ? 'Honored - Play Pit Boss' : 'Pit Boss - Five Seats';
+    if (btn.textContent !== btnLabel) btn.textContent = btnLabel;
+    var ariaLabel = honored ? 'Honored - Play Pit Boss Five Seats' : 'Play Pit Boss Five Seats';
+    if (btn.getAttribute('aria-label') !== ariaLabel) btn.setAttribute('aria-label', ariaLabel);
+    if (btn.getAttribute('data-cq-honor-styled') !== '1') {
+      btn.style.cssText =
+        'display:block;margin:12px auto;max-width:320px;text-align:center;text-decoration:none;' +
+        'padding:14px 18px;border-radius:12px;background:linear-gradient(135deg,#f0d060,#c9a227);' +
+        'color:#111;font-weight:800;position:static;z-index:auto;box-shadow:0 0 0 2px rgba(201,162,39,.45),0 8px 24px rgba(0,0,0,.35);' +
+        'letter-spacing:.02em;';
+      btn.setAttribute('data-cq-honor-styled', '1');
+    }
   }
 
   function demoteDealerSecondary() {
@@ -121,7 +128,8 @@
       document.querySelectorAll('[data-lobby-play="dealer-mode"]').forEach(function (el) {
         el.classList.add('cq-honor-dealer-secondary');
         var sub = el.querySelector('.play-sub, .hero-sub');
-        if (sub) sub.textContent = 'Prove yourself on the table - then earn the pit rail';
+        var railSub = 'Prove yourself on the table - then earn the pit rail';
+        if (sub && sub.textContent !== railSub) sub.textContent = railSub;
       });
     } catch (e) {}
   }
@@ -180,7 +188,7 @@
   function promoteLobbyHero(app) {
     var heroSlot = document.getElementById('lobby-hero-play-slot');
     if (heroSlot) {
-      heroSlot.innerHTML = renderPitBossHeroHtml();
+      if (!heroSlot.querySelector('#lobby-hero-play')) heroSlot.innerHTML = renderPitBossHeroHtml();
     } else {
       var hero = document.getElementById('lobby-hero-play');
       if (hero && hero.tagName === 'BUTTON') {

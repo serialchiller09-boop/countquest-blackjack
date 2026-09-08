@@ -30,10 +30,10 @@
     }
     window.addEventListener('load', bootstrapPwaShell);
   </script>
-  <link rel="stylesheet" href="css/tailwind.css?v=49" />
-  <link rel="stylesheet" href="css/app.css?v=49" />
-  <link rel="stylesheet" href="css/casino-felt-table.css?v=49" />
-  <link rel="stylesheet" href="css/cq-jeff-23.css?v=49" />
+  <link rel="stylesheet" href="css/tailwind.css?v=53" />
+  <link rel="stylesheet" href="css/app.css?v=53" />
+  <link rel="stylesheet" href="css/casino-felt-table.css?v=53" />
+  <link rel="stylesheet" href="css/cq-jeff-23.css?v=53" />
 </head>
 <body class="min-h-screen text-white font-sans antialiased">
 
@@ -68,7 +68,7 @@
           <div id="app-title" class="app-title truncate">Pit Boss</div>
           <div class="app-title-sub">Blackjack</div>
           <p id="header-mode" class="header-session-mode truncate"></p>
-          <span id="cq-build-stamp" class="cq-build-stamp" title="App build">v46</span>
+          <span id="cq-build-stamp" class="cq-build-stamp" title="App build">v53</span>
         </div>
       </div>
       <div id="header-currency" class="flex flex-wrap items-center gap-2 justify-end">
@@ -131,7 +131,7 @@
         </div>
       </div>
       <div id="lobby-nav-icons" class="lobby-nav-icons"></div>
-      <span id="lobby-build-stamp" class="cq-build-stamp lobby-build-stamp" title="Web build">v46</span>
+      <span id="lobby-build-stamp" class="cq-build-stamp lobby-build-stamp" title="Web build">v53</span>
     </header>
 
     <button type="button" id="lobby-pass-banner" class="lobby-pass-banner text-left">

@@ -16,9 +16,8 @@ ASSETS = (
     "manifest.webmanifest",
     "sw.js",
     ".nojekyll",
-    "shift.html",
 )
-DIRS = ("css", "js", "icons", "pitboss", "shift", "index-parts")
+DIRS = ("css", "js", "icons", "index-parts")
 
 
 def run(cmd: list[str]) -> None:

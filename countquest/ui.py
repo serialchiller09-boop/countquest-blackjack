@@ -243,7 +243,7 @@ class ConsoleUI:
             f"{self._c(info.formatted(), Ansi.BOLD)}"
         )
         if card_note:
-            line += f"  {self._c('← ' + card_note, Ansi.DIM)}"
+            line += f"  {self._c('← [redacted]', Ansi.DIM)}"
         print(line)
         if hole_hidden:
             print(

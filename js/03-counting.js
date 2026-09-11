@@ -162,11 +162,16 @@ function betSpreadUnitsFromCountSnapshot(snapshot) {
 function suggestWagerFromCountSnapshot(snapshot, bankroll, unitSize, minBet) {
   const sys = COUNTING_SYSTEMS[snapshot.systemId || 'hi-lo'];
   const units = betSpreadUnitsFromCountSnapshot(snapshot);
-  let amount = units * unitSize;
-  const bankrollCap = Math.max(Math.floor(bankroll * 0.1), minBet);
-  const wasCappedByBankroll = amount > bankrollCap;
-  amount = Math.min(amount, bankrollCap, bankroll);
-  amount = Math.max(amount, minBet);
+  const safeBankroll = Number.isFinite(Number(bankroll)) ? Math.max(0, Math.floor(Number(bankroll))) : 0;
+  const safeUnitSize = Number.isFinite(Number(unitSize)) ? Math.max(1, Math.floor(Number(unitSize))) : 1;
+  const safeMinBet = Number.isFinite(Number(minBet)) ? Math.max(1, Math.floor(Number(minBet))) : 1;
+  const requested = units * safeUnitSize;
+  const bankrollCap = Math.max(Math.floor(safeBankroll * 0.1), safeMinBet);
+  const wasCappedByBankroll = requested > bankrollCap || requested > safeBankroll;
+  // Do not recommend a wager larger than the available bankroll. When the
+  // bankroll is below table minimum, return the affordable amount (zero is
+  // honest here) so the UI cannot suggest an impossible bet.
+  const amount = Math.min(requested, bankrollCap, safeBankroll);
   return {
     systemId: snapshot.systemId || 'hi-lo',
     trueCount: snapshot.trueCount,
@@ -175,8 +180,8 @@ function suggestWagerFromCountSnapshot(snapshot, bankroll, unitSize, minBet) {
     abovePivot: snapshot.abovePivot,
     betMetric: sys?.balanced ? snapshot.trueCount : (snapshot.abovePivot ?? 0),
     betMetricLabel: sys?.balanced ? 'tc' : 'key',
-    units: Math.max(1, Math.floor(amount / unitSize)),
-    unitSize,
+    units: Math.floor(amount / safeUnitSize),
+    unitSize: safeUnitSize,
     amount,
     wasCappedByBankroll,
   };

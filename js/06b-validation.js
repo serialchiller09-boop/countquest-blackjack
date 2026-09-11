@@ -13,6 +13,10 @@ function parseBoundedInteger(rawValue, options = {}) {
     max = Infinity,
     required = true,
   } = options;
+  // Form controls can be fed by restored settings or programmatic callers;
+  // reject invalid bounds instead of letting NaN make every comparison false.
+  const lowerBound = Number.isFinite(Number(min)) ? Number(min) : -Infinity;
+  const upperBound = Number.isFinite(Number(max)) ? Number(max) : Infinity;
   const trimmed = String(rawValue ?? '').trim();
   if (!trimmed) {
     return required
@@ -26,8 +30,8 @@ function parseBoundedInteger(rawValue, options = {}) {
   if (!Number.isFinite(value)) {
     return { ok: false, error: `${fieldName} is not a valid number` };
   }
-  if (value < min || value > max) {
-    return { ok: false, error: `${fieldName} must be between ${min} and ${max}` };
+  if (value < lowerBound || value > upperBound) {
+    return { ok: false, error: `${fieldName} must be between ${lowerBound} and ${upperBound}` };
   }
   return { ok: true, value };
 }
@@ -46,15 +50,17 @@ function validateRunningCountGuess(rawValue, shoe = null) {
 /** Bet amount: positive integer, min bet, and bankroll cap (skipped in practice mode). */
 function validateBetAmount(rawAmount, bankroll, minBet, options = {}) {
   const { practice = false } = options;
-  const upper = practice ? 1_000_000 : Math.max(minBet, Math.floor(bankroll));
+  const safeBankroll = Number.isFinite(Number(bankroll)) ? Math.max(0, Math.floor(Number(bankroll))) : 0;
+  const safeMinBet = Number.isFinite(Number(minBet)) ? Math.max(1, Math.floor(Number(minBet))) : 1;
+  const upper = practice ? 1_000_000 : Math.max(safeMinBet, safeBankroll);
   const parsed = parseBoundedInteger(rawAmount, {
     fieldName: 'Bet',
-    min: minBet,
+    min: safeMinBet,
     max: upper,
   });
   if (!parsed.ok) return parsed;
-  if (!practice && parsed.value > bankroll) {
-    return { ok: false, error: `Bet cannot exceed bankroll ($${bankroll.toLocaleString()})` };
+  if (!practice && parsed.value > safeBankroll) {
+    return { ok: false, error: `Bet cannot exceed bankroll ($${safeBankroll.toLocaleString()})` };
   }
   return { ok: true, value: parsed.value };
 }
@@ -76,7 +82,13 @@ function validateAndRepairSave(data) {
   repaired.bankroll = Number.isFinite(bankroll) && bankroll >= 0
     ? Math.floor(bankroll)
     : defaultSave().bankroll;
-  if (!repaired.settings) repaired.settings = defaultSave().settings;
+  const defaultSettings = defaultSave().settings;
+  // localStorage is user-editable and older saves may contain a malformed
+  // settings value. Always repair the container before reading its fields.
+  if (!repaired.settings || typeof repaired.settings !== 'object' || Array.isArray(repaired.settings)) {
+    repaired.settings = {};
+  }
+  repaired.settings = { ...defaultSettings, ...repaired.settings };
   repaired.settings.minBet = Math.max(1, Math.floor(Number(repaired.settings.minBet) || 10));
   repaired.settings.unitSize = Math.max(1, Math.floor(Number(repaired.settings.unitSize) || 10));
   repaired.settings.numDecks = Math.max(1, Math.min(8, Math.floor(Number(repaired.settings.numDecks) || 6)));
